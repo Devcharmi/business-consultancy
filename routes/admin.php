@@ -1,0 +1,69 @@
+<?php
+
+use App\Http\Controllers\Admin\AdsManagerController;
+use App\Http\Controllers\Admin\CategoryManagerController;
+use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\EventTypeController;
+use App\Http\Controllers\Admin\FeatureGroupController;
+use App\Http\Controllers\Admin\FilterGroupController;
+use App\Http\Controllers\Admin\GuestController;
+use App\Http\Controllers\Admin\LeadController;
+use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserManagerController;
+use App\Http\Controllers\Admin\UserPermissionController;
+use App\Http\Controllers\Admin\VendorServiceController;
+use App\Http\Controllers\DashboardController;
+use App\Models\VendorService;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth')->get('/admin/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+
+    return "✅ All caches cleared!";
+});
+
+Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])
+        ->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('admin.profile.destroy');
+
+    //---------------------------------------------------------------
+    //----------------- Roles ---------------------------------------
+
+    Route::resource('permissions', PermissionController::class);
+    Route::resource('user-manager', UserManagerController::class);
+    Route::resource('role', RoleController::class);
+    Route::get('roles/{role}/add-permission', [RoleController::class, 'addPermission'])->name('add-role-permisiion');
+    Route::put('roles/{role}/give-permission', [RoleController::class, 'givePermission'])->name('give-role-permission');
+
+    // USER PERMISSION MANAGER
+    // Route::get('/user-permission', [UserPermissionController::class, 'index'])->name('user.permission.index');
+
+    Route::get('/user-permission/{user}/modal', [UserPermissionController::class, 'loadModal'])
+        ->name('user.permission.modal');
+
+    Route::get('user-permission/fetch', [UserPermissionController::class, 'loadRolePermissionForm'])
+        ->name('user-permission-fetch');
+
+    Route::put('/user-permission/{user}', [UserPermissionController::class, 'update'])
+        ->name('user.permission.update');
+
+    Route::get('/get-states/{country}', [LocationController::class, 'states'])
+        ->name('location.states');
+
+    Route::get('/get-cities/{state}', [LocationController::class, 'cities'])
+        ->name('location.cities');
+
+    Route::resource('clients', ClientController::class);
+});
