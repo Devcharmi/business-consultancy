@@ -74,15 +74,6 @@
                             </div>
                         </div>
                         <div class="row mb-1 align-items-center">
-                            <label for="gst_number" class="col-md-2 col-form-label">Gst Number</label>
-                            <div class="form-group col-md-6">
-                                <input type="text" name="gst_number" id="gst_number" class="form-control"
-                                    value="{{ $clientData->gst_number ?? '' }}" placeholder="Enter Gst number">
-                                <span id="gst_number_error"
-                                    class="help-inline text-danger mt-2">{{ $errors->first('gst_number') }}</span>
-                            </div>
-                        </div>
-                        <div class="row mb-1 align-items-center">
                             <label for="status" class="col-md-2 col-form-label">Status</label>
                             <div class="form-group col-md-6">
                                 <select name="status" id="status" class="form-select">

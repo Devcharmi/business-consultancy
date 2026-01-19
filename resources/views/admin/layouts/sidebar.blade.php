@@ -43,11 +43,16 @@
                 <!-- End::slide -->
 
                 <!-- Start::slide Staff Maanger-->
-                {{-- @if (canAccess('event type.allow') || canAccess('filter manager.allow') || canAccess('category manager.allow') || canAccess('package features.allow'))
+                @if (canAccess('objective.allow') ||
+                        canAccess('expertise.allow') ||
+                        canAccess('focus-area.allow') ||
+                        canAccess('status-manager.allow'))
                     <li
-                        class="slide has-sub {{ (request()->routeIs('event-types.*') || request()->routeIs('filter-groups.*') || request()->routeIs('category-manager.*') ? 'open' : '' || request()->routeIs('package-features.*')) ? 'open' : '' }} ">
+                        class="slide has-sub 
+                        {{ (request()->routeIs('objective-manager.*') || request()->routeIs('expertise-manager.*') || request()->routeIs('focus-area-manager.*') ? 'open' : '' || request()->routeIs('status-manager.*')) ? 'open' : '' }}
+                        ">
                         <a href="javascript:void(0);"
-                            class="side-menu__item {{ (request()->routeIs('event-types.*') || request()->routeIs('filter-groups.*') || request()->routeIs('category-manager.*') ? 'active' : '' || request()->routeIs('package-features.*')) ? 'active' : '' }}">
+                            class="side-menu__item {{ (request()->routeIs('objective-manager.*') || request()->routeIs('expertise-manager.*') || request()->routeIs('focus-area-manager.*') ? 'active' : '' || request()->routeIs('status-manager.*')) ? 'active' : '' }}">
                             <i class="ri-arrow-right-s-line side-menu__angle"></i>
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -59,29 +64,38 @@
                             <li class="slide side-menu__label1">
                                 <a href="javascript:void(0)">Masters</a>
                             </li>
-                            @if (canAccess('event type.allow'))
+                            @if (canAccess('objective.allow'))
                                 <li class="slide">
-                                    <a href="{{ route('event-types.index') }}"
-                                        class="side-menu__item {{ request()->routeIs('event-types.*') ? 'active' : '' }}">event
-                                        Type</a>
+                                    <a href="{{ route('objective-manager.index') }}"
+                                        class="side-menu__item {{ request()->routeIs('objective-manager.*') ? 'active' : '' }}">Objective
+                                        Manager</a>
                                 </li>
                             @endif
-                            @if (canAccess('filter manager.allow'))
+                            @if (canAccess('expertise.allow'))
                                 <li class="slide">
-                                    <a href="{{ route('filter-groups.index') }}"
-                                        class="side-menu__item {{ request()->routeIs('filter-groups.*') ? 'active' : '' }}">Filters</a>
+                                    <a href="{{ route('expertise-manager.index') }}"
+                                        class="side-menu__item {{ request()->routeIs('expertise-manager.*') ? 'active' : '' }}">Expertise
+                                        Manager</a>
                                 </li>
                             @endif
-                            @if (canAccess('package features.allow'))
+                            @if (canAccess('focus-area.allow'))
                                 <li class="slide">
-                                    <a href="{{ route('package-features.index') }}"
-                                        class="side-menu__item {{ request()->routeIs('package-features.*') ? 'active' : '' }}">Package
-                                        Features</a>
+                                    <a href="{{ route('focus-area-manager.index') }}"
+                                        class="side-menu__item {{ request()->routeIs('focus-area-manager.*') ? 'active' : '' }}">Focus
+                                        Area
+                                        Manager</a>
+                                </li>
+                            @endif
+                            @if (canAccess('status-manager.allow'))
+                                <li class="slide">
+                                    <a href="{{ route('status-manager.index') }}"
+                                        class="side-menu__item {{ request()->routeIs('status-manager.*') ? 'active' : '' }}">Status
+                                        Manager</a>
                                 </li>
                             @endif
                         </ul>
                     </li>
-                @endif --}}
+                @endif
                 <!-- End::slide -->
 
                 <!-- Start::slide Staff Maanger-->
@@ -117,7 +131,7 @@
                 @endif
                 <!-- End::slide -->
 
-                {{-- <!-- Start::slide Leads Manager -->
+                <!-- Start::slide Leads Manager -->
                 @if (canAccess('leads.allow'))
                     <li class="slide">
                         <a href="{{ route('lead.index') }}"
@@ -137,7 +151,7 @@
                         </a>
                     </li>
                 @endif
-                <!-- End::slide --> --}}
+                <!-- End::slide -->
 
                 {{-- @if (canAccess('reports.allow'))
                     <li

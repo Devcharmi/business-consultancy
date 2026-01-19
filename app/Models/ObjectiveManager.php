@@ -4,75 +4,59 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Client extends Model
+class ObjectiveManager extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'client_name',
-        'contact_person',
-        'email',
-        'phone',
-        'address',
-        'status',
-        'created_by',
-        'updated_by',
+        'name',
+        'status'
     ];
 
-    public static function activeClients()
+    public static function activeObjectives()
     {
         return self::where('status', '1')->get();
     }
 
-    // 🔹 Client → Objective Manager
+    // 🔹 Objective → Objective Manager
     public function clientObjectives()
     {
         return $this->hasMany(ClientObjective::class);
     }
 
-    // Relations
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    // Scope for filtering/searching
     public function scopeFilters($query, $filters = [], $columns = [])
     {
-        if (!empty($filters['search']) || !empty($filters['search']['value'])) {
+        // if (!empty($filters['date_range'])) {
+        //     $explode = explode(' - ', $filters['date_range']);
+        //     $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
+        //     $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
+        //     $query->whereDate('created_at', '>=', $from);
+        //     $query->whereDate('created_at', '<=', $to);
+        // }
+
+        if (!empty($filters['search']) or !empty($filters['search']['value'])) {
             $term = is_array($filters['search']) ? $filters['search']['value'] : $filters['search'];
             $query->where(function ($q) use ($term) {
-                $q->orWhere('client_name', 'LIKE', '%' . $term . '%');
-                $q->orWhere('email', 'LIKE', '%' . $term . '%');
-                $q->orWhere('phone', 'LIKE', '%' . $term . '%');
+                $q->orWhere('name', 'LIKE', '%' . $term . '%');
             });
         }
-
         if (!empty($filters['sort'])) {
             $sort = $filters['sort'];
+
             if ($sort == 'latest') {
                 $query->orderBy('id', 'desc');
             }
         }
-
         if (isset($filters['start']) && !empty($filters['length'])) {
             $query->take($filters['length'])
                 ->skip($filters['start']);
         }
-
-        if (!empty($filters['order']) && !empty(head($filters['order']))) {
+        if (!empty($filters['order']) and !empty(head($filters['order']))) {
             $order = head($filters['order']);
-            $column = $columns[$order['column']] ?? 'id';
+            $column = $columns[$order['column']];
             $query->orderBy($column, $order['dir']);
         }
-
         return $query;
     }
 }

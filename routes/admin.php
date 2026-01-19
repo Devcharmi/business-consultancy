@@ -4,16 +4,20 @@ use App\Http\Controllers\Admin\AdsManagerController;
 use App\Http\Controllers\Admin\CategoryManagerController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\EventTypeController;
+use App\Http\Controllers\Admin\ExpertiseManagerController;
 use App\Http\Controllers\Admin\FeatureGroupController;
 use App\Http\Controllers\Admin\FilterGroupController;
+use App\Http\Controllers\Admin\FocusAreaManagerController;
 use App\Http\Controllers\Admin\GuestController;
 use App\Http\Controllers\Admin\LeadController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\ObjectiveManagerController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\StatusManagerController;
 use App\Http\Controllers\Admin\UserManagerController;
 use App\Http\Controllers\Admin\UserPermissionController;
 use App\Http\Controllers\Admin\VendorServiceController;
@@ -66,4 +70,22 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         ->name('location.cities');
 
     Route::resource('clients', ClientController::class);
+    Route::resource('status-manager', StatusManagerController::class);
+    Route::resource('objective-manager', ObjectiveManagerController::class);
+    Route::resource('expertise-manager', ExpertiseManagerController::class);
+    Route::resource('focus-area-manager', FocusAreaManagerController::class);
+
+    Route::resource('lead', LeadController::class);
+
+    Route::prefix('leads')->name('admin.leads.')->group(function () {
+
+        Route::post('update-status', [LeadController::class, 'updateStatus'])
+            ->name('update-status');
+
+        Route::post('follow-ups', [LeadController::class, 'followupStore'])
+            ->name('followups.store');
+
+        Route::get('{lead}/follow-ups', [LeadController::class, 'followUpsList'])
+            ->name('followups.list');
+    });
 });
