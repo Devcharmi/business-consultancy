@@ -14,6 +14,11 @@ class FocusAreaManager extends Model
         'status'
     ];
 
+    public static function activeFocusArea()
+    {
+        return self::where('status', '1')->get();
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         // if (!empty($filters['date_range'])) {

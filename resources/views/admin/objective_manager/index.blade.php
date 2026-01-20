@@ -23,7 +23,7 @@
                     {{-- @if (canAccess('status manager.create')) --}}
                     <a href="#" data-url="{{ route('objective-manager.show', ['objective_manager' => 'new']) }}"
                         class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('objective.create') ? '' : 'disabled' }}">+
-                        Add Status</a>
+                        Add Objective</a>
                     {{-- @endif --}}
                 </div>
                 <div class="card-body">

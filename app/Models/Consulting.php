@@ -2,30 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ExpertiseManager extends Model
+class Consulting extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'name',
-        'color_name',
-        'status'
+        'client_objective_id',
+        'expertise_manager_id',
+        'focus_area_manager_id',
+        'consulting_datetime',
+        'created_by',
+        'updated_by'
     ];
 
-    public static function activeExpertise()
+    public function client_objective()
     {
-        return self::where('status', '1')->get();
+        return $this->belongsTo(ClientObjective::class);
     }
 
-    public function users()
+    public function expertise_manager()
     {
-        return $this->belongsToMany(
-            User::class,
-            'users_expertise_manager'
-        )->withTimestamps();
+        return $this->belongsTo(ExpertiseManager::class);
+    }
+
+    public function focus_area_manager()
+    {
+        return $this->belongsTo(FocusAreaManager::class);
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])
@@ -41,8 +43,24 @@ class ExpertiseManager extends Model
         if (!empty($filters['search']) or !empty($filters['search']['value'])) {
             $term = is_array($filters['search']) ? $filters['search']['value'] : $filters['search'];
             $query->where(function ($q) use ($term) {
-                $q->orWhere('name', 'LIKE', '%' . $term . '%');
-                $q->orWhere('color_name', 'LIKE', '%' . $term . '%');
+
+                // Client name
+                $q->whereHas('client_objective.client', function ($qc) use ($term) {
+                    $qc->where('client_name', 'LIKE', "%{$term}%");
+                })
+
+                    // OR Objective name
+                    ->orWhereHas('client_objective.objective_manager', function ($qo) use ($term) {
+                        $qo->where('name', 'LIKE', "%{$term}%");
+                    })
+                    // OR expertise name
+                    ->orWhereHas('expertise_manager', function ($qo) use ($term) {
+                        $qo->where('name', 'LIKE', "%{$term}%");
+                    })
+                    // OR focus_area name
+                    ->orWhereHas('focus_area_manager', function ($qo) use ($term) {
+                        $qo->where('name', 'LIKE', "%{$term}%");
+                    });
             });
         }
         if (!empty($filters['sort'])) {

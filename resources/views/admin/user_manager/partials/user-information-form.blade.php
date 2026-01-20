@@ -86,6 +86,29 @@
                               class="help-inline text-danger mt-2">{{ $errors->first('role') }}</span>
                       </div>
                   </div>
+                  <div class="row mb-1">
+                      <label for="expertise_manager_ids" class="col-form-label col-md-2">
+                          Expertises
+                      </label>
+
+                      <div class="form-group col-md-6">
+                          <select name="expertise_manager_ids[]" id="expertise_manager_ids" class="form-control select2"
+                              multiple>
+
+                              @foreach ($expertises as $expertise)
+                                  <option value="{{ $expertise->id }}"
+                                      {{ isset($userExpertiseIds) && in_array($expertise->id, $userExpertiseIds) ? 'selected' : '' }}>
+                                      {{ $expertise->name }}
+                                  </option>
+                              @endforeach
+                          </select>
+
+                          <span class="help-inline text-danger mt-2">
+                              {{ $errors->first('expertise_manager_ids') }}
+                          </span>
+                      </div>
+                  </div>
+
               </div>
           </div>
       </div>

@@ -11,6 +11,7 @@ class LeadConversionService
 {
     public static function convertIfRequired(Lead $lead, string $newStatus): void
     {
+// Log::info($lead);
         // Only when converting
         if ($newStatus !== 'converted') {
             return;
@@ -27,24 +28,24 @@ class LeadConversionService
                1️⃣ FIND EXISTING CLIENT
             ============================ */
 
-            $client = Client::where(function ($q) use ($lead) {
+            // $client = Client::where(function ($q) use ($lead) {
 
-                if ($lead->phone && $lead->email) {
-                    $q->where('phone', $lead->phone)
-                        ->orWhere('email', $lead->email);
-                } elseif ($lead->phone) {
-                    $q->where('phone', $lead->phone);
-                } elseif ($lead->email) {
-                    $q->where('email', $lead->email);
-                }
-            })->first();
+            //     if ($lead->phone && $lead->email) {
+            //         $q->where('phone', $lead->phone)
+            //             ->orWhere('email', $lead->email);
+            //     } elseif ($lead->phone) {
+            //         $q->where('phone', $lead->phone);
+            //     } elseif ($lead->email) {
+            //         $q->where('email', $lead->email);
+            //     }
+            // })->first();
 
 
             /* ============================
                2️⃣ CREATE CLIENT IF NOT FOUND
             ============================ */
 
-            if (!$client) {
+            // if (!$client) {
                 $client = Client::create([
                     'client_name'    => $lead->name,
                     'contact_person' => $lead->name,
@@ -52,7 +53,7 @@ class LeadConversionService
                     'phone'          => $lead->phone,
                     'created_by'     => auth()->id(),
                 ]);
-            }
+            // }
 
             /* ============================
                3️⃣ LINK CLIENT TO LEAD
@@ -74,7 +75,7 @@ class LeadConversionService
                         'objective_manager_id'  => $lead->objective_manager_id,
                     ],
                     [
-                        'status'     => 'active',
+                        'status'     => '1',
                         'created_by' => auth()->id(),
                     ]
                 );

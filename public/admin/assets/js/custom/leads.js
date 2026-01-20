@@ -216,8 +216,10 @@ function loadFollowUps() {
 }
 
 function setClientInfo(guestSelect) {
+    let name = $(guestSelect).find(":selected").data("name") || "";
     let phone = $(guestSelect).find(":selected").data("phone") || "";
     let email = $(guestSelect).find(":selected").data("email") || "";
+    $("#name").val(name);
     $("#phone").val(phone);
     $("#email").val(email);
 }

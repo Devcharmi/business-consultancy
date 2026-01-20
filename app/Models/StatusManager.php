@@ -14,6 +14,11 @@ class StatusManager extends Model
         'color_name',
         'status'
     ];
+    
+    public static function activeStatus()
+    {
+        return self::where('status', '1')->get();
+    }
 
     public function scopeFilters($query, $filters = [], $columns = [])
     {

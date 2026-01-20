@@ -94,12 +94,36 @@ class LeadController extends Controller
     {
         // ✅ SINGLE validation block
         $validated = $request->validate([
-            'objective_manager_id' => 'required',
-            'name'       => 'required|string|max:255',
-            'phone'      => 'required|string|max:20',
-            'email'      => 'nullable|email',
-            'status'     => 'required|in:new,contacted,converted,lost',
-            'note'       => 'nullable|string',
+            'objective_manager_id' => 'required|exists:objective_managers,id',
+
+            'client_id' => 'nullable|exists:clients,id',
+
+            'name'  => 'required|string|max:255',
+
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+
+                // ✅ Only check uniqueness when client NOT selected
+                Rule::unique('clients', 'phone')
+                    ->when(!$request->client_id, function ($query) {
+                        return $query;
+                    }),
+            ],
+
+            'email' => [
+                'nullable',
+                'email',
+
+                Rule::unique('clients', 'email')
+                    ->when(!$request->client_id, function ($query) {
+                        return $query;
+                    }),
+            ],
+
+            'status' => 'required|in:new,contacted,converted,lost',
+            'note'   => 'nullable|string',
         ]);
 
         try {

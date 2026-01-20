@@ -22,7 +22,7 @@ return new class extends Migration
 
             // 🏷 Status
             $table->enum('status', ['0', '1'])
-                ->default('1');
+                ->default('1')->nullable();
 
             // 📝 Optional info
             $table->text('note')->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
                 ->nullOnDelete();
 
             // 🔒 Prevent duplicates
-            $table->unique(['client_id', 'objective_id']);
+            // $table->unique(['client_id', 'objective_manager_id']);
 
             $table->timestamps();
         });

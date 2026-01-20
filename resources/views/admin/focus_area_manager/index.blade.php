@@ -23,7 +23,7 @@
                     {{-- @if (canAccess('status manager.create')) --}}
                     <a href="#" data-url="{{ route('focus-area-manager.show', ['focus_area_manager' => 'new']) }}"
                         class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('focus-area.create') ? '' : 'disabled' }}">+
-                        Add Status</a>
+                        Add Focus Area</a>
                     {{-- @endif --}}
                 </div>
                 <div class="card-body">

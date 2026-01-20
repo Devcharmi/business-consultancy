@@ -26,7 +26,7 @@
 
                             {{-- Objective --}}
                             <div class="col-md-6 mb-3">
-                                <label>Objective</label>
+                                <label>Objective</label><span class="text-danger">*</span>
                                 <select name="objective_manager_id" class="form-control select2">
                                     <option value="">Select Objective</option>
 
@@ -36,6 +36,7 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <small class="text-danger" id="objective_manager_id_error"></small>
                             </div>
 
                             {{-- Client --}}
@@ -45,10 +46,10 @@
                                     onChange="setClientInfo(this)">
                                     <option value="">Select Client</option>
                                     @foreach ($clients as $client)
-                                        <option value="{{ $client->id }}" data-phone="{{ $client->phone }}"
-                                            data-email="{{ $client->email }}"
+                                        <option value="{{ $client->id }}" data-name="{{ $client->client_name }}"
+                                            data-phone="{{ $client->phone }}" data-email="{{ $client->email }}"
                                             {{ isset($leadData) && $leadData->client_id == $client->id ? 'selected' : '' }}>
-                                            {{ $client->name }}
+                                            {{ $client->client_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -76,6 +77,7 @@
                                 <label>Email</label>
                                 <input type="email" class="form-control" name="email" id="email"
                                     value="{{ $leadData->email ?? '' }}">
+                                <small class="text-danger" id="email_error"></small>
                             </div>
 
                             {{-- Status --}}

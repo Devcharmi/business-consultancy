@@ -90,6 +90,14 @@ class User extends Authenticatable
         return $username;
     }
 
+    public function expertiseManagers()
+    {
+        return $this->belongsToMany(
+            ExpertiseManager::class,
+            'users_expertise_manager'
+        )->withTimestamps();
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         // if (!empty($filters['date_range'])) {

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AdsManagerController;
 use App\Http\Controllers\Admin\CategoryManagerController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\ClientObjectiveController;
+use App\Http\Controllers\Admin\ConsultingController;
 use App\Http\Controllers\Admin\EventTypeController;
 use App\Http\Controllers\Admin\ExpertiseManagerController;
 use App\Http\Controllers\Admin\FeatureGroupController;
@@ -88,4 +90,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         Route::get('{lead}/follow-ups', [LeadController::class, 'followUpsList'])
             ->name('followups.list');
     });
+
+    Route::resource('client-objective-manager', ClientObjectiveController::class);
+    Route::resource('consulting', ConsultingController::class);
 });

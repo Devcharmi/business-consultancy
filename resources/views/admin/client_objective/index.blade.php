@@ -18,24 +18,23 @@
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">
-                        Expertise Manager
+                        Client Objective Manager
                     </div>
                     {{-- @if (canAccess('status manager.create')) --}}
-                    <a href="#" data-url="{{ route('expertise-manager.show', ['expertise_manager' => 'new']) }}"
-                        class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('expertise.create') ? '' : 'disabled' }}">+
-                        Add Expertise</a>
+                    <a href="#" data-url="{{ route('client-objective-manager.show', ['client_objective_manager' => 'new']) }}"
+                        class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('client-objective.create') ? '' : 'disabled' }}">+
+                        Add Client Objective</a>
                     {{-- @endif --}}
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="expertise_table" data-url="{{ route('expertise-manager.index') }}"
+                        <table id="client_objective_table" data-url="{{ route('client-objective-manager.index') }}"
                             class="table table-bordered text-nowrap w-100 table-list">
                             <thead>
                                 <tr>
                                     <th>Sr No.</th>
-                                    <th>Name</th>
-                                    <th>Color</th>
-                                    <th>Status</th>
+                                    <th>Client Name</th>
+                                    <th>Objective</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -51,10 +50,10 @@
 @section('script')
     <script>
         var csrf_token = '{{ csrf_token() }}';
-        var edit_path = "{{ route('expertise-manager.show', ['expertise_manager' => ':expertise_manager']) }}";
-        var delete_path = "{{ route('expertise-manager.destroy', ['expertise_manager' => ':expertise_manager']) }}";
-        window.canEditTask = @json(canAccess('expertise.edit'));
-        window.canDeleteTask = @json(canAccess('expertise.delete'));
+        var edit_path = "{{ route('client-objective-manager.show', ['client_objective_manager' => ':client_objective_manager']) }}";
+        var delete_path = "{{ route('client-objective-manager.destroy', ['client_objective_manager' => ':client_objective_manager']) }}";
+        window.canEditTask = @json(canAccess('client-objective.edit'));
+        window.canDeleteTask = @json(canAccess('client-objective.delete'));
     </script>
-    <script src="{{ asset('admin/assets/js/custom/expertise_manager.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/client_objective_manager.js') }}"></script>
 @endsection

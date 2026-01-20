@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
+use App\Models\ExpertiseManager;
 use App\Models\Segment;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
@@ -115,6 +116,10 @@ class UserManagerController extends Controller
                 'profile_image' => $profileImagePath,
             ]);
 
+            $user->expertiseManagers()->sync(
+                $request->expertise_manager_ids
+            );
+
             // ✅ Assign role
             $user->syncRoles($request->role);
 
@@ -150,16 +155,21 @@ class UserManagerController extends Controller
     public function show(string $id)
     {
         $roles = Role::where('name', '!=', 'Super Admin')->get();
+        $expertises = ExpertiseManager::activeExpertise();
         if ($id != 'new') {
             $userData = User::find($id);
             $userRole = $userData->roles->pluck('id')->first(); // assuming single role
+            // ✅ Get selected expertise IDs from pivot
+            $userExpertiseIds = $userData->expertiseManagers->pluck('id')->toArray();
             return view('admin.user_manager.user-form', [
                 'userData' => $userData,
                 'roles' => $roles,
                 'userRole' => $userRole,
+                'expertises' => $expertises,
+                'userExpertiseIds' => $userExpertiseIds,
             ]);
         } else {
-            return view('admin.user_manager.user-form', compact('roles'));
+            return view('admin.user_manager.user-form', compact('roles', 'expertises'));
         }
     }
 
@@ -234,6 +244,10 @@ class UserManagerController extends Controller
 
             $user->save();
 
+            $user->expertiseManagers()->sync(
+                $request->expertise_manager_ids
+            );
+
             // Step 4: Update role ONLY IF CHANGED
             $oldRole = $user->getRoleNames()->first();
             $newRole = $request->role;
@@ -279,5 +293,4 @@ class UserManagerController extends Controller
             return response()->json(['success' => false, 'message' => 'Something went wrong!'], 500);
         }
     }
-
 }
