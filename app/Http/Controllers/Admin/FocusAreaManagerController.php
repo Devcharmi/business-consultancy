@@ -66,9 +66,9 @@ class FocusAreaManagerController extends Controller
             'name' => 'required|unique:focus_area_managers,name'
         ]);
         try {
-            $status = new FocusAreaManager();
-            $status->fill($data);
-            $status->save();
+            $focusArea = new FocusAreaManager();
+            $focusArea->fill($data);
+            $focusArea->save();
             return response()->json(['success' => true, 'message' => 'Focus Area created successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
@@ -108,9 +108,9 @@ class FocusAreaManagerController extends Controller
             'name' => 'required|unique:focus_area_managers,name,' . $id,
         ]);
         try {
-            $status = FocusAreaManager::find($id);
-            $status->fill($data);
-            $status->save();
+            $focusArea = FocusAreaManager::find($id);
+            $focusArea->fill($data);
+            $focusArea->save();
             return response()->json(['success' => true, 'message' => 'Focus Area updated successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
@@ -124,8 +124,8 @@ class FocusAreaManagerController extends Controller
     public function destroy($id)
     {
         try {
-            $status = FocusAreaManager::findOrFail($id);
-            $status->delete();
+            $focusArea = FocusAreaManager::findOrFail($id);
+            $focusArea->delete();
             return response()->json(['success' => true, 'message' => 'Focus Area deleted successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());

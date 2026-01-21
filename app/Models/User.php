@@ -95,7 +95,7 @@ class User extends Authenticatable
         return $this->belongsToMany(
             ExpertiseManager::class,
             'users_expertise_manager'
-        )->withTimestamps();
+        )->withPivot('is_primary')->withTimestamps();
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])

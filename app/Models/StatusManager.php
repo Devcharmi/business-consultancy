@@ -15,9 +15,9 @@ class StatusManager extends Model
         'status'
     ];
     
-    public static function activeStatus()
+    public function scopeActiveStatus($query)
     {
-        return self::where('status', '1')->get();
+        return $query->where('status', '1');
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])

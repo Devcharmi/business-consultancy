@@ -15,9 +15,9 @@ class ExpertiseManager extends Model
         'status'
     ];
 
-    public static function activeExpertise()
+    public function scopeActiveExpertise($query)
     {
-        return self::where('status', '1')->get();
+        return $query->where('status', '1');
     }
 
     public function users()
@@ -25,7 +25,7 @@ class ExpertiseManager extends Model
         return $this->belongsToMany(
             User::class,
             'users_expertise_manager'
-        )->withTimestamps();
+        )->withPivot('is_primary')->withTimestamps();
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])

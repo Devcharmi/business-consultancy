@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\StatusManagerController;
+use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserManagerController;
 use App\Http\Controllers\Admin\UserPermissionController;
 use App\Http\Controllers\Admin\VendorServiceController;
@@ -93,4 +94,5 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
 
     Route::resource('client-objective-manager', ClientObjectiveController::class);
     Route::resource('consulting', ConsultingController::class);
+    Route::resource('task', TaskController::class);
 });

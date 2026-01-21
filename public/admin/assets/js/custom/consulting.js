@@ -12,41 +12,65 @@ var consulting_table = $(".table-list").DataTable({
         url: $("#consulting_table").attr("data-url"),
     },
     columns: [
+        // 1️⃣ Sr No
         {
             data: "id",
-            mRender: function (v, t, o, meta) {
+            render: function (data, type, row, meta) {
                 return meta.row + meta.settings._iDisplayStart + 1;
             },
         },
+
+        // 2️⃣ Client Name
         {
-            data: "client",
-            mRender: function (v, t, o) {
-                return o["client"].client_name;
+            data: "client_objective",
+            render: function (data, type, row) {
+                return data && data.client ? data.client.client_name : "-";
             },
         },
+
+        // 3️⃣ Objective
         {
-            data: "objective_manager",
-            mRender: function (v, t, o) {
-                return o["objective_manager"].name;
+            data: "client_objective",
+            render: function (data, type, row) {
+                return data && data.objective_manager
+                    ? data.objective_manager.name
+                    : "-";
             },
         },
+
+        // 4️⃣ Expertise
         {
-            data: "guard_name",
-            sClass: "text-center",
-            mRender: function (v, t, o) {
-                var id = o["id"];
+            data: "expertise_manager",
+            render: function (data) {
+                return data ? data.name : "-";
+            },
+        },
 
-                var edit_path_set = edit_path;
-                edit_path_set = edit_path_set.replace(
-                    ":consulting",
-                    id,
-                );
+        // 5️⃣ Focus Area
+        {
+            data: "focus_area_manager",
+            render: function (data) {
+                return data ? data.name : "-";
+            },
+        },
 
-                var delete_path_set = delete_path;
-                delete_path_set = delete_path_set.replace(
-                    ":consulting",
-                    id,
-                );
+        // 6️⃣ Date
+        {
+            data: "consulting_datetime",
+            render: function (data) {
+                return data ? moment(data).format("DD-MM-YYYY HH:mm") : "-";
+            },
+        },
+
+        // 7️⃣ Action
+        {
+            data: "id",
+            orderable: false,
+            searchable: false,
+            className: "text-center",
+            render: function (id, type, row) {
+                let edit_path_set = edit_path.replace(":consulting", id);
+                let delete_path_set = delete_path.replace(":consulting", id);
 
                 let editDisabled = window.canEditTask
                     ? ""
@@ -55,13 +79,16 @@ var consulting_table = $(".table-list").DataTable({
                     ? ""
                     : "style='pointer-events:none;opacity:0.4;' disabled";
 
-                var html = `<a href="javascript:void(0);" data-url="${edit_path_set}" title="Edit" data-tool-tips="Edit" class="open-modal" ${editDisabled}>
-                                       <i class="fas fa-pen p-1 text-primary"></i>
-                                    </a>`;
-                html += `<a href="javascript:void(0);" data-url="${delete_path_set}" title="Delete" data-tool-tips="Delete" class="delete-data" ${deleteDisabled}>
-                    <i class="fas fa-trash p-1 text-danger"></i>
-                                    </a>`;
-                return html;
+                return `
+                    <a href="javascript:void(0);" data-url="${edit_path_set}"
+                       class="open-modal" title="Edit" ${editDisabled}>
+                        <i class="fas fa-pen p-1 text-primary"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-url="${delete_path_set}"
+                       class="delete-data" title="Delete" ${deleteDisabled}>
+                        <i class="fas fa-trash p-1 text-danger"></i>
+                    </a>
+                `;
             },
         },
     ],
@@ -81,6 +108,13 @@ $(document).on("click", ".open-modal", function () {
             // alert(data.html);
             $("#modal_show_html").html(data.html);
             $("#consultingForm").modal("show");
+            $(".select2").select2({
+                placeholder: "Select...",
+                width: "100%",
+                dropdownParent: $("#consultingForm"),
+                // allowClear: true,
+                // closeOnSelect: false, // keep dropdown open for multiple selections
+            });
         },
     });
     return false;

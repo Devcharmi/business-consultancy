@@ -17,41 +17,43 @@
                 @csrf
                 <div class="modal-body">
 
-                    {{-- Client --}}
-                    <div class="col-md-12 mb-3">
-                        <label>Client</label>
-                        <select name="client_id" id="client_id" class="form-control select2"
-                            {{ isset($ClientObjectiveData) ? 'disabled' : '' }}>
-                            <option value="">Select Client</option>
-                            @foreach ($clients as $client)
-                                <option value="{{ $client->id }}"
-                                    {{ isset($ClientObjectiveData) && $ClientObjectiveData->client_id == $client->id ? 'selected' : '' }}>
-                                    {{ $client->client_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small class="text-danger" id="client_id_error"></small>
-                    </div>
+                    <div class="row">
+                        {{-- Client --}}
+                        <div class="col-md-12 mb-3">
+                            <label>Client</label>
+                            <select name="client_id" id="client_id" class="form-control select2"
+                                {{ isset($ClientObjectiveData) ? 'disabled' : '' }}>
+                                <option value="">Select Client</option>
+                                @foreach ($clients as $client)
+                                    <option value="{{ $client->id }}"
+                                        {{ isset($ClientObjectiveData) && $ClientObjectiveData->client_id == $client->id ? 'selected' : '' }}>
+                                        {{ $client->client_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger" id="client_id_error"></small>
+                        </div>
 
-                    {{-- Objective --}}
-                    <div class="col-md-12 mb-3">
-                        <label>Objective</label><span class="text-danger">*</span>
-                        <select name="objective_manager_id" class="form-control select2">
-                            <option value="">Select Objective</option>
+                        {{-- Objective --}}
+                        <div class="col-md-12 mb-3">
+                            <label>Objective</label><span class="text-danger">*</span>
+                            <select name="objective_manager_id" class="form-control select2">
+                                <option value="">Select Objective</option>
 
-                            @foreach ($objectives as $objective)
-                                <option value="{{ $objective->id }}" @selected(old('objective_manager_id', $ClientObjectiveData->objective_manager_id ?? null) == $objective->id)>
-                                    {{ $objective->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small class="text-danger" id="objective_manager_id_error"></small>
-                    </div>
+                                @foreach ($objectives as $objective)
+                                    <option value="{{ $objective->id }}" @selected(old('objective_manager_id', $ClientObjectiveData->objective_manager_id ?? null) == $objective->id)>
+                                        {{ $objective->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger" id="objective_manager_id_error"></small>
+                        </div>
 
-                    {{-- Note --}}
-                    <div class="col-md-12 mb-3">
-                        <label>Note</label>
-                        <textarea name="note" id="note" class="form-control" rows="3">{{ $ClientObjectiveData->note ?? '' }}</textarea>
+                        {{-- Note --}}
+                        <div class="col-md-12 mb-3">
+                            <label>Note</label>
+                            <textarea name="note" id="note" class="form-control" rows="3">{{ $ClientObjectiveData->note ?? '' }}</textarea>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -154,8 +154,8 @@ class UserManagerController extends Controller
      */
     public function show(string $id)
     {
-        $roles = Role::where('name', '!=', 'Super Admin')->get();
-        $expertises = ExpertiseManager::activeExpertise();
+        $roles = Role::get();
+        $expertises = ExpertiseManager::activeExpertise()->get();
         if ($id != 'new') {
             $userData = User::find($id);
             $userRole = $userData->roles->pluck('id')->first(); // assuming single role

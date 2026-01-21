@@ -14,20 +14,18 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('client_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->foreignId('objective_manager_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->foreignId('client_objective_id')
+                ->after('id')
+                ->nullable()
+                ->constrained('client_objectives')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignId('expertise_manager_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
             $table->string('title'); // Task Name / Meeting
-            $table->longText('content')->nullable(); // Task / Meeting Content
 
             $table->date('task_start_date')->nullable(); // Today’s date / meeting date
             $table->date('task_due_date')->nullable(); // Today’s date / meeting date

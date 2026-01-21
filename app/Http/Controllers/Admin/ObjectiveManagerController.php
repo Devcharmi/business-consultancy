@@ -66,9 +66,9 @@ class ObjectiveManagerController extends Controller
             'name' => 'required|unique:objective_managers,name'
         ]);
         try {
-            $status = new ObjectiveManager();
-            $status->fill($data);
-            $status->save();
+            $objective = new ObjectiveManager();
+            $objective->fill($data);
+            $objective->save();
             return response()->json(['success' => true, 'message' => 'Objective created successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
@@ -108,9 +108,9 @@ class ObjectiveManagerController extends Controller
             'name' => 'required|unique:objective_managers,name,' . $id,
         ]);
         try {
-            $status = ObjectiveManager::find($id);
-            $status->fill($data);
-            $status->save();
+            $objective = ObjectiveManager::find($id);
+            $objective->fill($data);
+            $objective->save();
             return response()->json(['success' => true, 'message' => 'Objective updated successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
@@ -124,8 +124,8 @@ class ObjectiveManagerController extends Controller
     public function destroy($id)
     {
         try {
-            $status = ObjectiveManager::findOrFail($id);
-            $status->delete();
+            $objective = ObjectiveManager::findOrFail($id);
+            $objective->delete();
             return response()->json(['success' => true, 'message' => 'Objective deleted successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());

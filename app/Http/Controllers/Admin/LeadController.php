@@ -74,8 +74,8 @@ class LeadController extends Controller
 
     public function show($id)
     {
-        $clients  = Client::activeClients();
-        $objectives  = ObjectiveManager::activeObjectives();
+        $clients  = Client::activeClients()->get();
+        $objectives  = ObjectiveManager::activeObjectives()->get();
 
         if ($id !== 'new') {
             $leadData = Lead::with([

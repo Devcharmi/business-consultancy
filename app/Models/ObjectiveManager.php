@@ -14,9 +14,9 @@ class ObjectiveManager extends Model
         'status'
     ];
 
-    public static function activeObjectives()
+    public function scopeActiveObjectives($query)
     {
-        return self::where('status', '1')->get();
+        return $query->where('status', '1');
     }
 
     // 🔹 Objective → Objective Manager

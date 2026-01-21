@@ -21,9 +21,9 @@ class Client extends Model
         'updated_by',
     ];
 
-    public static function activeClients()
+    public function scopeActiveClients($query)
     {
-        return self::where('status', '1')->get();
+        return $query->where('status', '1');
     }
 
     // 🔹 Client → Objective Manager

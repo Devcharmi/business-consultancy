@@ -69,9 +69,9 @@ class ClientObjectiveController extends Controller
             'objective_manager_id' => 'required',
         ]);
         try {
-            $status = new ClientObjective();
-            $status->fill($data);
-            $status->save();
+            $clientObjective = new ClientObjective();
+            $clientObjective->fill($data);
+            $clientObjective->save();
             return response()->json(['success' => true, 'message' => 'Client Objective created successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
@@ -84,8 +84,8 @@ class ClientObjectiveController extends Controller
      */
     public function show($id)
     {
-        $clients  = Client::activeClients();
-        $objectives  = ObjectiveManager::activeObjectives();
+        $clients  = Client::activeClients()->get();
+        $objectives  = ObjectiveManager::activeObjectives()->get();
 
         if ($id !== 'new') {
             $ClientObjectiveData = ClientObjective::with([
@@ -120,9 +120,9 @@ class ClientObjectiveController extends Controller
             'objective_manager_id' => 'required',
         ]);
         try {
-            $status = ClientObjective::find($id);
-            $status->fill($data);
-            $status->save();
+            $clientObjective = ClientObjective::find($id);
+            $clientObjective->fill($data);
+            $clientObjective->save();
             return response()->json(['success' => true, 'message' => 'Client Objective updated successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
@@ -136,8 +136,8 @@ class ClientObjectiveController extends Controller
     public function destroy($id)
     {
         try {
-            $status = ClientObjective::findOrFail($id);
-            $status->delete();
+            $clientObjective = ClientObjective::findOrFail($id);
+            $clientObjective->delete();
             return response()->json(['success' => true, 'message' => 'Client Objective deleted successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());

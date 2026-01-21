@@ -33,13 +33,122 @@
                     <a href="{{ route('dashboard') }}"
                         class="side-menu__item {{ request()->routeIs('dashboard') ? 'active' : '' }} ">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                         </svg>
                         <span class="side-menu__label">Dashboard</span>
                     </a>
                 </li>
+                <!-- End::slide -->
+
+                <!-- Start::slide Leads Manager -->
+                @if (canAccess('leads.allow'))
+                    <li class="slide">
+                        <a href="{{ route('lead.index') }}"
+                            class="side-menu__item {{ request()->routeIs('lead.*') ? 'active' : '' }}">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92V21a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3 5.18 2 2 0 0 1 5 3h4.09a2 2 0 0 1 2 1.72c.12.81.3 1.6.57 2.36a2 2 0 0 1-.45 2.11L10 10a16 16 0 0 0 6 6l.81-1.21a2 2 0 0 1 2.11-.45c.76.27 1.55.45 2.36.57A2 2 0 0 1 22 16.92z" />
+                            </svg>
+
+                            <span class="side-menu__label">Leads</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- End::slide -->
+
+                <!-- Start::slide client Maanger-->
+                @if (canAccess('client.allow'))
+                    <li class="slide">
+                        <a href="{{ route('clients.index') }}"
+                            class="side-menu__item {{ request()->routeIs('clients.*') ? 'active' : '' }} ">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 19.125a3.375 3.375 0 1 0-6 0M3 20.25a9 9 0 0 1 18 0M12 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                            </svg>
+                            <span class="side-menu__label">client</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- End::slide -->
+
+                <!-- Start::slide Leads Manager -->
+                @if (canAccess('consulting.allow'))
+                    <li class="slide">
+                        <a href="{{ route('consulting.index') }}"
+                            class="side-menu__item {{ request()->routeIs('consulting.*') ? 'active' : '' }}">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+                                <path d="M8 9h8" />
+                                <path d="M8 13h6" />
+                            </svg>
+
+                            <span class="side-menu__label">Consulting</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- End::slide -->
+
+                <!-- Start::slide Leads Manager -->
+                @if (canAccess('client-objective.allow'))
+                    <li class="slide">
+                        <a href="{{ route('client-objective-manager.index') }}"
+                            class="side-menu__item {{ request()->routeIs('client-objective-manager.*') ? 'active' : '' }}">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <circle cx="12" cy="12" r="6" />
+                                <circle cx="12" cy="12" r="2" />
+                            </svg>
+
+                            <span class="side-menu__label">Client Objective</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- End::slide -->
+
+                <!-- Start::slide task Manager -->
+                @if (canAccess('task.allow'))
+                    <li class="slide">
+                        <a href="{{ route('task.index') }}"
+                            class="side-menu__item {{ request()->routeIs('task.*') ? 'active' : '' }}">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.5 6.75h15M4.5 12h15M4.5 17.25h15M5.25 6.75l1.5 1.5L9 5.25M5.25 12l1.5 1.5L9 10.5M5.25 17.25l1.5 1.5L9 15.75" />
+                            </svg>
+                            <span class="side-menu__label">Tasks</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- End::slide -->
+
+                <!-- Start::slide Staff Maanger-->
+                @if (canAccess('user.allow'))
+                    <li class="slide">
+                        <a href="{{ route('user-manager.index') }}"
+                            class="side-menu__item {{ request()->routeIs('user-manager.*') ? 'active' : '' }} ">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon"
+                                viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z" />
+                                <path d="M4 20a8 8 0 0 1 16 0z" />
+                            </svg>
+
+                            <span class="side-menu__label">User Manager</span>
+                        </a>
+                    </li>
+                @endif
                 <!-- End::slide -->
 
                 <!-- Start::slide Staff Maanger-->
@@ -55,7 +164,7 @@
                             class="side-menu__item {{ (request()->routeIs('objective-manager.*') || request()->routeIs('expertise-manager.*') || request()->routeIs('focus-area-manager.*') ? 'active' : '' || request()->routeIs('status-manager.*')) ? 'active' : '' }}">
                             <i class="ri-arrow-right-s-line side-menu__angle"></i>
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M3 12h18M3 18h18" />
                             </svg>
                             <span class="side-menu__label">Masters</span>
@@ -98,105 +207,6 @@
                 @endif
                 <!-- End::slide -->
 
-                <!-- Start::slide Staff Maanger-->
-                @if (canAccess('user.allow'))
-                    <li class="slide">
-                        <a href="{{ route('user-manager.index') }}"
-                            class="side-menu__item {{ request()->routeIs('user-manager.*') ? 'active' : '' }} ">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
-                                fill="currentColor">
-                                <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z" />
-                                <path d="M4 20a8 8 0 0 1 16 0z" />
-                            </svg>
-
-                            <span class="side-menu__label">User Manager</span>
-                        </a>
-                    </li>
-                @endif
-                <!-- End::slide -->
-
-                <!-- Start::slide client Maanger-->
-                @if (canAccess('client.allow'))
-                    <li class="slide">
-                        <a href="{{ route('clients.index') }}"
-                            class="side-menu__item {{ request()->routeIs('clients.*') ? 'active' : '' }} ">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 19.125a3.375 3.375 0 1 0-6 0M3 20.25a9 9 0 0 1 18 0M12 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                            </svg>
-                            <span class="side-menu__label">client</span>
-                        </a>
-                    </li>
-                @endif
-                <!-- End::slide -->
-
-                <!-- Start::slide Leads Manager -->
-                @if (canAccess('leads.allow'))
-                    <li class="slide">
-                        <a href="{{ route('lead.index') }}"
-                            class="side-menu__item {{ request()->routeIs('lead.*') ? 'active' : '' }}">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <circle cx="7" cy="7" r="3" />
-                                <path d="M2.5 18c0-2.8 2.2-5 4.5-5s4.5 2.2 4.5 5" />
-                                <rect x="13" y="4" width="8" height="14" rx="2" />
-                                <path d="M15.5 8h3" />
-                                <path d="M15.5 11h3" />
-                                <path d="M15.5 14h3" />
-                            </svg>
-                            <span class="side-menu__label">Leads Manager</span>
-                        </a>
-                    </li>
-                @endif
-                <!-- End::slide -->
-
-                <!-- Start::slide Leads Manager -->
-                @if (canAccess('client-objective.allow'))
-                    <li class="slide">
-                        <a href="{{ route('client-objective-manager.index') }}"
-                            class="side-menu__item {{ request()->routeIs('client-objective-manager.*') ? 'active' : '' }}">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="7" cy="7" r="3" />
-                                <path d="M2.5 18c0-2.8 2.2-5 4.5-5s4.5 2.2 4.5 5" />
-                                <rect x="13" y="4" width="8" height="14" rx="2" />
-                                <path d="M15.5 8h3" />
-                                <path d="M15.5 11h3" />
-                                <path d="M15.5 14h3" />
-                            </svg>
-                            <span class="side-menu__label">Client Objective</span>
-                        </a>
-                    </li>
-                @endif
-                <!-- End::slide -->
-
-                <!-- Start::slide Leads Manager -->
-                @if (canAccess('consulting.allow'))
-                    <li class="slide">
-                        <a href="{{ route('consulting.index') }}"
-                            class="side-menu__item {{ request()->routeIs('consulting.*') ? 'active' : '' }}">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="7" cy="7" r="3" />
-                                <path d="M2.5 18c0-2.8 2.2-5 4.5-5s4.5 2.2 4.5 5" />
-                                <rect x="13" y="4" width="8" height="14" rx="2" />
-                                <path d="M15.5 8h3" />
-                                <path d="M15.5 11h3" />
-                                <path d="M15.5 14h3" />
-                            </svg>
-                            <span class="side-menu__label">Consulting</span>
-                        </a>
-                    </li>
-                @endif
-                <!-- End::slide -->
-
                 {{-- @if (canAccess('reports.allow'))
                     <li
                         class="slide has-sub {{ request()->routeIs('admin.reports.marketplace-demand') || request()->routeIs('admin.reports.service-demand') || request()->routeIs('admin.reports.vendor-performance') || request()->routeIs('admin.reports.client-engagement') || request()->routeIs('admin.reports.service-click-detail') ? 'open' : '' }} ">
@@ -204,7 +214,7 @@
                             class="side-menu__item {{ request()->routeIs('admin.reports.marketplace-demand') || request()->routeIs('admin.reports.service-demand') || request()->routeIs('admin.reports.vendor-performance') || request()->routeIs('admin.reports.client-engagement') || request()->routeIs('admin.reports.service-click-detail') ? 'active' : '' }}">
                             <i class="ri-arrow-right-s-line side-menu__angle"></i>
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M3 12h18M3 18h18" />
                             </svg>
                             <span class="side-menu__label">Reports</span>

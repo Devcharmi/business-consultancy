@@ -14,9 +14,9 @@ class FocusAreaManager extends Model
         'status'
     ];
 
-    public static function activeFocusArea()
+    public function scopeActiveFocusArea($query)
     {
-        return self::where('status', '1')->get();
+        return $query->where('status', '1');
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])
