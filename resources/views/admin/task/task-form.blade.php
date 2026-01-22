@@ -101,8 +101,6 @@
                         ========================= --}}
                         <div class="row mt-4">
                             @include('admin.task.task-activity')
-                            @include('admin.task.commitment-modal')
-                            @include('admin.task.deliverable-modal')
                         </div>
 
                         {{-- Footer --}}
@@ -117,6 +115,9 @@
             </div>
         </div>
     </div>
+
+    @include('admin.task.commitment-modal')
+    @include('admin.task.deliverable-modal')
 @endsection
 
 @section('script')

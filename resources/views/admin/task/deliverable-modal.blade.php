@@ -14,13 +14,12 @@
                 @csrf
 
                 <input type="hidden" id="deliverable_date">
-                <input type="hidden" name="task_id" id="deliverable_task_id">
 
                 <div class="modal-body">
 
                     <div class="mb-3">
                         <label class="required">Deliverable</label>
-                        <input type="text" name="deliverable" class="form-control" placeholder="Enter deliverable">
+                        <input type="text" name="deliverable" id="deliverable" class="form-control" placeholder="Enter deliverable">
                         <small class="text-danger" id="deliverable_error"></small>
                     </div>
 

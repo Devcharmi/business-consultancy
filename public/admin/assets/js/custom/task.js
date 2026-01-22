@@ -141,7 +141,7 @@ $(document).on("click", "#task_form_button", function () {
             value: JSON.stringify(deliverables),
         })
         .appendTo(this);
-        
+
     let form = $("#task_form");
     let url = $(this).attr("data-url");
     let method = form.find("input[name='_method']").length ? "PUT" : "POST"; // Detect if it's an update
@@ -213,21 +213,17 @@ $(document).on("click", ".open-commitment-modal", function () {
     $("#commitmentModal").modal("show");
 });
 
-$(document).on("click", ".open-deliverable-modal", function () {
-    let date = $(this).data("date");
-
-    $("#deliverable_date").val(date);
-
-    $("#deliverableModal").modal("show");
-});
-
 $("#commitment_form").on("submit", function (e) {
     e.preventDefault();
+    e.stopImmediatePropagation(); // ✅ prevent other listeners from firing
 
-    let date = $("#commitment_date").val();
+    let date = $("#commitment_due_date").val();
     let text = $("#commitment").val();
 
-    if (!date || !text) return;
+    if (!date || !text) {
+        alert("Please select date and enter commitment");
+        return;
+    }
 
     commitments[date] ??= [];
     commitments[date].push({ text });
@@ -235,24 +231,6 @@ $("#commitment_form").on("submit", function (e) {
     renderCommitments(date);
 
     $("#commitmentModal").modal("hide");
-    this.reset();
-});
-
-
-$("#deliverable_form").on("submit", function (e) {
-    e.preventDefault();
-
-    let date = $("#deliverable_date").val();
-    let text = $('input[name="deliverable"]').val();
-
-    if (!date || !text) return;
-
-    deliverables[date] ??= [];
-    deliverables[date].push({ text });
-
-    renderDeliverables(date);
-
-    $("#deliverableModal").modal("hide");
     this.reset();
 });
 
@@ -271,10 +249,57 @@ function renderCommitments(date) {
     });
 }
 
+function renderCommitments(date) {
+    let wrapper = $("#commitments_" + date);
+    wrapper.html("");
+
+    let formattedDate = moment(date).format("DD MMM YYYY"); // simple format
+
+    (commitments[date] ?? []).forEach((item, index) => {
+        wrapper.append(`
+            <div class="d-flex mb-2 align-items-center">
+                <span class="me-2 fw-bold">${formattedDate}:</span>
+                <input class="form-control me-2" readonly value="${item.text}">
+                <button type="button" class="btn btn-sm btn-danger"
+                    onclick="removeCommitment('${date}', ${index})">✕</button>
+            </div>
+        `);
+    });
+}
+
+
 function removeCommitment(date, index) {
     commitments[date].splice(index, 1);
     renderCommitments(date);
 }
+
+$(document).on("click", ".open-deliverable-modal", function () {
+    let date = $(this).data("date");
+
+    $("#deliverable_date").val(date);
+
+    $("#deliverableModal").modal("show");
+});
+
+$("#deliverable_form").on("submit", function (e) {
+    e.preventDefault();
+
+    let date = $("#deliverable_date").val();
+    let text = $("#deliverable").val();
+
+    if (!date || !text) {
+        alert("Please select date and enter deliverable");
+        return;
+    }
+
+    deliverables[date] ??= [];
+    deliverables[date].push({ text });
+
+    renderDeliverables(date);
+
+    $("#deliverableModal").modal("hide");
+    this.reset();
+});
 
 function renderDeliverables(date) {
     let wrapper = $("#deliverables_" + date);
