@@ -125,52 +125,65 @@ var task_table = $(".table-list").DataTable({
 //     return false;
 // });
 
-$(document).on("click", "#task_form_button", function () {
-    $("<input>")
-        .attr({
-            type: "hidden",
-            name: "commitments",
-            value: JSON.stringify(commitments),
-        })
-        .appendTo(this);
+$("#task_form").on("submit", function (e) {
+    e.preventDefault();
 
-    $("<input>")
-        .attr({
-            type: "hidden",
-            name: "deliverables",
-            value: JSON.stringify(deliverables),
-        })
-        .appendTo(this);
+    updateTextareasFromEditors(); // CKEditor sync
 
-    let form = $("#task_form");
-    let url = $(this).attr("data-url");
-    let method = form.find("input[name='_method']").length ? "PUT" : "POST"; // Detect if it's an update
-    $("#task_form").ajaxSubmit({
+    let form = $(this);
+
+    // Remove old hidden inputs
+    form.find("input[name='commitments']").remove();
+    form.find("input[name='deliverables']").remove();
+
+    const safeCommitments = Object.fromEntries(
+        Object.entries(commitments ?? {}),
+    );
+
+    const safeDeliverables = Object.fromEntries(
+        Object.entries(deliverables ?? {}),
+    );
+
+    $("<input>", {
+        type: "hidden",
+        name: "commitments",
+        value: JSON.stringify(safeCommitments),
+    }).appendTo(form);
+
+    $("<input>", {
+        type: "hidden",
+        name: "deliverables",
+        value: JSON.stringify(safeDeliverables),
+    }).appendTo(form);
+
+    let url = form.attr("action");
+    let method = form.find("input[name='_method']").length ? "PUT" : "POST";
+    console.log("Commitments:", commitments);
+    console.log("Deliverables:", deliverables);
+
+    form.ajaxSubmit({
         url: url,
         type: method,
         dataType: "json",
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
-        beforeSubmit: function () {},
-        success: function (result) {
-            task_table.draw();
-            $("#taskForm").modal("hide");
-            showToastr("success", result.message);
+        success: function (res) {
+             if (res.success) {
+                showToastr("success", res.message);
+                setTimeout(() => (window.location.href = index_path), 1500);
+            } else {
+                showToastr("error", res.message);
+            }
         },
         error: function (result) {
             $("[id$='_error']").empty();
             showToastr("error", result.responseJSON.message);
             $.each(result.responseJSON.errors, function (k, v) {
-                var id_arr = k.split(".");
-                $("body")
-                    .find("#task_form")
-                    .find("#" + id_arr[0] + "_error")
-                    .text(v);
+                $("#" + k + "_error").text(v);
             });
         },
     });
-    return false;
 });
 
 $(document).on("click", ".delete-data", function () {
@@ -215,20 +228,33 @@ $(document).on("click", ".open-commitment-modal", function () {
 
 $("#commitment_form").on("submit", function (e) {
     e.preventDefault();
-    e.stopImmediatePropagation(); // ✅ prevent other listeners from firing
+    e.stopImmediatePropagation();
 
-    let date = $("#commitment_due_date").val();
     let text = $("#commitment").val();
+    let commitmentDueDate = $("#commitment_due_date").val();
+    let commitmentDate = $("#commitment_date").val();
 
-    if (!date || !text) {
-        alert("Please select date and enter commitment");
+    if (!text) {
+        showToastr("error", "Please enter commitment");
         return;
     }
 
-    commitments[date] ??= [];
-    commitments[date].push({ text });
+    if (!commitmentDueDate) {
+        showToastr("error", "Please enter date");
+        return;
+    }
 
-    renderCommitments(date);
+    let today = moment().format("YYYY-MM-DD");
+
+    commitments[commitmentDate] ??= [];
+    commitments[commitmentDate].push({
+        text: text,
+        created_at: today,
+        commitment_due_date: commitmentDueDate,
+    });
+
+    // ✅ render correct accordion
+    renderCommitments(commitmentDate);
 
     $("#commitmentModal").modal("hide");
     this.reset();
@@ -236,37 +262,49 @@ $("#commitment_form").on("submit", function (e) {
 
 function renderCommitments(date) {
     let wrapper = $("#commitments_" + date);
+
+    if (wrapper.length === 0) {
+        console.warn("Table not found for:", date);
+        return;
+    }
+
     wrapper.html("");
 
-    (commitments[date] ?? []).forEach((item, index) => {
+    let items = commitments[date] ?? [];
+
+    if (items.length === 0) {
         wrapper.append(`
-            <div class="d-flex mb-2">
-                <input class="form-control me-2" readonly value="${item.text}">
-                <button type="button" class="btn btn-sm btn-danger"
-                    onclick="removeCommitment('${date}', ${index})">✕</button>
-            </div>
+            <tr>
+                <td colspan="4" class="text-muted text-center">
+                    No commitments for this date
+                </td>
+            </tr>
+        `);
+        return;
+    }
+
+    items.forEach((item, index) => {
+        let createdDate = moment(item.created_at).format("DD MMM YYYY");
+        let commitmentDueDate = moment(item.commitment_due_date).format(
+            "DD MMM YYYY",
+        );
+
+        wrapper.append(`
+            <tr>
+                <td>${createdDate}</td>
+                <td>${commitmentDueDate}</td>
+                <td>${item.text}</td>
+                <td class="text-center">
+                    <button type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="removeCommitment('${date}', ${index})">
+                        ✕
+                    </button>
+                </td>
+            </tr>
         `);
     });
 }
-
-function renderCommitments(date) {
-    let wrapper = $("#commitments_" + date);
-    wrapper.html("");
-
-    let formattedDate = moment(date).format("DD MMM YYYY"); // simple format
-
-    (commitments[date] ?? []).forEach((item, index) => {
-        wrapper.append(`
-            <div class="d-flex mb-2 align-items-center">
-                <span class="me-2 fw-bold">${formattedDate}:</span>
-                <input class="form-control me-2" readonly value="${item.text}">
-                <button type="button" class="btn btn-sm btn-danger"
-                    onclick="removeCommitment('${date}', ${index})">✕</button>
-            </div>
-        `);
-    });
-}
-
 
 function removeCommitment(date, index) {
     commitments[date].splice(index, 1);
@@ -275,27 +313,40 @@ function removeCommitment(date, index) {
 
 $(document).on("click", ".open-deliverable-modal", function () {
     let date = $(this).data("date");
-
+    $("#expected_date").val(date);
     $("#deliverable_date").val(date);
-
     $("#deliverableModal").modal("show");
 });
 
 $("#deliverable_form").on("submit", function (e) {
     e.preventDefault();
+    e.stopImmediatePropagation();
 
-    let date = $("#deliverable_date").val();
     let text = $("#deliverable").val();
+    let expectedDate = $("#expected_date").val();
+    let accordionDate = $("#deliverable_date").val();
 
-    if (!date || !text) {
-        alert("Please select date and enter deliverable");
+    if (!text) {
+        showToastr("error", "Please enter deliverable");
         return;
     }
 
-    deliverables[date] ??= [];
-    deliverables[date].push({ text });
+    if (!expectedDate) {
+        showToastr("error", "Please enter expected date");
+        return;
+    }
 
-    renderDeliverables(date);
+    // 🔥 use TODAY as created date
+    let today = moment().format("YYYY-MM-DD");
+
+    deliverables[accordionDate] ??= [];
+    deliverables[accordionDate].push({
+        text: text,
+        created_at: today,
+        expected_date: expectedDate,
+    });
+
+    renderDeliverables(accordionDate);
 
     $("#deliverableModal").modal("hide");
     this.reset();
@@ -303,15 +354,44 @@ $("#deliverable_form").on("submit", function (e) {
 
 function renderDeliverables(date) {
     let wrapper = $("#deliverables_" + date);
+
+    if (wrapper.length === 0) {
+        console.warn("Table not found for deliverables:", date);
+        return;
+    }
+
     wrapper.html("");
 
-    (deliverables[date] ?? []).forEach((item, index) => {
+    let items = deliverables[date] ?? [];
+
+    if (items.length === 0) {
         wrapper.append(`
-            <div class="d-flex mb-2">
-                <input class="form-control me-2" readonly value="${item.text}">
-                <button type="button" class="btn btn-sm btn-danger"
-                    onclick="removeDeliverable('${date}', ${index})">✕</button>
-            </div>
+            <tr>
+                <td colspan="4" class="text-muted text-center">
+                    No deliverables for this date
+                </td>
+            </tr>
+        `);
+        return;
+    }
+
+    items.forEach((item, index) => {
+        let createdDate = moment(item.created_at).format("DD MMM YYYY");
+        let expectedDate = moment(item.expected_date).format("DD MMM YYYY");
+
+        wrapper.append(`
+            <tr>
+                <td>${createdDate}</td>
+                <td>${expectedDate}</td>
+                <td>${item.text}</td>
+                <td class="text-center">
+                    <button type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="removeDeliverable('${date}', ${index})">
+                        ✕
+                    </button>
+                </td>
+            </tr>
         `);
     });
 }

@@ -16,10 +16,16 @@
                 <input type="hidden" id="deliverable_date">
 
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="required">Date</label>
+                        <input type="date" name="expected_date" id="expected_date" class="form-control">
+                        <small class="text-danger" id="expected_date_error"></small>
+                    </div>
 
                     <div class="mb-3">
                         <label class="required">Deliverable</label>
-                        <input type="text" name="deliverable" id="deliverable" class="form-control" placeholder="Enter deliverable">
+                        <input type="text" name="deliverable" id="deliverable" class="form-control"
+                            placeholder="Enter deliverable">
                         <small class="text-danger" id="deliverable_error"></small>
                     </div>
 

@@ -35,7 +35,7 @@
                         <div class="row">
 
                             {{-- Client Objective --}}
-                            <div class="col-md-8 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label class="required">Client Objective</label>
                                 <select name="client_objective_id" class="form-control select2">
                                     <option value="">Select Client Objective</option>
@@ -45,11 +45,20 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <small class="text-danger" id="client_objective_id_error"></small>
+                                <small class="text-danger"
+                                    id="client_objective_id_error">{{ $errors->first('client_objective_id') }}</small>
+                            </div>
+
+                            {{-- Title --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="required">Task Title</label>
+                                <input type="text" name="title" id="title" class="form-control"
+                                    value="{{ old('title', optional($taskData)->title) }}">
+                                <small class="text-danger" id="title_error">{{ $errors->first('title') }}</small>
                             </div>
 
                             {{-- Expertise --}}
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="required">Expertise</label>
                                 <select name="expertise_manager_id" class="form-select">
                                     @foreach ($expertises as $expertise)
@@ -58,32 +67,28 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <small class="text-danger" id="expertise_manager_id_error"></small>
-                            </div>
-
-                            {{-- Title --}}
-                            <div class="col-md-6 mb-3">
-                                <label class="required">Task Title</label>
-                                <input type="text" name="title" class="form-control"
-                                    value="{{ old('title', optional($taskData)->title) }}">
-                                <small class="text-danger" id="title_error"></small>
+                                <small class="text-danger"
+                                    id="expertise_manager_id_error">{{ $errors->first('expertise_manager_id') }}</small>
                             </div>
 
                             {{-- Due Date --}}
                             <div class="col-md-3 mb-3">
                                 <label>Due Date</label>
-                                <input type="date" name="task_due_date" class="form-control"
+                                <input type="date" name="task_due_date" id="task_due_date" class="form-control"
                                     value="{{ old(
                                         'task_due_date',
                                         optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : '',
                                     ) }}">
+                                <small class="text-danger"
+                                    id="task_due_date_error">{{ $errors->first('task_due_date') }}</small>
+
                             </div>
 
                             {{-- Type --}}
                             <div class="col-md-3 mb-3">
                                 <label class="required">Type</label>
-                                <select name="type" class="form-select">
-                                    <option value="">Select Type</option>
+                                <select name="type" id="type" class="form-select">
+                                    {{-- <option value="">Select Type</option> --}}
                                     <option value="meeting" @selected(old('type', optional($taskData)->type) === 'meeting')>
                                         Meeting
                                     </option>
@@ -91,9 +96,22 @@
                                         Task
                                     </option>
                                 </select>
-                                <small class="text-danger" id="type_error"></small>
+                                <small class="text-danger" id="type_error">{{ $errors->first('type') }}</small>
                             </div>
 
+                             {{-- Expertise --}}
+                            <div class="col-md-3 mb-3">
+                                <label class="required">Status</label>
+                                <select name="status_manager_id" class="form-select">
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status->id }}" @selected(old('status_manager_id', optional($taskData)->status_manager_id) == $status->id)>
+                                            {{ $status->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="text-danger"
+                                    id="status_manager_id_error">{{ $errors->first('status_manager_id') }}</small>
+                            </div>
                         </div>
 
                         {{-- =========================
@@ -123,6 +141,7 @@
 @section('script')
     <script>
         const csrf_token = '{{ csrf_token() }}';
+        var index_path = "{{ route('task.index') }}";
         window.taskContentEditorIds = [
             @foreach ($dates as $date)
                 "content_{{ \Illuminate\Support\Str::slug($date) }}",
@@ -138,10 +157,9 @@
         <script>
             commitments = @json(
                 $commitmentsByDate->map(fn($items) => $items->map(fn($c) => [
-                            'id' => $c->id,
                             'text' => $c->commitment,
+                            'created_at' => $c->created_at->format('Y-m-d'),
                         ])));
-
             deliverables = @json(
                 $deliverablesByDate->map(fn($items) => $items->map(fn($d) => [
                             'id' => $d->id,

@@ -28,35 +28,91 @@
                     </textarea>
 
                     {{-- ================= Commitments ================= --}}
-                    <h6 class="mt-4 mb-3">Commitments</h6>
+                    {{-- <div class="d-flex align-items-center justify-content-between mt-4 mb-3"> --}}
+                    <h6 class="mt-4 mb-3 d-inline-block">
+                        Commitments
+                    </h6>
 
-                    @forelse ($commitmentsByDate->get($date, []) as $commitment)
-                        <input type="text" class="form-control mb-2" value="{{ $commitment->commitment }}" readonly>
-                    @empty
-                        <p class="text-muted">No commitments for this date</p>
-                    @endforelse
-
-                    <div id="commitments_{{ $date }}"></div>
-                    <button type="button" class="btn btn-sm btn-outline-primary open-commitment-modal"
+                    <button type="button" class="btn btn-sm btn-outline-primary ms-2 open-commitment-modal"
                         data-date="{{ $date }}">
                         + Add Commitment
                     </button>
 
+                    {{-- </div> --}}
+
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width:150px;">Created Date</th>
+                                <th style="width:150px;">Commitment Date</th>
+                                <th>Commitment</th>
+                                <th style="width:80px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commitments_{{ $date }}">
+                            @forelse ($commitmentsByDate->get($date, []) as $commitment)
+                                <tr>
+                                    <td>{{ $commitment->created_at->format('d M Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($commitment->due_date)->format('d M Y') }}</td>
+
+                                    <td>{{ $commitment->commitment }}</td>
+
+
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-primary edit-commitment">✎</button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-danger remove-commitment">✕</button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-muted text-center">
+                                        No commitments for this date
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+
+                    </table>
+
                     {{-- ================= Deliverables ================= --}}
-                    <h6 class="mt-4 mb-3">Deliverables</h6>
+                    <h6 class="mt-4 mb-3 d-inline-block">
+                        Deliverables
+                    </h6>
 
-                    @forelse ($deliverablesByDate->get($date, []) as $deliverable)
-                        <input type="text" class="form-control mb-2" value="{{ $deliverable->deliverable }}"
-                            readonly>
-                    @empty
-                        <p class="text-muted">No deliverables for this date</p>
-                    @endforelse
-
-                    <div id="deliverables_{{ $date }}"></div>
-                    <button type="button" class="btn btn-sm btn-outline-success open-deliverable-modal"
+                    <button type="button" class="btn btn-sm btn-outline-success ms-2 open-deliverable-modal"
                         data-date="{{ $date }}">
                         + Add Deliverable
                     </button>
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width:150px;">Created Date</th>
+                                <th style="width:150px;">Expected Date</th>
+                                <th>Deliverable</th>
+                                <th style="width:80px;">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="deliverables_{{ $date }}">
+                            @forelse ($deliverablesByDate->get($date, []) as $deliverable)
+                                <tr>
+                                    <td>{{ $commitment->created_at->format('d M Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($deliverable->expected_date)->format('d M Y') }}</td>
+                                    <td>{{ $deliverable->deliverable }}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger">✕</button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-muted text-center">
+                                        No deliverables for this date
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
 
                 </div>
 
