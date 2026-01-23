@@ -93,6 +93,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     });
 
     Route::resource('client-objective-manager', ClientObjectiveController::class);
+    Route::get('/client-objective/{id}/details', [ClientObjectiveController::class, 'getObjectiveDetails'])->name('client-objective.details');
     Route::resource('consulting', ConsultingController::class);
     Route::resource('task', TaskController::class);
 });

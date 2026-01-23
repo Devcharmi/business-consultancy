@@ -15,22 +15,24 @@
                     @method('PUT')
                 @endif
                 @csrf
-                <div class="modal-body">
 
+                @if (!empty($taskId))
+                    <input type="hidden" name="task_id" value="{{ $taskId }}">
+                @endif
+
+                <div class="modal-body">
                     <div class="row">
                         {{-- Client --}}
                         <div class="col-md-12 mb-3">
                             <label>Client Objective</label>
                             <select name="client_objective_id" class="form-control select2">
                                 <option value="">Select Client Objective</option>
-
                                 @foreach ($clientObjectives as $co)
                                     <option value="{{ $co->id }}" @selected(old('client_objective_id', $consultingData->client_objective_id ?? null) == $co->id)>
                                         {{ $co->client->client_name }} - {{ $co->objective_manager->name }}
                                     </option>
                                 @endforeach
                             </select>
-
                             <small class="text-danger" id="client_objective_id_error"></small>
                         </div>
 
@@ -52,7 +54,6 @@
                             <label>Focus Area</label><span class="text-danger">*</span>
                             <select name="focus_area_manager_id" class="form-control select2">
                                 <option value="">Select focus Area</option>
-
                                 @foreach ($focusAreas as $focusArea)
                                     <option value="{{ $focusArea->id }}" @selected(old('focus_area_manager_id', $consultingData->focus_area_manager_id ?? null) == $focusArea->id)>
                                         {{ $focusArea->name }}
@@ -66,9 +67,11 @@
                             <label>Date</label>
                             <input type="datetime-local" id="consulting_datetime" name="consulting_datetime"
                                 class="form-control form-control-sm"
-                                value="{{ $consultingData->consulting_datetime ? \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d\TH:i') : '' }}">
+                                value="{{ $consultingData->consulting_datetime ?? '' ? \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d\TH:i') : '' }}">
                         </div>
                     </div>
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" data-bs-dismiss="modal">Close</button>

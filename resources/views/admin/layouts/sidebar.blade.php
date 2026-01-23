@@ -2,7 +2,7 @@
 
     <!-- Start::main-sidebar-header -->
     <div class="main-sidebar-header">
-        <a href="index.html" class="header-logo">
+        <a href="{{ route('dashboard') }}" class="header-logo">
             <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo" class="desktop-logo">
             <img src="{{ asset('admin/assets/images/brand-logos/toggle-dark.png') }}" alt="logo" class="toggle-dark">
             <img src="{{ asset('admin/assets/images/brand-logos/desktop-dark.png') }}" alt="logo"
@@ -157,7 +157,7 @@
                         canAccess('focus-area.allow') ||
                         canAccess('status-manager.allow'))
                     <li
-                        class="slide has-sub 
+                        class="slide has-sub
                         {{ (request()->routeIs('objective-manager.*') || request()->routeIs('expertise-manager.*') || request()->routeIs('focus-area-manager.*') ? 'open' : '' || request()->routeIs('status-manager.*')) ? 'open' : '' }}
                         ">
                         <a href="javascript:void(0);"
@@ -242,7 +242,7 @@
                                     Performance
                                     Overview</a>
                             </li>
-                           
+
                         </ul>
                     </li>
                 @endif --}}

@@ -31,6 +31,7 @@ class TaskController extends Controller
                 'client_objective_id',
                 'expertise_manager_id',
                 'task_due_date',
+                'status_manager_id'
             ];
 
             $tableData = Task::Filters($data, $columns)
@@ -41,13 +42,12 @@ class TaskController extends Controller
 
             $tableDataCount = Task::Filters($data, $columns)->count();
 
-            $tableData = $tableData->with(['client_objective.client', 'client_objective.objective_manager', 'expertise_manager'])->get();
+            $tableData = $tableData->with(['client_objective.client', 'client_objective.objective_manager', 'expertise_manager' ,'status_manager'])->get();
             // dd($tableData->toArray());
             $response['iTotalDisplayRecords'] = $tableDataCount;
             $response['iTotalRecords'] = $tableDataCount;
             $response['draw'] = intval(collect($data)->get('draw'));
             $response['aaData'] = $tableData->toArray();
-
             return $response;
         }
         return view('admin.task.index');

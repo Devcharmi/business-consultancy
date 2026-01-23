@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\ObjectiveManager;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -32,14 +33,13 @@ class ClientObjectiveController extends Controller
             $tableData = ClientObjective::Filters($data, $columns)
                 ->select($columns);
 
-
             unset($data['start']);
             unset($data['length']);
 
             $tableDataCount = ClientObjective::Filters($data, $columns)->count();
 
             $tableData = $tableData->with(['client', 'objective_manager'])->get();
-            // dd($tableData->toArray());
+
             $response['iTotalDisplayRecords'] = $tableDataCount;
             $response['iTotalRecords'] = $tableDataCount;
             $response['draw'] = intval(collect($data)->get('draw'));
@@ -49,6 +49,35 @@ class ClientObjectiveController extends Controller
         }
         return view('admin.client_objective.index');
     }
+
+ public function getObjectiveDetails($id)
+{
+    $clientObjective = ClientObjective::with(['client','objective_manager'])
+        ->findOrFail($id);
+
+    $expertiseManagers = \App\Models\ExpertiseManager::activeExpertise()->get();
+
+    $tasks = Task::where('client_objective_id', $id)
+        ->with(['status_manager','content'])
+        ->get();
+
+    $expertiseManagers = $expertiseManagers->map(function ($expertise) use ($tasks) {
+        $expertiseTasks = $tasks->where('expertise_manager_id', $expertise->id);
+
+        $expertise->tasks = $expertiseTasks;
+        $expertise->total_tasks = $expertiseTasks->count();
+
+        return $expertise;
+    });
+
+    $html = view(
+        'admin.client_objective.objective-details',
+        compact('clientObjective','expertiseManagers')
+    )->render();
+
+    return response()->json(['success'=>true,'html'=>$html]);
+}
+
 
     /**
      * Show the form for creating a new resource.

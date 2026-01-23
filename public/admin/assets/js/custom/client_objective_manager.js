@@ -55,16 +55,22 @@ var client_objective_table = $(".table-list").DataTable({
                     ? ""
                     : "style='pointer-events:none;opacity:0.4;' disabled";
 
-                var html = `<a href="javascript:void(0);" data-url="${edit_path_set}" title="Edit" data-tool-tips="Edit" class="open-modal" ${editDisabled}>
-                                       <i class="fas fa-pen p-1 text-primary"></i>
-                                    </a>`;
+                var html = `<a href="javascript:void(0);" data-id="${id}" title="View Details" data-tool-tips="View Details" class="view-details">
+                                   <i class="fas fa-eye p-1 text-info"></i>
+                                </a>`;
+                html += `<a href="javascript:void(0);" data-url="${edit_path_set}" title="Edit" data-tool-tips="Edit" class="open-modal" ${editDisabled}>
+                                   <i class="fas fa-pen p-1 text-primary"></i>
+                                </a>`;
                 html += `<a href="javascript:void(0);" data-url="${delete_path_set}" title="Delete" data-tool-tips="Delete" class="delete-data" ${deleteDisabled}>
                     <i class="fas fa-trash p-1 text-danger"></i>
-                                    </a>`;
+                                </a>`;
                 return html;
             },
         },
     ],
+    createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-id', data.id);
+    },
     language: {
         searchPlaceholder: "Search...",
         sSearch: "",
@@ -72,13 +78,67 @@ var client_objective_table = $(".table-list").DataTable({
     },
 });
 
+// Handle view details (accordion)
+$(document).on("click", ".view-details", function () {
+    var id = $(this).data('id');
+    var row = $(this).closest('tr');
+    var nextRow = row.next('tr.details-row');
+
+    // If already expanded, collapse it
+    if (nextRow.length && nextRow.is(':visible')) {
+        nextRow.hide();
+        $(this).find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+        return false;
+    }
+
+    // Hide any other open details
+    $('tr.details-row').hide();
+    $('.view-details i').removeClass('fa-eye-slash').addClass('fa-eye');
+
+    // If details already loaded, show them
+    if (nextRow.length) {
+        nextRow.show();
+        $(this).find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+    } else {
+        // Load details via AJAX
+        var detailsUrl = objective_details_path.replace(':id', id);
+
+        $.ajax({
+            url: detailsUrl,
+            type: "GET",
+            dataType: "json",
+            beforeSend: function() {
+                $(this).prop('disabled', true);
+            },
+            success: function (data) {
+                if (data.success) {
+                    // Add details row
+                    var detailsRow = $('<tr class="details-row"><td colspan="4"></td></tr>');
+                    detailsRow.find('td').html(data.html);
+                    row.after(detailsRow);
+
+                    // Change icon
+                    $('.view-details[data-id="' + id + '"] i').removeClass('fa-eye').addClass('fa-eye-slash');
+                }
+            },
+            error: function() {
+                alert('Error loading details');
+            },
+            complete: function() {
+                $(this).prop('disabled', false);
+            }
+        });
+    }
+    return false;
+});
+
+
 $(document).on("click", ".open-modal", function () {
     $.ajax({
         url: $(this).attr("data-url"),
         type: "GET",
         dataType: "json",
         success: function (data) {
-            // alert(data.html);
             $("#modal_show_html").html(data.html);
             $("#modalForm").modal("show");
         },

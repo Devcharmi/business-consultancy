@@ -47,11 +47,13 @@
         </div>
     </div>
 @endsection
+
 @section('script')
     <script>
         var csrf_token = '{{ csrf_token() }}';
         var edit_path = "{{ route('client-objective-manager.show', ['client_objective_manager' => ':client_objective_manager']) }}";
         var delete_path = "{{ route('client-objective-manager.destroy', ['client_objective_manager' => ':client_objective_manager']) }}";
+        var objective_details_path = "{{ route('client-objective.details', ['id' => ':id']) }}";
         window.canEditTask = @json(canAccess('client-objective.edit'));
         window.canDeleteTask = @json(canAccess('client-objective.delete'));
     </script>
