@@ -12,6 +12,7 @@ class TaskContent extends Model
     protected $fillable = [
         'task_id',
         'task_content',
+        'content_date',
     ];
 
     /* ======================

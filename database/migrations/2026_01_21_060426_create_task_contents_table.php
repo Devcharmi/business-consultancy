@@ -17,6 +17,8 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->longText('task_content')->nullable(); // Task / Meeting Content
+            $table->date('content_date');
+            $table->unique(['task_id', 'content_date']);
             $table->timestamps();
         });
     }

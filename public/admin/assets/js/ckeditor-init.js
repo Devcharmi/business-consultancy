@@ -42,7 +42,7 @@ function initAllCKEditors(prefixes = [], defaultContents = {}, heights = {}) {
     prefixes.forEach((prefix) => {
         // Select all <textarea> elements whose IDs start with the prefix
         const textareas = document.querySelectorAll(
-            `textarea[id^="${prefix}"]`
+            `textarea[id^="${prefix}"]`,
         );
 
         textareas.forEach((textarea) => {
@@ -54,7 +54,7 @@ function initAllCKEditors(prefixes = [], defaultContents = {}, heights = {}) {
                         editorInstances[id] = editor;
                         textarea.setAttribute(
                             "data-ckeditor-initialized",
-                            "true"
+                            "true",
                         );
 
                         const trimmedValue = textarea.value.trim();
@@ -75,7 +75,7 @@ function initAllCKEditors(prefixes = [], defaultContents = {}, heights = {}) {
                         }
                     })
                     .catch((error) =>
-                        console.error(`CKEditor error on #${id}:`, error)
+                        console.error(`CKEditor error on #${id}:`, error),
                     );
             }
         });

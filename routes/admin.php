@@ -96,4 +96,5 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::get('/client-objective/{id}/details', [ClientObjectiveController::class, 'getObjectiveDetails'])->name('client-objective.details');
     Route::resource('consulting', ConsultingController::class);
     Route::resource('task', TaskController::class);
+    Route::delete('/task/attachments/{attachment}',[TaskController::class,'destroyAttachment'])->name('task.attachments.destroy');
 });

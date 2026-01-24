@@ -127,35 +127,35 @@ var task_table = $(".table-list").DataTable({
 
 $("#task_form").on("submit", function (e) {
     e.preventDefault();
-
-    updateTextareasFromEditors(); // CKEditor sync
+    updateTextareasFromEditors();
 
     let form = $(this);
-
-    // Remove old hidden inputs
     form.find("input[name='commitments']").remove();
+    form.find("input[name='commitments_to_delete']").remove();
     form.find("input[name='deliverables']").remove();
-
-    const safeCommitments = Object.fromEntries(
-        Object.entries(commitments ?? {}),
-    );
-
-    const safeDeliverables = Object.fromEntries(
-        Object.entries(deliverables ?? {}),
-    );
+    form.find("input[name='deliverables_to_delete']").remove();
 
     $("<input>", {
         type: "hidden",
         name: "commitments",
-        value: JSON.stringify(safeCommitments),
+        value: JSON.stringify(commitments),
     }).appendTo(form);
-
+    $("<input>", {
+        type: "hidden",
+        name: "commitments_to_delete",
+        value: JSON.stringify(commitmentsToDelete),
+    }).appendTo(form);
     $("<input>", {
         type: "hidden",
         name: "deliverables",
-        value: JSON.stringify(safeDeliverables),
+        value: JSON.stringify(deliverables),
     }).appendTo(form);
-
+    $("<input>", {
+        type: "hidden",
+        name: "deliverables_to_delete",
+        value: JSON.stringify(deliverablesToDelete),
+    }).appendTo(form);
+    
     let url = form.attr("action");
     let method = form.find("input[name='_method']").length ? "PUT" : "POST";
     console.log("Commitments:", commitments);
@@ -169,7 +169,7 @@ $("#task_form").on("submit", function (e) {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
         success: function (res) {
-             if (res.success) {
+            if (res.success) {
                 showToastr("success", res.message);
                 setTimeout(() => (window.location.href = index_path), 1500);
             } else {
@@ -216,187 +216,3 @@ $(document).on("click", ".delete-data", function () {
         }
     });
 });
-
-$(document).on("click", ".open-commitment-modal", function () {
-    let date = $(this).data("date");
-
-    $("#commitment_due_date").val(date);
-    $("#commitment_date").val(date);
-
-    $("#commitmentModal").modal("show");
-});
-
-$("#commitment_form").on("submit", function (e) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-
-    let text = $("#commitment").val();
-    let commitmentDueDate = $("#commitment_due_date").val();
-    let commitmentDate = $("#commitment_date").val();
-
-    if (!text) {
-        showToastr("error", "Please enter commitment");
-        return;
-    }
-
-    if (!commitmentDueDate) {
-        showToastr("error", "Please enter date");
-        return;
-    }
-
-    let today = moment().format("YYYY-MM-DD");
-
-    commitments[commitmentDate] ??= [];
-    commitments[commitmentDate].push({
-        text: text,
-        created_at: today,
-        commitment_due_date: commitmentDueDate,
-    });
-
-    // ✅ render correct accordion
-    renderCommitments(commitmentDate);
-
-    $("#commitmentModal").modal("hide");
-    this.reset();
-});
-
-function renderCommitments(date) {
-    let wrapper = $("#commitments_" + date);
-
-    if (wrapper.length === 0) {
-        console.warn("Table not found for:", date);
-        return;
-    }
-
-    wrapper.html("");
-
-    let items = commitments[date] ?? [];
-
-    if (items.length === 0) {
-        wrapper.append(`
-            <tr>
-                <td colspan="4" class="text-muted text-center">
-                    No commitments for this date
-                </td>
-            </tr>
-        `);
-        return;
-    }
-
-    items.forEach((item, index) => {
-        let createdDate = moment(item.created_at).format("DD MMM YYYY");
-        let commitmentDueDate = moment(item.commitment_due_date).format(
-            "DD MMM YYYY",
-        );
-
-        wrapper.append(`
-            <tr>
-                <td>${createdDate}</td>
-                <td>${commitmentDueDate}</td>
-                <td>${item.text}</td>
-                <td class="text-center">
-                    <button type="button"
-                        class="btn btn-sm btn-danger"
-                        onclick="removeCommitment('${date}', ${index})">
-                        ✕
-                    </button>
-                </td>
-            </tr>
-        `);
-    });
-}
-
-function removeCommitment(date, index) {
-    commitments[date].splice(index, 1);
-    renderCommitments(date);
-}
-
-$(document).on("click", ".open-deliverable-modal", function () {
-    let date = $(this).data("date");
-    $("#expected_date").val(date);
-    $("#deliverable_date").val(date);
-    $("#deliverableModal").modal("show");
-});
-
-$("#deliverable_form").on("submit", function (e) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-
-    let text = $("#deliverable").val();
-    let expectedDate = $("#expected_date").val();
-    let accordionDate = $("#deliverable_date").val();
-
-    if (!text) {
-        showToastr("error", "Please enter deliverable");
-        return;
-    }
-
-    if (!expectedDate) {
-        showToastr("error", "Please enter expected date");
-        return;
-    }
-
-    // 🔥 use TODAY as created date
-    let today = moment().format("YYYY-MM-DD");
-
-    deliverables[accordionDate] ??= [];
-    deliverables[accordionDate].push({
-        text: text,
-        created_at: today,
-        expected_date: expectedDate,
-    });
-
-    renderDeliverables(accordionDate);
-
-    $("#deliverableModal").modal("hide");
-    this.reset();
-});
-
-function renderDeliverables(date) {
-    let wrapper = $("#deliverables_" + date);
-
-    if (wrapper.length === 0) {
-        console.warn("Table not found for deliverables:", date);
-        return;
-    }
-
-    wrapper.html("");
-
-    let items = deliverables[date] ?? [];
-
-    if (items.length === 0) {
-        wrapper.append(`
-            <tr>
-                <td colspan="4" class="text-muted text-center">
-                    No deliverables for this date
-                </td>
-            </tr>
-        `);
-        return;
-    }
-
-    items.forEach((item, index) => {
-        let createdDate = moment(item.created_at).format("DD MMM YYYY");
-        let expectedDate = moment(item.expected_date).format("DD MMM YYYY");
-
-        wrapper.append(`
-            <tr>
-                <td>${createdDate}</td>
-                <td>${expectedDate}</td>
-                <td>${item.text}</td>
-                <td class="text-center">
-                    <button type="button"
-                        class="btn btn-sm btn-danger"
-                        onclick="removeDeliverable('${date}', ${index})">
-                        ✕
-                    </button>
-                </td>
-            </tr>
-        `);
-    });
-}
-
-function removeDeliverable(date, index) {
-    deliverables[date].splice(index, 1);
-    renderDeliverables(date);
-}

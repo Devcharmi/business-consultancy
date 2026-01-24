@@ -13,7 +13,9 @@
             <form id="commitment_form">
                 @csrf
 
+                <input type="hidden" id="commitment_tmp_id">
                 <input type="hidden" id="commitment_date">
+                <input type="hidden" id="commitment_id">
 
                 <div class="modal-body">
 
@@ -25,7 +27,8 @@
 
                     <div class="mb-3">
                         <label class="required">Commitment</label>
-                        <input type="text" name="commitment" id="commitment" class="form-control" placeholder="Enter commitment">
+                        <input type="text" name="commitment" id="commitment" class="form-control"
+                            placeholder="Enter commitment">
                         <small class="text-danger" id="commitment_error"></small>
                     </div>
 

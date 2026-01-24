@@ -12,6 +12,7 @@ class TaskCommitment extends Model
     protected $fillable = [
         'task_id',
         'commitment',
+        'commitment_date',
         'due_date',
         'status',
     ];

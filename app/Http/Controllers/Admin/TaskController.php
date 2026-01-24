@@ -7,12 +7,15 @@ use App\Models\ClientObjective;
 use App\Models\ExpertiseManager;
 use App\Models\StatusManager;
 use App\Models\Task;
+use App\Models\TaskAttachment;
 use App\Models\TaskCommitment;
+use App\Models\TaskContent;
 use App\Models\TaskDeliverable;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -76,11 +79,11 @@ class TaskController extends Controller
         $user = auth()->user();
 
         /* ============================
-        Expertise logic
+       Expertise & Status
         ============================ */
         $statuses = StatusManager::activeStatus()->get();
-        $userExpertises = $user->expertiseManagers()->activeExpertise()->get();
 
+        $userExpertises = $user->expertiseManagers()->activeExpertise()->get();
         $expertises = $userExpertises->isNotEmpty()
             ? $userExpertises
             : ExpertiseManager::activeExpertise()->get();
@@ -88,22 +91,19 @@ class TaskController extends Controller
         $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
 
         /* ============================
-        Defaults (NEW TASK)
+       Defaults (NEW TASK)
         ============================ */
         $taskData = null;
-
         $today = Carbon::today()->toDateString();
 
-        // ✅ Accordion dates (always include today)
         $dates = collect([$today]);
-
         $commitmentsByDate = collect();
         $deliverablesByDate = collect();
         $contentByDate = collect();
 
         /* ============================
-        EDIT TASK
-         ============================ */
+       EDIT TASK
+    ============================ */
         if ($id !== 'new') {
 
             $taskData = Task::with([
@@ -116,66 +116,29 @@ class TaskController extends Controller
             ])->findOrFail($id);
 
             /* ----------------------------
-            Collect accordion dates
-            (ONLY created_at)
-             ---------------------------- */
-            $dates = $dates->merge(
-                $taskData->commitments
-                    ->pluck('created_at')
-                    ->filter()
-                    ->map(fn($d) => $d->toDateString())
-            );
-
-            $dates = $dates->merge(
-                $taskData->deliverables
-                    ->pluck('created_at')
-                    ->filter()
-                    ->map(fn($d) => $d->toDateString())
-            );
-
-            if ($taskData->content) {
-                $dates->push($taskData->content->created_at->toDateString());
-            }
-
-            /* ----------------------------
-            Unique + sort (today on top)
-            ---------------------------- */
-            $dates = $dates
+           Collect ALL dates
+        ---------------------------- */
+            $dates = collect()
+                ->merge($taskData->content->pluck('content_date'))
+                ->merge($taskData->commitments->pluck('commitment_date'))
+                ->merge($taskData->deliverables->pluck('deliverable_date'))
+                ->push($today) // ensure today exists
+                ->filter()
                 ->unique()
-                ->sort()
+                ->sortDesc()
                 ->values();
 
-            if (!$dates->contains($today)) {
-                $dates->prepend($today);
-            }
-
             /* ----------------------------
-            Group records by created_at
-            ---------------------------- */
-            // Group by CREATED date (accordion key)
-            $commitmentsByDate = $taskData->commitments->groupBy(
-                fn($c) => $c->created_at->toDateString()
-            );
-
-            $deliverablesByDate = $taskData->deliverables->groupBy(
-                fn($d) => $d->created_at->toDateString()
-            );
-
-
-            /* ----------------------------
-            Content (1 per day)
-            ---------------------------- */
-            if ($taskData->content) {
-                $contentByDate->put(
-                    $taskData->content->created_at->toDateString(),
-                    $taskData->content
-                );
-            }
+           Group data by DATE
+        ---------------------------- */
+            $commitmentsByDate = $taskData->commitments->groupBy('commitment_date');
+            $deliverablesByDate = $taskData->deliverables->groupBy('deliverable_date');
+            $contentByDate = $taskData->content->keyBy('content_date');
         }
-        // dd($taskData);
+
         /* ============================
-        Render view
-        ============================ */
+       Render View
+    ============================ */
         return view('admin.task.task-form', compact(
             'taskData',
             'clientObjectives',
@@ -213,8 +176,28 @@ class TaskController extends Controller
             $this->syncActivities(
                 $task,
                 json_decode($request->commitments ?? '[]', true),
-                json_decode($request->deliverables ?? '[]', true)
+                json_decode($request->deliverables ?? '[]', true),
+                json_decode($request->commitments_to_delete ?? '[]', true),
+                json_decode($request->deliverables_to_delete ?? '[]', true)
             );
+
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+
+                    $path = $file->store('task_attachments', 'public');
+
+                    TaskAttachment::create([
+                        'task_id'        => $task->id,
+                        'file_name'      => basename($path),
+                        'file_path'      => $path,
+                        'file_type'      => $file->getClientMimeType(),
+                        'file_size'      => $file->getSize(),
+                        'original_name'  => $file->getClientOriginalName(),
+                        'storage'        => 'public',
+                    ]);
+                }
+            }
+
             DB::commit();
 
             return response()->json([
@@ -232,120 +215,6 @@ class TaskController extends Controller
         }
     }
 
-    private function syncTaskContent(Task $task, ?array $contents): void
-    {
-        if (empty($contents)) {
-            return;
-        }
-
-        foreach ($contents as $date => $html) {
-
-            // Remove empty CKEditor garbage
-            if (blank(strip_tags($html))) {
-                continue;
-            }
-
-            $date = Carbon::parse($date)->startOfDay();
-
-            $task->content()->updateOrCreate(
-                [
-                    'task_id'    => $task->id,
-                    'created_at' => $date,
-                ],
-                [
-                    'task_content' => $html,
-                    'updated_at'   => now(),
-                ]
-            );
-        }
-    }
-
-    public function syncActivities(
-        Task $task,
-        array $commitments = [],
-        array $deliverables = []
-    ): void {
-
-        /* ===========================
-       Reset old data (update case)
-        ============================ */
-        $task->commitments()->delete();
-        $task->deliverables()->delete();
-
-        /* ===========================
-       Prepare bulk inserts
-        ============================ */
-        $commitmentInsert = [];
-        $deliverableInsert = [];
-
-        /* ===========================
-       Commitments
-        ============================ */
-        foreach ($commitments as $accordionDate => $items) {
-            foreach ($items as $item) {
-
-                if (empty($item['text'])) {
-                    continue;
-                }
-
-                $commitmentInsert[] = [
-                    'task_id'     => $task->id,
-                    'commitment'  => $item['text'],
-                    'due_date'    => $item['commitment_due_date'] ?? $accordionDate,
-                    'status'      => $item['status'] ?? 1,
-                    'created_at'  => isset($item['created_at'])
-                        ? Carbon::parse($item['created_at'])
-                        : now(),
-                    'updated_at'  => now(),
-                ];
-            }
-        }
-
-        /* ===========================
-       Deliverables
-        ============================ */
-        foreach ($deliverables as $accordionDate => $items) {
-            foreach ($items as $item) {
-
-                if (empty($item['text'])) {
-                    continue;
-                }
-
-                $deliverableInsert[] = [
-                    'task_id'       => $task->id,
-                    'deliverable'   => $item['text'],
-                    'expected_date' => $item['expected_date'] ?? $accordionDate,
-                    'status'        => $item['status'] ?? 1,
-                    'created_at'    => isset($item['created_at'])
-                        ? Carbon::parse($item['created_at'])
-                        : now(),
-                    'updated_at'    => now(),
-                ];
-            }
-        }
-
-        /* ===========================
-       Bulk insert (FAST 🚀)
-        ============================ */
-        if (!empty($commitmentInsert)) {
-            TaskCommitment::insert($commitmentInsert);
-        }
-
-        if (!empty($deliverableInsert)) {
-            TaskDeliverable::insert($deliverableInsert);
-        }
-    }
-
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */
@@ -359,7 +228,7 @@ class TaskController extends Controller
 
         try {
             DB::beginTransaction();
-            // dd($request->all());
+
             $task->update($request->only([
                 'client_objective_id',
                 'title',
@@ -369,14 +238,34 @@ class TaskController extends Controller
                 'status_manager_id',
             ]));
 
-            // ✅ CONTENT
+            // ✅ Content
             $this->syncTaskContent($task, $request->content);
 
+            // ✅ Commitments & Deliverables
             $this->syncActivities(
                 $task,
                 json_decode($request->commitments ?? '[]', true),
-                json_decode($request->deliverables ?? '[]', true)
+                json_decode($request->deliverables ?? '[]', true),
+                json_decode($request->commitments_to_delete ?? '[]', true),
+                json_decode($request->deliverables_to_delete ?? '[]', true)
             );
+
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+
+                    $path = $file->store('task_attachments', 'public');
+
+                    TaskAttachment::create([
+                        'task_id'        => $task->id,
+                        'file_name'      => basename($path),
+                        'file_path'      => $path,
+                        'file_type'      => $file->getClientMimeType(),
+                        'file_size'      => $file->getSize(),
+                        'original_name'  => $file->getClientOriginalName(),
+                        'storage'        => 'public',
+                    ]);
+                }
+            }
 
             DB::commit();
 
@@ -395,6 +284,89 @@ class TaskController extends Controller
         }
     }
 
+    private function syncTaskContent(Task $task, ?array $contents): void
+    {
+        if (empty($contents)) return;
+
+        foreach ($contents as $date => $html) {
+
+            if (blank(strip_tags($html))) {
+                continue;
+            }
+
+            $contentDate = Carbon::parse($date)->toDateString();
+
+            TaskContent::updateOrCreate(
+                [
+                    'task_id'      => $task->id,
+                    'content_date' => $contentDate,
+                ],
+                [
+                    'task_content' => $html,
+                ]
+            );
+        }
+    }
+
+
+    public function syncActivities(
+        Task $task,
+        array $commitments = [],
+        array $deliverables = [],
+        array $commitmentsToDelete = [],
+        array $deliverablesToDelete = []
+    ) {
+        // ---------------- COMMITMENTS ----------------
+        if ($commitmentsToDelete) {
+            TaskCommitment::whereIn('id', $commitmentsToDelete)->delete();
+        }
+
+        foreach ($commitments as $date => $items) {
+            $date = Carbon::parse($date)->toDateString();
+
+            foreach ($items as $item) {
+                if (blank($item['text'])) continue;
+
+                TaskCommitment::updateOrCreate(
+                    [
+                        'task_id'         => $task->id,
+                        'commitment_date' => $date,
+                        'commitment'      => $item['text'],
+                    ],
+                    [
+                        'due_date' => $item['commitment_due_date'] ?? $date,
+                        'status'   => $item['status'] ?? 1,
+                    ]
+                );
+            }
+        }
+
+        // ---------------- DELIVERABLES ----------------
+        if ($deliverablesToDelete) {
+            TaskDeliverable::whereIn('id', $deliverablesToDelete)->delete();
+        }
+
+        foreach ($deliverables as $date => $items) {
+            $date = Carbon::parse($date)->toDateString();
+
+            foreach ($items as $item) {
+                if (blank($item['text'])) continue;
+
+                TaskDeliverable::updateOrCreate(
+                    [
+                        'task_id'          => $task->id,
+                        'deliverable_date' => $date,
+                        'deliverable'      => $item['text'],
+                    ],
+                    [
+                        'expected_date' => $item['expected_date'] ?? $date,
+                        'status'        => $item['status'] ?? 1,
+                    ]
+                );
+            }
+        }
+    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -409,5 +381,21 @@ class TaskController extends Controller
             Log::info($th->getMessage());
             return response()->json(['success' => false, 'message' => 'Something went wrong!'], 500);
         }
+    }
+
+    public function destroyAttachment(TaskAttachment $attachment)
+    {
+        // delete file
+        if (Storage::disk($attachment->storage)->exists($attachment->file_path)) {
+            Storage::disk($attachment->storage)->delete($attachment->file_path);
+        }
+
+        // delete DB record
+        $attachment->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attachment deleted'
+        ]);
     }
 }

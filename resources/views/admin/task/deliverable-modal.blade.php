@@ -13,7 +13,9 @@
             <form id="deliverable_form">
                 @csrf
 
+                <input type="hidden" id="deliverable_tmp_id">
                 <input type="hidden" id="deliverable_date">
+                <input type="hidden" id="deliverable_id">
 
                 <div class="modal-body">
                     <div class="mb-3">

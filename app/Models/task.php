@@ -35,7 +35,7 @@ class Task extends Model
 
     public function content()
     {
-        return $this->hasOne(TaskContent::class);
+        return $this->hasMany(TaskContent::class);
     }
 
     public function commitments()

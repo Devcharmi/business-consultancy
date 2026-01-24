@@ -12,6 +12,7 @@ class TaskDeliverable extends Model
     protected $fillable = [
         'task_id',
         'deliverable',
+        'deliverable_date',
         'expected_date',
         'status',
     ];

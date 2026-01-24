@@ -25,109 +25,164 @@
                 </div>
 
                 <div class="card-body">
+                    <ul class="nav nav-tabs mb-4" id="taskTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic"
+                                type="button" role="tab">
+                                🧾 Basic Details
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="attachment-tab" data-bs-toggle="tab" data-bs-target="#attachments"
+                                type="button" role="tab">
+                                📎 Attachments
+                            </button>
+                        </li>
+                    </ul>
+
                     <form action="{{ !empty($taskData) ? route('task.update', $taskData->id) : route('task.store') }}"
-                        method="POST" id="task_form">
+                        method="POST" id="task_form" enctype="multipart/form-data">
+
                         @csrf
                         @if (!empty($taskData))
                             @method('PUT')
                         @endif
+                        <div class="tab-content" id="taskTabsContent">
+                            <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                                <div class="row">
 
-                        <div class="row">
+                                    {{-- Client Objective --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="required">Client Objective</label>
+                                        <select name="client_objective_id" class="form-control select2">
+                                            <option value="">Select Client Objective</option>
+                                            @foreach ($clientObjectives as $co)
+                                                <option value="{{ $co->id }}" @selected(old('client_objective_id', optional($taskData)->client_objective_id) == $co->id)>
+                                                    {{ $co->client->client_name }} - {{ $co->objective_manager->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-danger"
+                                            id="client_objective_id_error">{{ $errors->first('client_objective_id') }}</small>
+                                    </div>
 
-                            {{-- Client Objective --}}
-                            <div class="col-md-6 mb-3">
-                                <label class="required">Client Objective</label>
-                                <select name="client_objective_id" class="form-control select2">
-                                    <option value="">Select Client Objective</option>
-                                    @foreach ($clientObjectives as $co)
-                                        <option value="{{ $co->id }}" @selected(old('client_objective_id', optional($taskData)->client_objective_id) == $co->id)>
-                                            {{ $co->client->client_name }} - {{ $co->objective_manager->name }}
-                                        </option>
+                                    {{-- Title --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="required">Task Title</label>
+                                        <input type="text" name="title" id="title" class="form-control"
+                                            value="{{ old('title', optional($taskData)->title) }}">
+                                        <small class="text-danger" id="title_error">{{ $errors->first('title') }}</small>
+                                    </div>
+
+                                    {{-- Expertise --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label class="required">Expertise</label>
+                                        <select name="expertise_manager_id" class="form-select">
+                                            @foreach ($expertises as $expertise)
+                                                <option value="{{ $expertise->id }}" @selected(old('expertise_manager_id', optional($taskData)->expertise_manager_id) == $expertise->id)>
+                                                    {{ $expertise->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-danger"
+                                            id="expertise_manager_id_error">{{ $errors->first('expertise_manager_id') }}</small>
+                                    </div>
+
+                                    {{-- Due Date --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label>Due Date</label>
+                                        <input type="date" name="task_due_date" id="task_due_date" class="form-control"
+                                            value="{{ old(
+                                                'task_due_date',
+                                                optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : '',
+                                            ) }}">
+                                        <small class="text-danger"
+                                            id="task_due_date_error">{{ $errors->first('task_due_date') }}</small>
+
+                                    </div>
+
+                                    {{-- Type --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label class="required">Type</label>
+                                        <select name="type" id="type" class="form-select">
+                                            {{-- <option value="">Select Type</option> --}}
+                                            <option value="meeting" @selected(old('type', optional($taskData)->type) === 'meeting')>
+                                                Meeting
+                                            </option>
+                                            <option value="task" @selected(old('type', optional($taskData)->type) === 'task')>
+                                                Task
+                                            </option>
+                                        </select>
+                                        <small class="text-danger" id="type_error">{{ $errors->first('type') }}</small>
+                                    </div>
+
+                                    {{-- Expertise --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label class="required">Status</label>
+                                        <select name="status_manager_id" class="form-select">
+                                            @foreach ($statuses as $status)
+                                                <option value="{{ $status->id }}" @selected(old('status_manager_id', optional($taskData)->status_manager_id) == $status->id)>
+                                                    {{ $status->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-danger"
+                                            id="status_manager_id_error">{{ $errors->first('status_manager_id') }}</small>
+                                    </div>
+                                </div>
+
+                                {{-- =========================
+                                TASK ACTIVITY (Accordion)
+                                ========================= --}}
+                                <div class="row mt-4">
+                                    @include('admin.task.task-activity')
+                                </div>
+                            </div>
+                            {{-- Attachments --}}
+                            <div class="tab-pane fade" id="attachments" role="tabpanel">
+
+                                <input type="file" id="attachmentInput" name="attachments[]" multiple accept="image/*"
+                                    class="form-control mb-3">
+
+                                {{-- Selected previews --}}
+                                <div class="row" id="previewContainer"></div>
+
+                                <hr>
+
+                                {{-- Existing attachments --}}
+                                <div class="row" id="existingAttachments">
+                                    @foreach ($taskData->attachments ?? [] as $file)
+                                        <div class="col-md-3 mb-3" id="attachment-{{ $file->id }}">
+                                            <div class="card">
+                                                <img src="{{ asset('storage/' . $file->file_path) }}"
+                                                    class="card-img-top" style="height:150px;object-fit:cover">
+
+                                                <div class="card-body p-2 text-center">
+                                                    <a href="{{ asset('storage/' . $file->file_path) }}"
+                                                        download="{{ $file->original_name }}"
+                                                        class="btn btn-sm btn-success">⬇</a>
+
+                                                    <button type="button" class="btn btn-sm btn-danger delete-existing"
+                                                        data-id="{{ $file->id }}">
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
-                                </select>
-                                <small class="text-danger"
-                                    id="client_objective_id_error">{{ $errors->first('client_objective_id') }}</small>
-                            </div>
-
-                            {{-- Title --}}
-                            <div class="col-md-6 mb-3">
-                                <label class="required">Task Title</label>
-                                <input type="text" name="title" id="title" class="form-control"
-                                    value="{{ old('title', optional($taskData)->title) }}">
-                                <small class="text-danger" id="title_error">{{ $errors->first('title') }}</small>
-                            </div>
-
-                            {{-- Expertise --}}
-                            <div class="col-md-3 mb-3">
-                                <label class="required">Expertise</label>
-                                <select name="expertise_manager_id" class="form-select">
-                                    @foreach ($expertises as $expertise)
-                                        <option value="{{ $expertise->id }}" @selected(old('expertise_manager_id', optional($taskData)->expertise_manager_id) == $expertise->id)>
-                                            {{ $expertise->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <small class="text-danger"
-                                    id="expertise_manager_id_error">{{ $errors->first('expertise_manager_id') }}</small>
-                            </div>
-
-                            {{-- Due Date --}}
-                            <div class="col-md-3 mb-3">
-                                <label>Due Date</label>
-                                <input type="date" name="task_due_date" id="task_due_date" class="form-control"
-                                    value="{{ old(
-                                        'task_due_date',
-                                        optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : '',
-                                    ) }}">
-                                <small class="text-danger"
-                                    id="task_due_date_error">{{ $errors->first('task_due_date') }}</small>
+                                </div>
 
                             </div>
 
-                            {{-- Type --}}
-                            <div class="col-md-3 mb-3">
-                                <label class="required">Type</label>
-                                <select name="type" id="type" class="form-select">
-                                    {{-- <option value="">Select Type</option> --}}
-                                    <option value="meeting" @selected(old('type', optional($taskData)->type) === 'meeting')>
-                                        Meeting
-                                    </option>
-                                    <option value="task" @selected(old('type', optional($taskData)->type) === 'task')>
-                                        Task
-                                    </option>
-                                </select>
-                                <small class="text-danger" id="type_error">{{ $errors->first('type') }}</small>
-                            </div>
 
-                             {{-- Expertise --}}
-                            <div class="col-md-3 mb-3">
-                                <label class="required">Status</label>
-                                <select name="status_manager_id" class="form-select">
-                                    @foreach ($statuses as $status)
-                                        <option value="{{ $status->id }}" @selected(old('status_manager_id', optional($taskData)->status_manager_id) == $status->id)>
-                                            {{ $status->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <small class="text-danger"
-                                    id="status_manager_id_error">{{ $errors->first('status_manager_id') }}</small>
+                            {{-- Footer --}}
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ !empty($taskData) ? 'Update Task' : 'Create Task' }}
+                                </button>
                             </div>
                         </div>
-
-                        {{-- =========================
-                           TASK ACTIVITY (Accordion)
-                        ========================= --}}
-                        <div class="row mt-4">
-                            @include('admin.task.task-activity')
-                        </div>
-
-                        {{-- Footer --}}
-                        <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                {{ !empty($taskData) ? 'Update Task' : 'Create Task' }}
-                            </button>
-                        </div>
-
                     </form>
                 </div>
             </div>
@@ -137,11 +192,15 @@
     @include('admin.task.commitment-modal')
     @include('admin.task.deliverable-modal')
 @endsection
-
 @section('script')
     <script>
         const csrf_token = '{{ csrf_token() }}';
+        let commitments = {}; // new or edited items
+        let commitmentsToDelete = [];
+        let deliverables = {};
+        let deliverablesToDelete = [];
         var index_path = "{{ route('task.index') }}";
+        window.deleteAttachment = "{{ route('task.attachments.destroy', ':id') }}";
         window.taskContentEditorIds = [
             @foreach ($dates as $date)
                 "content_{{ \Illuminate\Support\Str::slug($date) }}",
@@ -149,24 +208,45 @@
         ];
         initAllCKEditors(window.taskContentEditorIds);
     </script>
-    <script>
-        let commitments = {}; // { date: [ {text, id?} ] }
-        let deliverables = {}; // { date: [ {text, id?} ] }
-    </script>
+
     @if (!empty($taskData))
         <script>
-            commitments = @json(
-                $commitmentsByDate->map(fn($items) => $items->map(fn($c) => [
-                            'text' => $c->commitment,
-                            'created_at' => $c->created_at->format('Y-m-d'),
-                        ])));
-            deliverables = @json(
-                $deliverablesByDate->map(fn($items) => $items->map(fn($d) => [
-                            'id' => $d->id,
-                            'text' => $d->deliverable,
-                        ])));
+            // Initialize commitments per date
+            commitments = {};
+            @foreach ($commitmentsByDate as $date => $items)
+                commitments['{{ $date }}'] = [];
+                @foreach ($items as $c)
+                    commitments['{{ $date }}'].push({
+                        @if ($c->id)
+                            id: {{ $c->id }},
+                        @endif
+                        _tmp_id: Date.now(), // 👈 unique temp key
+                        text: @json($c->commitment),
+                        created_at: @json($c->created_at->format('Y-m-d')),
+                        // status: {{ $c->status ?? 1 }}
+                    });
+                @endforeach
+            @endforeach
+
+            // Initialize deliverables per date
+            deliverables = {};
+            @foreach ($deliverablesByDate as $date => $items)
+                deliverables['{{ $date }}'] = [];
+                @foreach ($items as $d)
+                    deliverables['{{ $date }}'].push({
+                        id: {{ $d->id }},
+                        _tmp_id: Date.now(), // 👈 unique temp key
+                        text: @json($d->deliverable),
+                        created_at: @json($d->created_at->format('Y-m-d')),
+                        // status: {{ $d->status ?? 1 }}
+                    });
+                @endforeach
+            @endforeach
         </script>
     @endif
 
     <script src="{{ asset('admin/assets/js/custom/task.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/task-commitment.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/task-deliverable.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/task-attachments.js') }}"></script>
 @endsection
