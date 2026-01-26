@@ -74,10 +74,11 @@ class TaskController extends Controller
      */
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $user = auth()->user();
-
+        $clientObjectiveId   = $request->query('client_objective_id');
+        $expertiseManagerId  = $request->query('expertise_manager_id');
         /* ============================
        Expertise & Status
         ============================ */
@@ -103,7 +104,7 @@ class TaskController extends Controller
 
         /* ============================
        EDIT TASK
-    ============================ */
+        ============================ */
         if ($id !== 'new') {
 
             $taskData = Task::with([
@@ -116,8 +117,8 @@ class TaskController extends Controller
             ])->findOrFail($id);
 
             /* ----------------------------
-           Collect ALL dates
-        ---------------------------- */
+            Collect ALL dates
+            ---------------------------- */
             $dates = collect()
                 ->merge($taskData->content->pluck('content_date'))
                 ->merge($taskData->commitments->pluck('commitment_date'))
@@ -129,16 +130,16 @@ class TaskController extends Controller
                 ->values();
 
             /* ----------------------------
-           Group data by DATE
-        ---------------------------- */
+            Group data by DATE
+            ---------------------------- */
             $commitmentsByDate = $taskData->commitments->groupBy('commitment_date');
             $deliverablesByDate = $taskData->deliverables->groupBy('deliverable_date');
             $contentByDate = $taskData->content->keyBy('content_date');
         }
 
         /* ============================
-       Render View
-    ============================ */
+        Render View
+        ============================ */
         return view('admin.task.task-form', compact(
             'taskData',
             'clientObjectives',
@@ -147,7 +148,9 @@ class TaskController extends Controller
             'dates',
             'commitmentsByDate',
             'deliverablesByDate',
-            'contentByDate'
+            'contentByDate',
+            'clientObjectiveId',
+            'expertiseManagerId'
         ));
     }
 
@@ -249,6 +252,27 @@ class TaskController extends Controller
                 json_decode($request->commitments_to_delete ?? '[]', true),
                 json_decode($request->deliverables_to_delete ?? '[]', true)
             );
+
+            if ($request->filled('existing_file_names')) {
+                foreach ($request->existing_file_names as $id => $name) {
+
+                    $attachment = TaskAttachment::where('id', $id)
+                        ->where('task_id', $task->id)
+                        ->first();
+
+                    if (!$attachment) {
+                        continue; // attachment was deleted
+                    }
+
+                    $extension = pathinfo($attachment->original_name, PATHINFO_EXTENSION);
+
+                    $attachment->update([
+                        'original_name' => $name
+                            ? trim($name) . '.' . $extension
+                            : $attachment->original_name,
+                    ]);
+                }
+            }
 
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {

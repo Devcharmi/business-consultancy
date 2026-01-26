@@ -155,20 +155,24 @@ $("#task_form").on("submit", function (e) {
         name: "deliverables_to_delete",
         value: JSON.stringify(deliverablesToDelete),
     }).appendTo(form);
-    
+
     let url = form.attr("action");
-    let method = form.find("input[name='_method']").length ? "PUT" : "POST";
-    console.log("Commitments:", commitments);
-    console.log("Deliverables:", deliverables);
+    // alert(url);
+    // console.log("Commitments:", commitments);
+    // console.log("Deliverables:", deliverables);
+
+    let submitBtn = form.find("button[type='submit']");
+    submitBtn.prop("disabled", true);
 
     form.ajaxSubmit({
         url: url,
-        type: method,
+        type: "POST", // ✅ ALWAYS POST
         dataType: "json",
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
         success: function (res) {
+            submitBtn.prop("disabled", false);
             if (res.success) {
                 showToastr("success", res.message);
                 setTimeout(() => (window.location.href = index_path), 1500);
@@ -177,6 +181,7 @@ $("#task_form").on("submit", function (e) {
             }
         },
         error: function (result) {
+            submitBtn.prop("disabled", false);
             $("[id$='_error']").empty();
             showToastr("error", result.responseJSON.message);
             $.each(result.responseJSON.errors, function (k, v) {

@@ -68,8 +68,8 @@ var client_objective_table = $(".table-list").DataTable({
             },
         },
     ],
-    createdRow: function(row, data, dataIndex) {
-        $(row).attr('data-id', data.id);
+    createdRow: function (row, data, dataIndex) {
+        $(row).attr("data-id", data.id);
     },
     language: {
         searchPlaceholder: "Search...",
@@ -79,59 +79,135 @@ var client_objective_table = $(".table-list").DataTable({
 });
 
 // Handle view details (accordion)
-$(document).on("click", ".view-details", function () {
-    var id = $(this).data('id');
-    var row = $(this).closest('tr');
-    var nextRow = row.next('tr.details-row');
+// $(document).on("click", ".view-details", function () {
+//     var id = $(this).data("id");
+//     var row = $(this).closest("tr");
+//     var nextRow = row.next("tr.details-row");
+//     let expertiseId = $(this).data("expertise-id");
 
-    // If already expanded, collapse it
-    if (nextRow.length && nextRow.is(':visible')) {
+//     // If already expanded, collapse it
+//     if (nextRow.length && nextRow.is(":visible")) {
+//         nextRow.hide();
+//         $(this).find("i").removeClass("fa-eye-slash").addClass("fa-eye");
+//         return false;
+//     }
+
+//     // Hide any other open details
+//     $("tr.details-row").hide();
+//     $(".view-details i").removeClass("fa-eye-slash").addClass("fa-eye");
+
+//     // If details already loaded, show them
+//     if (nextRow.length) {
+//         nextRow.show();
+//         $(this).find("i").removeClass("fa-eye").addClass("fa-eye-slash");
+//     } else {
+//         // Load details via AJAX
+//         var detailsUrl = objective_details_path.replace(":id", id);
+
+//         $.ajax({
+//             url: detailsUrl,
+//             type: "GET",
+//             data: {
+//                 expertise_manager_id: expertiseId,
+//             },
+//             dataType: "json",
+//             beforeSend: function () {
+//                 $(this).prop("disabled", true);
+//             },
+//             success: function (data) {
+//                 if (data.success) {
+//                     // Add details row
+//                     var detailsRow = $(
+//                         '<tr class="details-row"><td colspan="4"></td></tr>',
+//                     );
+//                     detailsRow.find("td").html(data.html);
+//                     row.after(detailsRow);
+                  
+//                     // Change icon
+//                     $('.view-details[data-id="' + id + '"] i')
+//                         .removeClass("fa-eye")
+//                         .addClass("fa-eye-slash");
+//                 }
+//             },
+//             error: function () {
+//                 showToastr("error", "Error loading details");
+//             },
+//             complete: function () {
+//                 $(this).prop("disabled", false);
+//             },
+//         });
+//     }
+//     return false;
+// });
+$(document).on("click", ".view-details", function () {
+    let btn = $(this);
+    let objectiveId = btn.data("id");
+    let expertiseId = btn.data("expertise-id");
+    let row = btn.closest("tr");
+    let nextRow = row.next("tr.details-row");
+
+    // Collapse
+    if (nextRow.length && nextRow.is(":visible")) {
         nextRow.hide();
-        $(this).find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+        btn.find("i").removeClass("fa-eye-slash").addClass("fa-eye");
         return false;
     }
 
-    // Hide any other open details
-    $('tr.details-row').hide();
-    $('.view-details i').removeClass('fa-eye-slash').addClass('fa-eye');
+    // Close others
+    $("tr.details-row").hide();
+    $(".view-details i").removeClass("fa-eye-slash").addClass("fa-eye");
 
-    // If details already loaded, show them
+    // Already loaded
     if (nextRow.length) {
         nextRow.show();
-        $(this).find('i').removeClass('fa-eye').addClass('fa-eye-slash');
-    } else {
-        // Load details via AJAX
-        var detailsUrl = objective_details_path.replace(':id', id);
-
-        $.ajax({
-            url: detailsUrl,
-            type: "GET",
-            dataType: "json",
-            beforeSend: function() {
-                $(this).prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.success) {
-                    // Add details row
-                    var detailsRow = $('<tr class="details-row"><td colspan="4"></td></tr>');
-                    detailsRow.find('td').html(data.html);
-                    row.after(detailsRow);
-
-                    // Change icon
-                    $('.view-details[data-id="' + id + '"] i').removeClass('fa-eye').addClass('fa-eye-slash');
-                }
-            },
-            error: function() {
-                alert('Error loading details');
-            },
-            complete: function() {
-                $(this).prop('disabled', false);
-            }
-        });
+        btn.find("i").removeClass("fa-eye").addClass("fa-eye-slash");
+        return false;
     }
+
+    // First time load
+    loadObjectiveDetails(objectiveId, expertiseId, row);
     return false;
 });
 
+$(document).on("click", ".expertise-tab-btn", function () {
+    let btn = $(this);
+    let expertiseId = btn.data("expertise-id");
+    let objectiveId = btn.data("objective-id");
+
+    let row = $('.view-details[data-id="' + objectiveId + '"]')
+        .closest("tr");
+
+    loadObjectiveDetails(objectiveId, expertiseId, row);
+});
+
+function loadObjectiveDetails(objectiveId, expertiseId, row) {
+    let detailsUrl = objective_details_path.replace(":id", objectiveId);
+
+    $.ajax({
+        url: detailsUrl,
+        type: "GET",
+        data: {
+            expertise_manager_id: expertiseId
+        },
+        dataType: "json",
+        success: function (res) {
+            if (!res.success) return;
+
+            let nextRow = row.next("tr.details-row");
+
+            if (!nextRow.length) {
+                nextRow = $('<tr class="details-row"><td colspan="4"></td></tr>');
+                row.after(nextRow);
+            }
+
+            nextRow.find("td").html(res.html).show();
+
+            $('.view-details[data-id="' + objectiveId + '"] i')
+                .removeClass("fa-eye")
+                .addClass("fa-eye-slash");
+        }
+    });
+}
 
 $(document).on("click", ".open-modal", function () {
     $.ajax({

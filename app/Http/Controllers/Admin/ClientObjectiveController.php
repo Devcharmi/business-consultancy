@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\ClientObjective;
+use App\Models\ExpertiseManager;
 use App\Models\ObjectiveManager;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -50,34 +51,116 @@ class ClientObjectiveController extends Controller
         return view('admin.client_objective.index');
     }
 
- public function getObjectiveDetails($id)
+    // public function getObjectiveDetails(Request $request, $id)
+    // {
+    //     $clientObjective = ClientObjective::with(['client', 'objective_manager'])
+    //         ->findOrFail($id);
+
+    //     // ALWAYS a collection
+    //     $expertiseManagers = ExpertiseManager::activeExpertise()->get();
+
+    //     if ($expertiseManagers->isEmpty()) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'html' => '<div class="p-4 text-center text-muted">No expertise available</div>',
+    //             'activeExpertiseId' => null
+    //         ]);
+    //     }
+
+    //     $activeExpertiseId = $request->expertise_manager_id
+    //         ?? $expertiseManagers->first()->id;
+
+    //     $tasks = Task::where('client_objective_id', $id)
+    //         ->where('expertise_manager_id', $activeExpertiseId)
+    //         ->with(['status_manager'])
+    //         ->get();
+
+    //     $expertiseManagers = $expertiseManagers->map(function ($expertise) use ($tasks, $activeExpertiseId) {
+    //         $expertise->tasks = $expertise->id == $activeExpertiseId
+    //             ? $tasks
+    //             : collect();
+
+    //         $expertise->total_tasks = $expertise->tasks->count();
+    //         $expertise->is_active = $expertise->id == $activeExpertiseId;
+
+    //         return $expertise;
+    //     });
+
+    //     $html = view(
+    //         'admin.client_objective.objective-details',
+    //         compact('clientObjective', 'expertiseManagers')
+    //     )->render();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'html' => $html,
+    //         'activeExpertiseId' => $activeExpertiseId
+    //     ]);
+    // }
+
+public function getObjectiveDetails(Request $request, $id)
 {
-    $clientObjective = ClientObjective::with(['client','objective_manager'])
+    $clientObjective = ClientObjective::with(['client', 'objective_manager'])
         ->findOrFail($id);
 
-    $expertiseManagers = \App\Models\ExpertiseManager::activeExpertise()->get();
+    $expertiseManagers = ExpertiseManager::activeExpertise()->get();
 
-    $tasks = Task::where('client_objective_id', $id)
-        ->with(['status_manager','content'])
+    // 🔥 active expertise (from request OR first)
+    $activeExpertiseId = $request->expertise_manager_id
+        ?? $expertiseManagers->first()?->id;
+
+    /*
+    |--------------------------------------------------------------------------
+    | 1️⃣ GET TOTAL COUNTS (ALL expertise)
+    |--------------------------------------------------------------------------
+    */
+    $taskCounts = Task::where('client_objective_id', $id)
+        ->selectRaw('expertise_manager_id, COUNT(*) as total')
+        ->groupBy('expertise_manager_id')
+        ->pluck('total', 'expertise_manager_id');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 2️⃣ GET TASKS FOR ACTIVE EXPERTISE ONLY
+    |--------------------------------------------------------------------------
+    */
+    $activeTasks = Task::where('client_objective_id', $id)
+        ->where('expertise_manager_id', $activeExpertiseId)
+        ->with(['content', 'status_manager'])
         ->get();
 
-    $expertiseManagers = $expertiseManagers->map(function ($expertise) use ($tasks) {
-        $expertiseTasks = $tasks->where('expertise_manager_id', $expertise->id);
+    /*
+    |--------------------------------------------------------------------------
+    | 3️⃣ MAP DATA TO EXPERTISE
+    |--------------------------------------------------------------------------
+    */
+    $expertiseManagers = $expertiseManagers->map(function ($expertise) use (
+        $taskCounts,
+        $activeExpertiseId,
+        $activeTasks
+    ) {
+        $expertise->total_tasks = $taskCounts[$expertise->id] ?? 0;
 
-        $expertise->tasks = $expertiseTasks;
-        $expertise->total_tasks = $expertiseTasks->count();
+        $expertise->tasks = $expertise->id == $activeExpertiseId
+            ? $activeTasks
+            : collect();
+
+        $expertise->is_active = $expertise->id == $activeExpertiseId;
 
         return $expertise;
     });
 
     $html = view(
         'admin.client_objective.objective-details',
-        compact('clientObjective','expertiseManagers')
+        compact('clientObjective', 'expertiseManagers')
     )->render();
 
-    return response()->json(['success'=>true,'html'=>$html]);
+    return response()->json([
+        'success' => true,
+        'html' => $html,
+        'activeExpertiseId' => $activeExpertiseId
+    ]);
 }
-
 
     /**
      * Show the form for creating a new resource.

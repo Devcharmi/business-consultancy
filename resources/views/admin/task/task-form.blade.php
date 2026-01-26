@@ -55,6 +55,33 @@
                                     {{-- Client Objective --}}
                                     <div class="col-md-6 mb-3">
                                         <label class="required">Client Objective</label>
+
+                                        <select name="client_objective_id" class="form-control select2">
+                                            <option value="">Select Client Objective</option>
+
+                                            @foreach ($clientObjectives as $co)
+                                                @php
+                                                    $selectedClientObjective = old(
+                                                        'client_objective_id',
+                                                        optional($taskData)->client_objective_id ??
+                                                            request()->query('client_objective_id'),
+                                                    );
+                                                @endphp
+
+                                                <option value="{{ $co->id }}"
+                                                    {{ $selectedClientObjective == $co->id ? 'selected' : '' }}>
+                                                    {{ $co->client->client_name }} - {{ $co->objective_manager->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        <small class="text-danger" id="client_objective_id_error">
+                                            {{ $errors->first('client_objective_id') }}
+                                        </small>
+                                    </div>
+
+                                    {{-- <div class="col-md-6 mb-3">
+                                        <label class="required">Client Objective</label>
                                         <select name="client_objective_id" class="form-control select2">
                                             <option value="">Select Client Objective</option>
                                             @foreach ($clientObjectives as $co)
@@ -65,7 +92,7 @@
                                         </select>
                                         <small class="text-danger"
                                             id="client_objective_id_error">{{ $errors->first('client_objective_id') }}</small>
-                                    </div>
+                                    </div> --}}
 
                                     {{-- Title --}}
                                     <div class="col-md-6 mb-3">
@@ -78,6 +105,33 @@
                                     {{-- Expertise --}}
                                     <div class="col-md-3 mb-3">
                                         <label class="required">Expertise</label>
+
+                                        <select name="expertise_manager_id" class="form-select">
+                                            <option value="">Select Expertise</option>
+
+                                            @foreach ($expertises as $expertise)
+                                                @php
+                                                    $selectedExpertise = old(
+                                                        'expertise_manager_id',
+                                                        optional($taskData)->expertise_manager_id ??
+                                                            request()->query('expertise_manager_id'),
+                                                    );
+                                                @endphp
+
+                                                <option value="{{ $expertise->id }}"
+                                                    {{ $selectedExpertise == $expertise->id ? 'selected' : '' }}>
+                                                    {{ $expertise->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        <small class="text-danger" id="expertise_manager_id_error">
+                                            {{ $errors->first('expertise_manager_id') }}
+                                        </small>
+                                    </div>
+
+                                    {{-- <div class="col-md-3 mb-3">
+                                        <label class="required">Expertise</label>
                                         <select name="expertise_manager_id" class="form-select">
                                             @foreach ($expertises as $expertise)
                                                 <option value="{{ $expertise->id }}" @selected(old('expertise_manager_id', optional($taskData)->expertise_manager_id) == $expertise->id)>
@@ -87,7 +141,7 @@
                                         </select>
                                         <small class="text-danger"
                                             id="expertise_manager_id_error">{{ $errors->first('expertise_manager_id') }}</small>
-                                    </div>
+                                    </div> --}}
 
                                     {{-- Due Date --}}
                                     <div class="col-md-3 mb-3">
@@ -139,6 +193,10 @@
                                     @include('admin.task.task-activity')
                                 </div>
                             </div>
+
+                            {{-- =====================
+                                Attachments TAB
+                                ===================== --}}
                             {{-- Attachments --}}
                             <div class="tab-pane fade" id="attachments" role="tabpanel">
 
@@ -153,28 +211,48 @@
                                 {{-- Existing attachments --}}
                                 <div class="row" id="existingAttachments">
                                     @foreach ($taskData->attachments ?? [] as $file)
-                                        <div class="col-md-3 mb-3" id="attachment-{{ $file->id }}">
-                                            <div class="card">
-                                                <img src="{{ asset('storage/' . $file->file_path) }}"
-                                                    class="card-img-top" style="height:150px;object-fit:cover">
+                                        <div class="col-md-3 mb-3 attachment-item" id="attachment-{{ $file->id }}">
+                                            <div class="card border">
+
+                                                {{-- 🖼 Preview --}}
+                                                @if (Str::startsWith($file->file_type, 'image'))
+                                                    <img src="{{ asset('storage/' . $file->file_path) }}"
+                                                        class="card-img-top" style="height:150px;object-fit:cover">
+                                                @else
+                                                    <div class="d-flex align-items-center justify-content-center"
+                                                        style="height:150px;font-size:40px;">
+                                                        📄
+                                                    </div>
+                                                @endif
 
                                                 <div class="card-body p-2 text-center">
+
+                                                    {{-- ✏️ Editable file name --}}
+                                                    <input type="text" name="existing_file_names[{{ $file->id }}]"
+                                                        class="form-control form-control-sm text-center mb-2"
+                                                        value="{{ pathinfo($file->original_name, PATHINFO_FILENAME) }}"
+                                                        placeholder="File name">
+
+                                                    {{-- 🔽 Download --}}
                                                     <a href="{{ asset('storage/' . $file->file_path) }}"
                                                         download="{{ $file->original_name }}"
-                                                        class="btn btn-sm btn-success">⬇</a>
+                                                        class="btn btn-sm btn-success">
+                                                        ⬇
+                                                    </a>
 
-                                                    <button type="button" class="btn btn-sm btn-danger delete-existing"
-                                                        data-id="{{ $file->id }}">
+                                                    {{-- 🗑 Delete --}}
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger btn-remove-attachment"
+                                                        data-url="{{ route('task.attachments.delete', $file->id) }}">
                                                         ✕
                                                     </button>
+
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
-
                             </div>
-
 
                             {{-- Footer --}}
                             <div class="d-flex justify-content-end mt-4">
@@ -200,7 +278,7 @@
         let deliverables = {};
         let deliverablesToDelete = [];
         var index_path = "{{ route('task.index') }}";
-        window.deleteAttachment = "{{ route('task.attachments.destroy', ':id') }}";
+        window.deleteAttachment = "{{ route('task.attachments.delete', ':id') }}";
         window.taskContentEditorIds = [
             @foreach ($dates as $date)
                 "content_{{ \Illuminate\Support\Str::slug($date) }}",
