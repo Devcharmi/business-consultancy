@@ -86,7 +86,7 @@ var task_table = $(".table-list").DataTable({
 
                 return `
                    <a href="${pdf_path_set}" title="Download Pdf" target="_blank">
-                    <i class="fas fa-file-pdf p-1 text-danger"></i>
+                    <i class="fas fa-file-pdf p-1 text-secondary"></i>
                     </a>
                     <a href="${edit_path_set}"
                        class="open-modal" title="Edit" ${editDisabled}>

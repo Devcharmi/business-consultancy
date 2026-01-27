@@ -5,7 +5,7 @@
     </h3>
     @if (!empty($taskData))
         <a href="{{ route('task.pdf', ['task' => $taskData->id]) }}" target="_blank"
-            class="btn btn-outline-danger d-flex align-items-center gap-2 shadow-sm export-pdf-btn">
+            class="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-sm export-pdf-btn">
             <i class="fas fa-file-pdf"></i>
             Export PDF
         </a>

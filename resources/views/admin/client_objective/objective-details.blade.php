@@ -117,6 +117,10 @@
 
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
+                                                    <a href="{{ route('task.pdf', $task->id) }}" title="Download Pdf"
+                                                        target="_blank" class="btn btn-outline-secondary">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </a>
                                                     <a href="{{ route('task.show', $task->id) }}"
                                                         class="btn btn-outline-primary open-task-modal">
                                                         <i class="fas fa-edit"></i>
