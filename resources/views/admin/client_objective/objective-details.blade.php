@@ -74,8 +74,8 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Task</th>
-                                        <th>Task Details</th>
-                                        {{-- <th width="120">Due Date</th> --}}
+                                        {{-- <th>Task Details</th> --}}
+                                        <th>Due Date</th>
                                         <th>Status</th>
                                         <th class="text-center">Action</th>
                                     </tr>
@@ -134,11 +134,18 @@
                             </table>
                         </div>
 
-                        <div class="text-end mt-3">
+                        <div class="d-flex justify-content-end gap-2 mt-3">
                             <a href="{{ route('task.show', 'new') }}?client_objective_id={{ $clientObjective->id }}&expertise_manager_id={{ $expertise->id }}"
                                 class="btn btn-success open-task-modal">
                                 <i class="fas fa-plus-circle me-1"></i> Add Task
                             </a>
+
+                            <a href="javascript:void(0)" class="btn btn-outline-primary open-followup-modal"
+                                data-client-objective-id="{{ $clientObjective->id }}"
+                                data-expertise-manager-id="{{ $expertise->id }}">
+                                <i class="fas fa-comments me-1"></i> Add Follow-up
+                            </a>
+
                         </div>
                     @else
                         <div class="p-5 text-center">
@@ -156,3 +163,4 @@
         </div>
     </div>
 </div>
+@include('admin.client_objective.followup-modal')
