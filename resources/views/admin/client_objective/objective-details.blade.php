@@ -69,15 +69,15 @@
 
                     @if ($expertise->total_tasks > 0)
                         <div class="table-responsive">
-                            <table class="table table-hover table-borderless align-middle task-datatable">
+                            <table class="table table-bordered text-nowrap w-100 task-datatable">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th width="50">#</th>
+                                        <th>#</th>
                                         <th>Task</th>
                                         <th>Task Details</th>
                                         {{-- <th width="120">Due Date</th> --}}
-                                        <th width="120">Status</th>
-                                        <th width="120" class="text-center">Action</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
