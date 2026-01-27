@@ -27,14 +27,14 @@ class ExpertiseManagerController extends Controller
             $data = $request->all();
             $columns = ['id', 'name', 'color_name', 'status'];
 
-            $tableData = expertiseManager::Filters($data, $columns)
+            $tableData = ExpertiseManager::Filters($data, $columns)
                 ->select($columns);
 
 
             unset($data['start']);
             unset($data['length']);
 
-            $tableDataCount = expertiseManager::Filters($data, $columns)->count();
+            $tableDataCount = ExpertiseManager::Filters($data, $columns)->count();
 
             $tableData = $tableData->get();
             // dd($tableData->toArray());
@@ -82,7 +82,7 @@ class ExpertiseManagerController extends Controller
     public function show(string $id)
     {
         if ($id != 'new') {
-            $expertiseData = expertiseManager::find($id);
+            $expertiseData = ExpertiseManager::find($id);
             $html = view('admin.expertise_manager.expertise-modal', ['expertiseData' => $expertiseData])->render();
         } else {
             $html = view('admin.expertise_manager.expertise-modal')->render();
@@ -108,7 +108,7 @@ class ExpertiseManagerController extends Controller
             'name' => 'required|unique:expertise_managers,name,' . $id,
         ]);
         try {
-            $expertise = expertiseManager::find($id);
+            $expertise = ExpertiseManager::find($id);
             $expertise->fill($data);
             $expertise->save();
             return response()->json(['success' => true, 'message' => 'Expertise updated successfully'], 200);
@@ -124,7 +124,7 @@ class ExpertiseManagerController extends Controller
     public function destroy($id)
     {
         try {
-            $expertise = expertiseManager::findOrFail($id);
+            $expertise = ExpertiseManager::findOrFail($id);
             $expertise->delete();
             return response()->json(['success' => true, 'message' => 'Expertise deleted successfully'], 200);
         } catch (\Throwable $th) {
