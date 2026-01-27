@@ -122,7 +122,7 @@ var client_objective_table = $(".table-list").DataTable({
 //                     );
 //                     detailsRow.find("td").html(data.html);
 //                     row.after(detailsRow);
-                  
+
 //                     // Change icon
 //                     $('.view-details[data-id="' + id + '"] i')
 //                         .removeClass("fa-eye")
@@ -174,8 +174,7 @@ $(document).on("click", ".expertise-tab-btn", function () {
     let expertiseId = btn.data("expertise-id");
     let objectiveId = btn.data("objective-id");
 
-    let row = $('.view-details[data-id="' + objectiveId + '"]')
-        .closest("tr");
+    let row = $('.view-details[data-id="' + objectiveId + '"]').closest("tr");
 
     loadObjectiveDetails(objectiveId, expertiseId, row);
 });
@@ -187,7 +186,7 @@ function loadObjectiveDetails(objectiveId, expertiseId, row) {
         url: detailsUrl,
         type: "GET",
         data: {
-            expertise_manager_id: expertiseId
+            expertise_manager_id: expertiseId,
         },
         dataType: "json",
         success: function (res) {
@@ -196,7 +195,9 @@ function loadObjectiveDetails(objectiveId, expertiseId, row) {
             let nextRow = row.next("tr.details-row");
 
             if (!nextRow.length) {
-                nextRow = $('<tr class="details-row"><td colspan="4"></td></tr>');
+                nextRow = $(
+                    '<tr class="details-row"><td colspan="4"></td></tr>',
+                );
                 row.after(nextRow);
             }
 
@@ -205,7 +206,24 @@ function loadObjectiveDetails(objectiveId, expertiseId, row) {
             $('.view-details[data-id="' + objectiveId + '"] i')
                 .removeClass("fa-eye")
                 .addClass("fa-eye-slash");
-        }
+
+            // Initialize DataTables for the new table(s)
+            nextRow.find(".task-datatable").each(function () {
+                if (!$.fn.DataTable.isDataTable(this)) {
+                    // Prevent double initialization
+                    $(this).DataTable({
+                        ordering: true,
+                        paging: true,
+                        searching: true,
+                        lengthChange: false,
+                        pageLength: 5,
+                        columnDefs: [
+                            { orderable: false, targets: -1 }, // Disable sorting on Action column
+                        ],
+                    });
+                }
+            });
+        },
     });
 }
 
