@@ -1,42 +1,38 @@
-$(function () {
-    var leads_table = $("#leads_table").DataTable({
-        order: [[0, "desc"]],
-        autoWidth: false,
-        processing: true,
-        serverSide: true,
-        serverMethod: "GET",
-        lengthMenu: [
-            [20, 100, 200, 250],
-            [20, 100, 200, 250],
-        ],
-        ajax: {
-            url: $("#leads_table").attr("data-url"),
-        },
-        columns: [
-            {
-                data: "id",
-                sClass: "text-center",
-                mRender: function (v, t, o) {
-                    let id = o.id;
+var leads_table = $("#leads_table").DataTable({
+    order: [[0, "desc"]],
+    autoWidth: false,
+    processing: true,
+    serverSide: true,
+    serverMethod: "GET",
+    lengthMenu: [
+        [20, 100, 200, 250],
+        [20, 100, 200, 250],
+    ],
+    ajax: {
+        url: $("#leads_table").attr("data-url"),
+    },
+    columns: [
+        {
+            data: "id",
+            sClass: "text-center",
+            mRender: function (v, t, o) {
+                let id = o.id;
 
-                    // URLs
-                    let viewFollowUpUrl = follow_up_list_url.replace(
-                        ":lead",
-                        id,
-                    );
-                    let editUrl = edit_path.replace(":id", id);
-                    let deleteUrl = delete_path.replace(":id", id);
+                // URLs
+                let viewFollowUpUrl = follow_up_list_url.replace(":lead", id);
+                let editUrl = edit_path.replace(":id", id);
+                let deleteUrl = delete_path.replace(":id", id);
 
-                    // Permission handling
-                    let editDisabled = window.canEditTask
-                        ? ""
-                        : "style='pointer-events:none;opacity:0.4;' disabled";
+                // Permission handling
+                let editDisabled = window.canEditTask
+                    ? ""
+                    : "style='pointer-events:none;opacity:0.4;' disabled";
 
-                    let deleteDisabled = window.canDeleteTask
-                        ? ""
-                        : "style='pointer-events:none;opacity:0.4;' disabled";
+                let deleteDisabled = window.canDeleteTask
+                    ? ""
+                    : "style='pointer-events:none;opacity:0.4;' disabled";
 
-                    let html = `
+                let html = `
             <button class="btn btn-sm btn-info view-followups me-1"
                 data-url="${viewFollowUpUrl}"
                 data-lead-id="${id}"
@@ -45,9 +41,9 @@ $(function () {
             </button>
         `;
 
-                    const isConverted = o.status === "converted";
+                const isConverted = o.status === "converted";
 
-                    html += `
+                html += `
     <a href="${isConverted ? "javascript:void(0)" : editUrl}"  ${editDisabled}
        class="lead-edit ${isConverted ? "disabled-link" : ""}"
        title="${isConverted ? "Lead already converted" : "Edit"}"
@@ -57,7 +53,7 @@ $(function () {
     </a>
 `;
 
-                    html += `
+                html += `
             <a href="javascript:void(0);"
                data-url="${deleteUrl}"
                title="Delete"
@@ -68,31 +64,31 @@ $(function () {
             </a>
         `;
 
-                    return html;
-                },
+                return html;
             },
-            { data: "name" },
-            { data: "phone" },
-            { data: "email" },
-            // {
-            //     data: "objective_manager",
-            //     mRender: function (v) {
-            //         return v ? v.name : "-";
-            //     },
-            // },
-            {
-                data: "status",
-                mRender: function (v, t, o) {
-                    // let badge = {
-                    //     new: "secondary",
-                    //     contacted: "info",
-                    //     converted: "success",
-                    //     lost: "danger",
-                    // };
+        },
+        { data: "name" },
+        { data: "phone" },
+        { data: "email" },
+        // {
+        //     data: "objective_manager",
+        //     mRender: function (v) {
+        //         return v ? v.name : "-";
+        //     },
+        // },
+        {
+            data: "status",
+            mRender: function (v, t, o) {
+                // let badge = {
+                //     new: "secondary",
+                //     contacted: "info",
+                //     converted: "success",
+                //     lost: "danger",
+                // };
 
-                    return `<select class="form-select lead-status" data-id="${
-                        o.id
-                    }" ${v === "converted" ? "disabled" : ""}>
+                return `<select class="form-select lead-status" data-id="${
+                    o.id
+                }" ${v === "converted" ? "disabled" : ""}>
                             <option value="new" ${
                                 v == "new" ? "selected" : ""
                             }>New</option>
@@ -106,47 +102,46 @@ $(function () {
                                 v == "lost" ? "selected" : ""
                             }>Lost</option>
                         </select>`;
-                    // return `<span class="badge bg-${badge[v]}">${v.replace(
-                    //     "_",
-                    //     " "
-                    // )}</span>`;
-                },
+                // return `<span class="badge bg-${badge[v]}">${v.replace(
+                //     "_",
+                //     " "
+                // )}</span>`;
             },
-            {
-                data: "created_at",
-                mRender: function (v) {
-                    return moment(v).format("D-M-Y");
-                },
-            },
-        ],
-        language: {
-            searchPlaceholder: "Search...",
-            sSearch: "",
-            lengthMenu: "_MENU_&nbsp; items/page",
         },
-    });
+        {
+            data: "created_at",
+            mRender: function (v) {
+                return moment(v).format("D-M-Y");
+            },
+        },
+    ],
+    language: {
+        searchPlaceholder: "Search...",
+        sSearch: "",
+        lengthMenu: "_MENU_&nbsp; items/page",
+    },
+});
 
-    /* 🔄 STATUS UPDATE (AJAX – SAME PATTERN) */
-    $(document).on("change", ".lead-status", function () {
-        let status = $(this).val();
-        let leadId = $(this).data("id");
+/* 🔄 STATUS UPDATE (AJAX – SAME PATTERN) */
+$(document).on("change", ".lead-status", function () {
+    let status = $(this).val();
+    let leadId = $(this).data("id");
 
-        $.ajax({
-            url: updateLeadStatusUrl, // define globally
-            type: "POST",
-            data: {
-                _token: csrf_token,
-                lead_id: leadId,
-                status: status,
-            },
-            success: function (res) {
-                toastr.success(res.message);
-                leads_table.draw();
-            },
-            error: function () {
-                toastr.error("Failed to update lead");
-            },
-        });
+    $.ajax({
+        url: updateLeadStatusUrl, // define globally
+        type: "POST",
+        data: {
+            _token: csrf_token,
+            lead_id: leadId,
+            status: status,
+        },
+        success: function (res) {
+            toastr.success(res.message);
+            leads_table.draw();
+        },
+        error: function () {
+            toastr.error("Failed to update lead");
+        },
     });
 });
 
