@@ -261,6 +261,11 @@
                                 </button>
                             </div>
                         </div>
+                        <input type="hidden" name="commitments" id="commitments_input">
+                        <input type="hidden" name="commitments_to_delete" id="commitments_delete_input">
+
+                        <input type="hidden" name="deliverables" id="deliverables_input">
+                        <input type="hidden" name="deliverables_to_delete" id="deliverables_delete_input">
                     </form>
                 </div>
             </div>
@@ -286,7 +291,7 @@
         ];
         initAllCKEditors(window.taskContentEditorIds);
     </script>
-
+    {{-- 
     @if (!empty($taskData))
         <script>
             // Initialize commitments per date
@@ -295,13 +300,11 @@
                 commitments['{{ $date }}'] = [];
                 @foreach ($items as $c)
                     commitments['{{ $date }}'].push({
-                        @if ($c->id)
-                            id: {{ $c->id }},
-                        @endif
-                        _tmp_id: Date.now(), // 👈 unique temp key
+                        id: {{ $c->id }},
                         text: @json($c->commitment),
                         created_at: @json($c->created_at->format('Y-m-d')),
-                        // status: {{ $c->status ?? 1 }}
+                        commitment_due_date: @json(optional($c->due_date)->format('Y-m-d') ?? $date),
+                        status: {{ $c->status ?? 1 }}
                     });
                 @endforeach
             @endforeach
@@ -320,8 +323,16 @@
                     });
                 @endforeach
             @endforeach
+
+            Object.keys(commitments).forEach(date => {
+                renderCommitments(date);
+            });
+
+            Object.keys(deliverables).forEach(date => {
+                renderDeliverables(date);
+            });
         </script>
-    @endif
+    @endif --}}
 
     <script src="{{ asset('admin/assets/js/custom/task.js') }}"></script>
     <script src="{{ asset('admin/assets/js/custom/task-commitment.js') }}"></script>

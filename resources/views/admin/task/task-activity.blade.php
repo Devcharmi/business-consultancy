@@ -65,10 +65,18 @@
                         <tbody id="commitments_{{ $date }}">
                             @forelse ($commitmentsByDate->get($date, []) as $commitment)
                                 <tr data-id="{{ $commitment->id }}">
-                                    {{-- <td>{{ $commitment->created_at->format('d M Y') }}</td> --}}
+                                    {{-- <td>{{ $commitmnt->created_at->format('d M Y') }}</td> --}}
                                     <td>{{ \Carbon\Carbon::parse($commitment->commitment_date)->format('d M Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($commitment->due_date)->format('d M Y') }}</td>
-                                    <td>{{ $commitment->commitment }}</td>
+                                    <td>{{ $commitment->commitment }}
+
+                                        <input type="hidden" name="commitments_existing[{{ $commitment->id }}][text]"
+                                            value="{{ $commitment->commitment }}">
+
+                                        <input type="hidden"
+                                            name="commitments_existing[{{ $commitment->id }}][due_date]"
+                                            value="{{ $commitment->due_date->toDateString() }}">
+                                    </td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-primary edit-commitment"
                                             data-id="{{ $commitment->id }}" data-text="{{ $commitment->commitment }}"
@@ -109,7 +117,15 @@
                                     <td>{{ \Carbon\Carbon::parse($deliverable->deliverable_date)->format('d M Y') }}
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($deliverable->expected_date)->format('d M Y') }}</td>
-                                    <td>{{ $deliverable->deliverable }}</td>
+                                    <td>{{ $deliverable->deliverable }}
+
+                                        <input type="hidden" name="deliverables_existing[{{ $deliverable->id }}][text]"
+                                            value="{{ $deliverable->deliverable }}">
+
+                                        <input type="hidden"
+                                            name="deliverables_existing[{{ $deliverable->id }}][expected_date]"
+                                            value="{{ $deliverable->expected_date->toDateString() }}">
+                                    </td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-primary edit-deliverable"
                                             data-id="{{ $deliverable->id }}"

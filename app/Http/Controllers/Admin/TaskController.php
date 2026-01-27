@@ -223,6 +223,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        // dd($request->all());
         $request->validate([
             'client_objective_id' => ['required', 'integer', 'exists:client_objectives,id'],
             'expertise_manager_id' => ['required', 'integer', 'exists:expertise_managers,id'],
@@ -244,13 +245,20 @@ class TaskController extends Controller
             // ✅ Content
             $this->syncTaskContent($task, $request->content);
 
-            // ✅ Commitments & Deliverables
-            $this->syncActivities(
+            // ✅ Commitments
+            $this->syncCommitmentActivities(
                 $task,
-                json_decode($request->commitments ?? '[]', true),
-                json_decode($request->deliverables ?? '[]', true),
-                json_decode($request->commitments_to_delete ?? '[]', true),
-                json_decode($request->deliverables_to_delete ?? '[]', true)
+                json_decode($request->commitments, true) ?? [],
+                json_decode($request->commitments_to_delete, true) ?? [],
+                $request->commitments_existing ?? []
+            );
+
+            // ✅ Deliverables
+            $this->syncDeliverableActivities(
+                   $task,
+                json_decode($request->deliverables, true) ?? [],
+                json_decode($request->deliverables_to_delete, true) ?? [],
+                $request->deliverables_existing ?? []
             );
 
             if ($request->filled('existing_file_names')) {
@@ -332,65 +340,120 @@ class TaskController extends Controller
         }
     }
 
-
-    public function syncActivities(
+    public function syncCommitmentActivities(
         Task $task,
         array $commitments = [],
-        array $deliverables = [],
         array $commitmentsToDelete = [],
-        array $deliverablesToDelete = []
+        array $commitmentsExisting = []
     ) {
-        // ---------------- COMMITMENTS ----------------
-        if ($commitmentsToDelete) {
+        // ---------------- DELETE ----------------
+        if (!empty($commitmentsToDelete)) {
             TaskCommitment::whereIn('id', $commitmentsToDelete)->delete();
         }
 
-        foreach ($commitments as $date => $items) {
-            $date = Carbon::parse($date)->toDateString();
+        // ---------------- UPDATE EXISTING ----------------
+        foreach ($commitmentsExisting as $id => $item) {
 
-            foreach ($items as $item) {
-                if (blank($item['text'])) continue;
-
-                TaskCommitment::updateOrCreate(
-                    [
-                        'task_id'         => $task->id,
-                        'commitment_date' => $date,
-                        'commitment'      => $item['text'],
-                    ],
-                    [
-                        'due_date' => $item['commitment_due_date'] ?? $date,
-                        'status'   => $item['status'] ?? 1,
-                    ]
-                );
+            if (blank($item['text'])) {
+                continue;
             }
+
+            TaskCommitment::where('id', $id)
+                ->where('task_id', $task->id)
+                ->update([
+                    'commitment' => $item['text'],
+                    'due_date'   => $item['due_date'],
+                ]);
         }
 
-        // ---------------- DELIVERABLES ----------------
-        if ($deliverablesToDelete) {
-            TaskDeliverable::whereIn('id', $deliverablesToDelete)->delete();
-        }
+        // ---------------- CREATE NEW ----------------
+        foreach ($commitments as $date => $items) {
 
-        foreach ($deliverables as $date => $items) {
+            if (empty($items) || !is_array($items)) {
+                continue;
+            }
+
             $date = Carbon::parse($date)->toDateString();
 
             foreach ($items as $item) {
-                if (blank($item['text'])) continue;
 
-                TaskDeliverable::updateOrCreate(
-                    [
-                        'task_id'          => $task->id,
-                        'deliverable_date' => $date,
-                        'deliverable'      => $item['text'],
-                    ],
-                    [
-                        'expected_date' => $item['expected_date'] ?? $date,
-                        'status'        => $item['status'] ?? 1,
-                    ]
-                );
+                if (blank($item['text']) || empty($item['commitment_due_date'])) {
+                    continue;
+                }
+
+                // ⛔ skip existing DB rows
+                if (!empty($item['id'])) {
+                    continue;
+                }
+
+                TaskCommitment::create([
+                    'task_id'         => $task->id,
+                    'commitment_date' => $date,
+                    'commitment'      => $item['text'],
+                    'due_date'        => $item['commitment_due_date'],
+                    'status'          => $item['status'] ?? 1,
+                ]);
             }
         }
     }
 
+    public function syncDeliverableActivities(
+        Task $task,
+        array $deliverables = [],
+        array $deliverablesToDelete = [],
+        array $deliverablesExisting = []
+    ) {
+        // ---------------- DELETE ----------------
+        if (!empty($deliverablesToDelete)) {
+            TaskDeliverable::whereIn('id', $deliverablesToDelete)->delete();
+        }
+
+        // ---------------- UPDATE EXISTING ----------------
+        foreach ($deliverablesExisting as $id => $item) {
+
+            if (blank($item['text'])) {
+                continue;
+            }
+
+            TaskDeliverable::where('id', $id)
+                ->where('task_id', $task->id)
+                ->update([
+                    'deliverable'   => $item['text'],
+                    'expected_date' => $item['expected_date'] ?? null,
+                    'status'        => $item['status'] ?? 1,
+                ]);
+        }
+
+        // ---------------- CREATE NEW ----------------
+        foreach ($deliverables as $date => $items) {
+
+            if (empty($items) || !is_array($items)) {
+                continue;
+            }
+
+            $date = Carbon::parse($date)->toDateString();
+
+            foreach ($items as $item) {
+
+                if (blank($item['text'])) {
+                    continue;
+                }
+
+                // ⛔ skip existing DB rows
+                if (!empty($item['id'])) {
+                    continue;
+                }
+
+                TaskDeliverable::create([
+                    'task_id'          => $task->id,
+                    'deliverable_date' => $date,
+                    'deliverable'      => $item['text'],
+                    'expected_date'    => $item['expected_date'] ?? $date,
+                    'status'           => $item['status'] ?? 1,
+                ]);
+            }
+        }
+    }
 
     /**
      * Remove the specified resource from storage.

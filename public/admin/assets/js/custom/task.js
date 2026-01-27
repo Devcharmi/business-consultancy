@@ -128,33 +128,14 @@ var task_table = $(".table-list").DataTable({
 $("#task_form").on("submit", function (e) {
     e.preventDefault();
     updateTextareasFromEditors();
+    
+    $("#commitments_input").val(JSON.stringify(commitments));
+    $("#commitments_delete_input").val(JSON.stringify(commitmentsToDelete));
+
+    $("#deliverables_input").val(JSON.stringify(deliverables));
+    $("#deliverables_delete_input").val(JSON.stringify(deliverablesToDelete));
 
     let form = $(this);
-    form.find("input[name='commitments']").remove();
-    form.find("input[name='commitments_to_delete']").remove();
-    form.find("input[name='deliverables']").remove();
-    form.find("input[name='deliverables_to_delete']").remove();
-
-    $("<input>", {
-        type: "hidden",
-        name: "commitments",
-        value: JSON.stringify(commitments),
-    }).appendTo(form);
-    $("<input>", {
-        type: "hidden",
-        name: "commitments_to_delete",
-        value: JSON.stringify(commitmentsToDelete),
-    }).appendTo(form);
-    $("<input>", {
-        type: "hidden",
-        name: "deliverables",
-        value: JSON.stringify(deliverables),
-    }).appendTo(form);
-    $("<input>", {
-        type: "hidden",
-        name: "deliverables_to_delete",
-        value: JSON.stringify(deliverablesToDelete),
-    }).appendTo(form);
 
     let url = form.attr("action");
     // alert(url);
