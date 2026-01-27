@@ -38,7 +38,9 @@ $("#deliverable_form").on("submit", function (e) {
         ).val(expected);
 
         // update edit button data
-        row.find(".edit-deliverable").data("text", text).data("expected", expected);
+        row.find(".edit-deliverable")
+            .data("text", text)
+            .data("expected", expected);
 
         $("#deliverableModal").modal("hide");
         return;
@@ -63,7 +65,9 @@ $("#deliverable_form").on("submit", function (e) {
             row.find("td:eq(1)").text(moment(expected).format("DD MMM YYYY"));
             row.find("td:eq(2)").text(text);
 
-            row.find(".edit-deliverable").data("text", text).data("expected", expected);
+            row.find(".edit-deliverable")
+                .data("text", text)
+                .data("expected", expected);
 
             $("#deliverableModal").modal("hide");
             return;
@@ -89,11 +93,14 @@ function renderDeliverables(date) {
     let wrapper = $("#deliverables_" + date);
     let items = deliverables[date] ?? [];
 
+    // ✅ REMOVE EMPTY ROW IF EXISTS
+    wrapper.find(".no-deliverables").remove();
+
     items.forEach((item) => {
         if (!item._tmp_id) return;
         if (wrapper.find(`tr[data-tmp-id="${item._tmp_id}"]`).length) return;
 
-        let createdDate  = moment(item.created_at).format("DD MMM YYYY");
+        let createdDate = moment(item.created_at).format("DD MMM YYYY");
         let expectedView = moment(item.expected_date).format("DD MMM YYYY"); // 👀 UI only
 
         wrapper.append(`
@@ -146,14 +153,27 @@ function removeDeliverable(id, tmpId, date) {
     if (id) {
         deliverablesToDelete.push(id);
         $(`#deliverables_${date}`).find(`tr[data-id="${id}"]`).remove();
-        return;
     }
 
     if (tmpId) {
-        deliverables[date] = deliverables[date].filter(
-            (d) => String(d._tmp_id) !== String(tmpId),
-        );
+        deliverables[date] =
+            deliverables[date]?.filter(
+                (d) => String(d._tmp_id) !== String(tmpId),
+            ) || [];
 
         $(`#deliverables_${date}`).find(`tr[data-tmp-id="${tmpId}"]`).remove();
+    }
+
+    // ✅ EMPTY STATE CHECK
+    let wrapper = $(`#deliverables_${date}`);
+
+    if (wrapper.find("tr").length === 0) {
+        wrapper.html(`
+            <tr class="no-deliverables">
+                <td colspan="4" class="text-muted text-center">
+                    No deliverables for this date
+                </td>
+            </tr>
+        `);
     }
 }

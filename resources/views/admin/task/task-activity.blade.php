@@ -87,7 +87,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="no-commitments">
                                     <td colspan="4" class="text-muted text-center">No commitments for this date</td>
                                 </tr>
                             @endforelse
@@ -138,7 +138,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="no-deliverables">
                                     <td colspan="4" class="text-muted text-center">No deliverables for this date</td>
                                 </tr>
                             @endforelse

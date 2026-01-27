@@ -57,11 +57,11 @@ $(document).on("click", ".open-commitment-modal", function () {
 $("#commitment_form").on("submit", function (e) {
     e.preventDefault();
 
-    let id    = $("#commitment_id").val();        // DB id
-    let tmpId = $("#commitment_tmp_id").val();    // TEMP id
-    let date  = $("#commitment_date").val();
-    let text  = $("#commitment").val().trim();
-    let due   = $("#commitment_due_date").val();
+    let id = $("#commitment_id").val(); // DB id
+    let tmpId = $("#commitment_tmp_id").val(); // TEMP id
+    let date = $("#commitment_date").val();
+    let text = $("#commitment").val().trim();
+    let due = $("#commitment_due_date").val();
 
     if (!text) return;
 
@@ -77,12 +77,12 @@ $("#commitment_form").on("submit", function (e) {
 
         // ✅ update hidden inputs (MOST IMPORTANT)
         row.find(`input[name="commitments_existing[${id}][text]"]`).val(text);
-        row.find(`input[name="commitments_existing[${id}][due_date]"]`).val(due);
+        row.find(`input[name="commitments_existing[${id}][due_date]"]`).val(
+            due,
+        );
 
         // update edit button dataset
-        row.find(".edit-commitment")
-            .data("text", text)
-            .data("due", due);
+        row.find(".edit-commitment").data("text", text).data("due", due);
 
         $("#commitmentModal").modal("hide");
         return;
@@ -93,7 +93,7 @@ $("#commitment_form").on("submit", function (e) {
     // ===============================
     if (tmpId) {
         let item = commitments[date]?.find(
-            c => String(c._tmp_id) === String(tmpId)
+            (c) => String(c._tmp_id) === String(tmpId),
         );
 
         if (item) {
@@ -101,15 +101,13 @@ $("#commitment_form").on("submit", function (e) {
             item.commitment_due_date = due;
 
             let row = $(`#commitments_${date}`).find(
-                `tr[data-tmp-id="${tmpId}"]`
+                `tr[data-tmp-id="${tmpId}"]`,
             );
 
             row.find("td:eq(1)").text(moment(due).format("DD MMM YYYY"));
             row.find("td:eq(2)").text(text);
 
-            row.find(".edit-commitment")
-                .data("text", text)
-                .data("due", due);
+            row.find(".edit-commitment").data("text", text).data("due", due);
 
             $("#commitmentModal").modal("hide");
             return;
@@ -132,19 +130,21 @@ $("#commitment_form").on("submit", function (e) {
     $("#commitmentModal").modal("hide");
 });
 
-
 function renderCommitments(date) {
     let wrapper = $("#commitments_" + date);
     let items = commitments[date] ?? [];
 
-    items.forEach(item => {
+    // ✅ REMOVE EMPTY ROW IF EXISTS
+    wrapper.find(".no-commitments").remove();
+
+    items.forEach((item) => {
         // ❗ TEMP ONLY
         if (!item._tmp_id) return;
 
         if (wrapper.find(`tr[data-tmp-id="${item._tmp_id}"]`).length) return;
 
         let createdDate = moment(item.created_at).format("DD MMM YYYY");
-        let dueDate     = moment(item.commitment_due_date).format("DD MMM YYYY");
+        let dueDate = moment(item.commitment_due_date).format("DD MMM YYYY");
 
         wrapper.append(`
             <tr data-tmp-id="${item._tmp_id}">
@@ -220,7 +220,6 @@ $(document).on("click", ".edit-commitment", function () {
     $("#commitmentModal").modal("show");
 });
 
-
 $(document).on("click", ".delete-commitment", function () {
     let id = $(this).data("id");
     let tmpId = $(this).data("tmp-id");
@@ -233,17 +232,27 @@ function removeCommitment(id, tmpId, date) {
     if (id) {
         commitmentsToDelete.push(id);
         $(`#commitments_${date}`).find(`tr[data-id="${id}"]`).remove();
-        return;
     }
 
     if (tmpId) {
-        commitments[date] = commitments[date].filter(
-            c => String(c._tmp_id) !== String(tmpId)
-        );
+        commitments[date] =
+            commitments[date]?.filter(
+                (c) => String(c._tmp_id) !== String(tmpId),
+            ) || [];
 
-        $(`#commitments_${date}`).find(
-            `tr[data-tmp-id="${tmpId}"]`
-        ).remove();
+        $(`#commitments_${date}`).find(`tr[data-tmp-id="${tmpId}"]`).remove();
+    }
+
+    // ✅ EMPTY STATE CHECK
+    let wrapper = $(`#commitments_${date}`);
+
+    if (wrapper.find("tr").length === 0) {
+        wrapper.html(`
+            <tr class="no-commitments">
+                <td colspan="4" class="text-muted text-center">
+                    No commitments for this date
+                </td>
+            </tr>
+        `);
     }
 }
-

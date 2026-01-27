@@ -176,12 +176,20 @@ class TaskController extends Controller
             // ✅ CONTENT
             $this->syncTaskContent($task, $request->content);
 
-            $this->syncActivities(
+             // ✅ Commitments
+            $this->syncCommitmentActivities(
                 $task,
-                json_decode($request->commitments ?? '[]', true),
-                json_decode($request->deliverables ?? '[]', true),
-                json_decode($request->commitments_to_delete ?? '[]', true),
-                json_decode($request->deliverables_to_delete ?? '[]', true)
+                json_decode($request->commitments, true) ?? [],
+                json_decode($request->commitments_to_delete, true) ?? [],
+                $request->commitments_existing ?? []
+            );
+
+            // ✅ Deliverables
+            $this->syncDeliverableActivities(
+                   $task,
+                json_decode($request->deliverables, true) ?? [],
+                json_decode($request->deliverables_to_delete, true) ?? [],
+                $request->deliverables_existing ?? []
             );
 
             if ($request->hasFile('attachments')) {
