@@ -135,7 +135,7 @@ $(function () {
             url: updateLeadStatusUrl, // define globally
             type: "POST",
             data: {
-                _token: csrfToken,
+                _token: csrf_token,
                 lead_id: leadId,
                 status: status,
             },
@@ -155,7 +155,7 @@ $(document).on("click", "#saveFollowUp", function () {
         url: $(this).attr("data-url"),
         type: "POST",
         data: {
-            _token: csrfToken,
+            _token: csrf_token,
             lead_id: $(this).data("id"),
             remark: $("#follow_remark").val(),
             next_follow_up_at: $("#next_follow_up_at").val(),

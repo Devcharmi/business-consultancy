@@ -48,7 +48,7 @@
 
 @section('script')
     <script>
-        var csrfToken = "{{ csrf_token() }}";
+        var csrf_token = "{{ csrf_token() }}";
         var updateLeadStatusUrl = "{{ route('admin.leads.update-status') }}";
         var follow_up_list_url = "{{ route('admin.leads.followups.list', ':lead') }}";
         var edit_path = "{{ route('lead.show', ['lead' => ':id']) }}";
