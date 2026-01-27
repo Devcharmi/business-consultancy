@@ -242,8 +242,8 @@ $(document).on("click", "#lead_form_button", function () {
             $("[id$='_error']").empty();
         },
         success: function (result) {
-            if (typeof lead_table !== "undefined") {
-                lead_table.draw();
+            if (typeof leads_table !== "undefined") {
+                leads_table.draw();
             }
             showToastr("success", result.message);
             window.location.href = index_path; // or modal hide if modal
@@ -289,8 +289,8 @@ $(document).on("click", ".delete-lead", function (event) {
                     _token: csrf_token,
                 },
                 success: function (result) {
-                    if (typeof lead_table !== "undefined") {
-                        lead_table.draw();
+                    if (typeof leads_table !== "undefined") {
+                        leads_table.draw();
                     }
                     showToastr("success", result.message);
                 },
