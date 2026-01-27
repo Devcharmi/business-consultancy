@@ -55,6 +55,7 @@
         var csrf_token = '{{ csrf_token() }}';
         var edit_path = "{{ route('task.show', ['task' => ':task']) }}";
         var delete_path = "{{ route('task.destroy', ['task' => ':task']) }}";
+        var pdf_path = "{{ route('task.pdf',  ['task' => ':task']) }}";
         window.canEditTask = @json(canAccess('task.edit'));
         window.canDeleteTask = @json(canAccess('task.delete'));
     </script>

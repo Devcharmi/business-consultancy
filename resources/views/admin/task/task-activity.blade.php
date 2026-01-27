@@ -1,7 +1,17 @@
-{{-- ================= Task Timeline Heading ================= --}}
-<h3 class="mb-4 text-center text-primary fw-bold">
-    📅 Task Timeline
-</h3>
+{{-- ================= Task Timeline Heading + Export ================= --}}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-primary fw-bold mb-0">
+        📅 Task Timeline
+    </h3>
+    @if (!empty($taskData))
+        <a href="{{ route('task.pdf', ['task' => $taskData->id]) }}" target="_blank"
+            class="btn btn-outline-danger d-flex align-items-center gap-2 shadow-sm export-pdf-btn">
+            <i class="fas fa-file-pdf"></i>
+            Export PDF
+        </a>
+    @endif
+</div>
+
 
 <div class="accordion" id="taskAccordion">
 
@@ -13,8 +23,8 @@
 
         <div class="accordion-item mb-2 shadow-sm rounded">
             <h2 class="accordion-header" id="heading-{{ $date }}">
-                <button class="accordion-button {{ $isToday ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse-{{ $date }}"
+                <button class="accordion-button {{ $isToday ? '' : 'collapsed' }}" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#collapse-{{ $date }}"
                     style="
                         color: white;
                         {{ $isToday
@@ -119,7 +129,8 @@
                                     <td>{{ \Carbon\Carbon::parse($deliverable->expected_date)->format('d M Y') }}</td>
                                     <td>{{ $deliverable->deliverable }}
 
-                                        <input type="hidden" name="deliverables_existing[{{ $deliverable->id }}][text]"
+                                        <input type="hidden"
+                                            name="deliverables_existing[{{ $deliverable->id }}][text]"
                                             value="{{ $deliverable->deliverable }}">
 
                                         <input type="hidden"

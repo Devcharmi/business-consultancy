@@ -11,11 +11,13 @@ use App\Models\TaskAttachment;
 use App\Models\TaskCommitment;
 use App\Models\TaskContent;
 use App\Models\TaskDeliverable;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TaskController extends Controller
 {
@@ -176,7 +178,7 @@ class TaskController extends Controller
             // ✅ CONTENT
             $this->syncTaskContent($task, $request->content);
 
-             // ✅ Commitments
+            // ✅ Commitments
             $this->syncCommitmentActivities(
                 $task,
                 json_decode($request->commitments, true) ?? [],
@@ -186,7 +188,7 @@ class TaskController extends Controller
 
             // ✅ Deliverables
             $this->syncDeliverableActivities(
-                   $task,
+                $task,
                 json_decode($request->deliverables, true) ?? [],
                 json_decode($request->deliverables_to_delete, true) ?? [],
                 $request->deliverables_existing ?? []
@@ -263,7 +265,7 @@ class TaskController extends Controller
 
             // ✅ Deliverables
             $this->syncDeliverableActivities(
-                   $task,
+                $task,
                 json_decode($request->deliverables, true) ?? [],
                 json_decode($request->deliverables_to_delete, true) ?? [],
                 $request->deliverables_existing ?? []
@@ -492,5 +494,41 @@ class TaskController extends Controller
             'success' => true,
             'message' => 'Attachment deleted'
         ]);
+    }
+
+    public function taskPdf($id)
+    {
+        $task = Task::with([
+            'client_objective.client',
+            'client_objective.objective_manager',
+            'expertise_manager',
+            'status_manager',
+            'commitments' => function ($q) {
+                $q->orderBy('commitment_date', 'desc'); // date-wise desc
+            },
+            'deliverables' => function ($q) {
+                $q->orderBy('deliverable_date', 'desc');
+            },
+        ])->findOrFail($id);
+
+        // Group commitments date-wise
+        $commitmentsByDate = $task->commitments->groupBy('date');
+
+        // ---------------- FILE NAME ----------------
+        $clientName = $task->client_objective->client->client_name ?? 'client';
+        $safeClient = Str::slug($clientName);
+
+        $date = $task->task_due_date
+            ? \Carbon\Carbon::parse($task->task_due_date)->format('Y-m-d')
+            : now()->format('Y-m-d');
+
+        $fileName = "task-{$safeClient}-{$date}-{$task->id}.pdf";
+        // ------------------------------------------------
+
+        $pdf = Pdf::loadView('admin.pdf.task', compact('task', 'commitmentsByDate'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream($fileName);
+        // return $pdf->download($fileName);
     }
 }

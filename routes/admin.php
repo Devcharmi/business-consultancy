@@ -97,7 +97,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::resource('consulting', ConsultingController::class);
     Route::resource('task', TaskController::class);
     Route::delete('/task/attachments/{attachment}',[TaskController::class,'destroyAttachment'])->name('task.attachments.delete');
-    Route::get('task/{id}/pdf', [TaskController::class, 'taskPdf'])
+    Route::get('task/{task}/pdf', [TaskController::class, 'taskPdf'])
     ->name('task.pdf');
 
 });

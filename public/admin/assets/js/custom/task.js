@@ -71,8 +71,11 @@ var task_table = $(".table-list").DataTable({
             searchable: false,
             className: "text-center",
             render: function (id, type, row) {
+                let pdf_path_set = pdf_path.replace(":task", id);
                 let edit_path_set = edit_path.replace(":task", id);
                 let delete_path_set = delete_path.replace(":task", id);
+
+             
 
                 let editDisabled = window.canEditTask
                     ? ""
@@ -82,6 +85,9 @@ var task_table = $(".table-list").DataTable({
                     : "style='pointer-events:none;opacity:0.4;' disabled";
 
                 return `
+                   <a href="${pdf_path_set}" title="Download Pdf" target="_blank">
+                    <i class="fas fa-file-pdf p-1 text-danger"></i>
+                    </a>
                     <a href="${edit_path_set}"
                        class="open-modal" title="Edit" ${editDisabled}>
                         <i class="fas fa-pen p-1 text-primary"></i>
