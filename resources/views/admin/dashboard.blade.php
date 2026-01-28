@@ -175,13 +175,18 @@
                                                         <div
                                                             class="calendar-day {{ !$isCurrentMonth ? 'calendar-day-other-month' : '' }} {{ $isToday ? 'calendar-day-today' : '' }}">
                                                             <div class="calendar-day-header">
-                                                                <span class="calendar-day-number">{{ $dayNumber }}</span>
+                                                                <span class="calendar-day-number">
+                                                                    <span
+                                                                        class="day-name">{{ $currentDay->format('D') . "," }}</span>
+                                                                    <span
+                                                                        class="day-date">{{ $currentDay->format('d') }}</span>
+                                                                </span>
+
                                                                 @if ($isCurrentMonth && $canCreateConsulting)
                                                                     <button type="button"
                                                                         data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
                                                                         class="btn btn-sm btn-link p-0 calendar-add-btn"
-                                                                        data-date="{{ $currentDay->format('Y-m-d') }}"
-                                                                        title="Add Consulting">
+                                                                        data-date="{{ $currentDay->format('Y-m-d') }}">
                                                                         <i class="bi bi-plus-circle text-success"></i>
                                                                     </button>
                                                                 @endif

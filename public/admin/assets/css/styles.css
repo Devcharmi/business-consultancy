@@ -31519,11 +31519,90 @@ Form label
   align-items: center;
   font-size: 0.75rem;
   word-break: break-word;
+  cursor: pointer;
+}
+
+.calendar-event:hover {
+  opacity: 0.9;
 }
 
 .calendar-event .calendar-event-text {
   margin-left: 0.25rem;
   line-height: 1.2;
+}
+
+.day-name {
+  display: none;
+}
+
+@media (max-width: 767px) {
+
+  .calendar-header {
+    display: none;
+    /* Hide Sun–Sat row */
+  }
+
+  .calendar-body {
+    display: block;
+  }
+
+  .calendar-week {
+    display: block;
+  }
+
+  .calendar-day {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    min-height: auto;
+    padding: 10px;
+    background-color: #fff;
+  }
+
+  .calendar-day-other-month {
+    display: none;
+    /* Hide prev/next month days */
+  }
+
+  .calendar-day-today {
+    border: 2px solid #0d6efd;
+    background-color: #f8fbff;
+  }
+
+  .calendar-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+  }
+
+  .day-name {
+    display: inline;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  .day-date {
+    font-weight: 700;
+  }
+
+  .calendar-day-number {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .calendar-day-content {
+    max-height: none;
+    overflow: visible;
+    gap: 6px;
+  }
+
+  .calendar-event {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
 }
 
 .task-statistics .rounded {
