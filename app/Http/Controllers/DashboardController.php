@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Consulting;
 use App\Models\ExpertiseManager;
+use App\Models\StatusManager;
+use App\Models\Task;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 class DashboardController extends Controller
 {
     // public function dashboard()
@@ -28,7 +32,7 @@ class DashboardController extends Controller
     //     return view('admin.dashboard');
     // }
 
-     public function dashboard(Request $request)
+    public function dashboard(Request $request)
     {
         $user = auth()->user();
 
@@ -43,6 +47,21 @@ class DashboardController extends Controller
 
         $expertises = ExpertiseManager::activeExpertise()
             ->get(['id', 'name', 'color_name']);
+
+        $statuses = StatusManager::whereIn('name', ['Done'])
+            ->pluck('id', 'name');
+
+        $DONE_STATUS_ID = $statuses['Done'] ?? null;
+
+        $expertiseTasks = Task::select(
+            'expertise_manager_id',
+            DB::raw('COUNT(*) as total_tasks'),
+            DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
+        )
+            ->groupBy('expertise_manager_id')
+            ->get();
+
+        $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
 
         $consultings = Consulting::with(['expertise_manager', 'client_objective.client'])
             ->whereMonth('consulting_datetime', $selectedMonth)
@@ -73,7 +92,8 @@ class DashboardController extends Controller
             'monthName',
             'prevMonth',
             'nextMonth',
-            'canCreateConsulting'
+            'canCreateConsulting',
+            'expertiseTaskCounts'
         ));
     }
 }

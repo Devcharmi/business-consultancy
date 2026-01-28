@@ -31535,3 +31535,33 @@ Form label
   text-align: center;
   word-break: break-word;
 }
+
+
+/* EXPERTISE CARDS  */
+
+.expertise-card {
+  background-color: var(--card-color);
+  border-radius: 14px;
+  padding: 18px 12px;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease;
+}
+
+.expertise-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.task-count {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.expertise-name {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.95;
+}

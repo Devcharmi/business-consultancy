@@ -4,8 +4,8 @@
         <div>
             <nav>
                 <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Today's Tasks</li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0);">Dashboard</a></li>
+                    <li class="breadcrumb-item" aria-current="page">Today's Tasks</li>
                 </ol>
             </nav>
             <h1 class="page-title fw-medium fs-18 mb-0">Dashboard</h1>
@@ -19,14 +19,14 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <ul class="nav nav-tabs card-header-tabs" role="tablist">
                         <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#other-tab" type="button"
-                                role="tab">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#task-statistics"
+                                type="button" role="tab">
                                 Task Statistics
                             </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#today-tasks-tab"
-                                type="button" role="tab">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#today-tasks-tab" type="button"
+                                role="tab">
                                 Today's Task and Followups
                             </button>
                         </li>
@@ -34,33 +34,45 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="today-tasks-tab" role="tabpanel">
+                        <div class="tab-pane fade show active" id="task-statistics" role="tabpanel">
 
                             <div class="row mb-4">
                                 <div class="col-xl-12">
                                     <div class="card custom-card">
                                         <div class="card-body p-0">
-                                            <div
+                                            {{-- <div
                                                 class="d-flex justify-content-between align-items-center p-3 border-bottom">
                                                 <h6 class="mb-0">Task Statistics</h6>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="p-3">
-                                                <div class="row g-3 text-center"> {{-- g-3 = proper gap --}}
+                                                <div class="row g-4 text-center">
                                                     @foreach ($expertises as $expertise)
+                                                        @php
+                                                            $stats = $expertiseTaskCounts[$expertise->id] ?? null;
+                                                            $done = $stats->done_tasks ?? 0;
+                                                            $total = $stats->total_tasks ?? 0;
+                                                        @endphp
+
                                                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                                            <div class="rounded d-flex align-items-center justify-content-center"
-                                                                style="
-                                                                background-color: {{ $expertise->color_name ?? '#6c757d' }};
-                                                                min-height: 80px;">
-                                                                <span class="fw-semibold text-light">
+                                                            <div class="expertise-card h-100"
+                                                                style="--card-color: {{ $expertise->color_name ?? '#6c757d' }};">
+
+                                                                {{-- Done / Total --}}
+                                                                <div class="task-count">
+                                                                    {{ $done }} / {{ $total }}
+                                                                </div>
+
+                                                                {{-- Expertise Name --}}
+                                                                <div class="expertise-name">
                                                                     {{ $expertise->name }}
-                                                                </span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
                                             </div>
+
 
                                         </div>
                                     </div>
@@ -166,6 +178,7 @@
                                                                 <span class="calendar-day-number">{{ $dayNumber }}</span>
                                                                 @if ($isCurrentMonth && $canCreateConsulting)
                                                                     <button type="button"
+                                                                        data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
                                                                         class="btn btn-sm btn-link p-0 calendar-add-btn"
                                                                         data-date="{{ $currentDay->format('Y-m-d') }}"
                                                                         title="Add Consulting">
@@ -209,7 +222,7 @@
                         </div>
 
                         <!-- Other Tab -->
-                        <div class="tab-pane fade" id="other-tab" role="tabpanel">
+                        <div class="tab-pane fade" id="today-tasks-tab" role="tabpanel">
                             <p>Other content goes here...</p>
                         </div>
                     </div>
@@ -220,105 +233,4 @@
 
     <!-- Modal Placeholder -->
     <div id="modal-container"></div>
-@endsection
-
-@section('script')
-    <script>
-        $(document).ready(function() {
-            $(document).on('click', '.calendar-add-btn', function() {
-                const date = $(this).data('date');
-                const url = '{{ route('consulting.show', ['consulting' => 'new']) }}';
-
-                $('#modal-container').html(
-                    '<div class="text-center p-5"><i class="bi bi-hourglass-split fs-1"></i><p>Loading...</p></div>'
-                    );
-
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        $('#modal-container').html(response.html);
-
-                        const datetimeInput = $('#consulting_datetime');
-                        if (datetimeInput.length) {
-                            datetimeInput.val(date + 'T09:00');
-                        }
-
-                        if ($.fn.select2) {
-                            $('.select2').select2({
-                                placeholder: "Select...",
-                                width: "100%",
-                                dropdownParent: $("#consultingForm"),
-                                allowClear: true
-                            });
-                        }
-
-                        $('#consultingForm').modal('show');
-                    },
-                    error: function() {
-                        alert('Error loading form');
-                    }
-                });
-            });
-
-            $(document).on('submit', '#consulting_form', function(e) {
-                e.preventDefault();
-
-                let form = $('#consulting_form');
-                let url = form.attr('action');
-                let method = form.find('input[name="_method"]').length ? 'PUT' : 'POST';
-
-                $("[id$='_error']").empty();
-
-                let formData = new FormData(form[0]);
-
-                formData.append('_token', '{{ csrf_token() }}');
-
-                $.ajax({
-                    url: url,
-                    type: method,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(result) {
-                        if (result.success) {
-                            $('#consultingForm').modal('hide');
-
-                            let message = result.message;
-                            if (result.task_id) {
-                                message += ' (Task ID: ' + result.task_id + ' created/updated)';
-                            }
-                            showToastr('success', message);
-
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 1500);
-                        }
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            $.each(errors, function(k, v) {
-                                var id_arr = k.split(".");
-                                $('#consulting_form').find('#' + id_arr[0] + '_error')
-                                    .text(v);
-                            });
-                            showToastr('error', 'Please fix the validation errors');
-                        } else {
-                            showToastr('error', xhr.responseJSON.message ||
-                                'Something went wrong!');
-                        }
-                    }
-                });
-
-                return false;
-            });
-
-            $(document).on('hidden.bs.modal', '#consultingForm', function() {
-                $("[id$='_error']").empty();
-            });
-        });
-    </script>
 @endsection
