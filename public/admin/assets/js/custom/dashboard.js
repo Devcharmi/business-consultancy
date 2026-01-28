@@ -3,7 +3,7 @@ $(document).ready(function () {
         const date = $(this).data("date");
         const url = $(this).data("url");
 
-        $("#modal-container").html(
+        $("#modal_show_html").html(
             '<div class="text-center p-5"><i class="bi bi-hourglass-split fs-1"></i><p>Loading...</p></div>',
         );
 
@@ -12,7 +12,7 @@ $(document).ready(function () {
             method: "GET",
             dataType: "json",
             success: function (response) {
-                $("#modal-container").html(response.html);
+                $("#modal_show_html").html(response.html);
 
                 const datetimeInput = $("#consulting_datetime");
                 if (datetimeInput.length) {

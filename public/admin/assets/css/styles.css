@@ -31432,192 +31432,7 @@ Form label
   font-size: 0.7rem;
 }
 
-.calendar-container {
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.calendar-header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background-color: #f8f9fa;
-  text-align: center;
-  font-weight: 600;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.calendar-day-header {
-  padding: 0.5rem 0;
-}
-
-.calendar-body {
-  display: grid;
-  grid-template-rows: repeat(6, 1fr);
-}
-
-.calendar-week {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-}
-
-.calendar-day {
-  border-right: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-  min-height: 100px;
-  padding: 0.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  font-size: 0.85rem;
-}
-
-.calendar-day:last-child {
-  border-right: none;
-}
-
-.calendar-day-other-month {
-  background-color: #f8f9fa;
-  color: #6c757d;
-}
-
-.calendar-day-today {
-  border: 2px solid #0d6efd;
-  position: relative;
-}
-
-.calendar-day-number {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  display: inline-block;
-}
-
-.calendar-add-btn {
-  font-size: 0.9rem;
-  line-height: 1;
-  padding: 0;
-  margin-left: 0.25rem;
-  vertical-align: middle;
-}
-
-.calendar-day-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  /* Space between consulting events */
-  margin-top: 0.25rem;
-  overflow-y: auto;
-  max-height: 75px;
-}
-
-.calendar-event {
-  border-radius: 0.25rem;
-  color: #fff;
-  padding: 0.2rem 0.35rem;
-  display: flex;
-  align-items: center;
-  font-size: 0.75rem;
-  word-break: break-word;
-  cursor: pointer;
-}
-
-.calendar-event:hover {
-  opacity: 0.9;
-}
-
-.calendar-event .calendar-event-text {
-  margin-left: 0.25rem;
-  line-height: 1.2;
-}
-
-.day-name {
-  display: none;
-}
-
-@media (max-width: 767px) {
-
-  .calendar-header {
-    display: none;
-    /* Hide Sun–Sat row */
-  }
-
-  .calendar-body {
-    display: block;
-  }
-
-  .calendar-week {
-    display: block;
-  }
-
-  .calendar-day {
-    border: 1px solid #dee2e6;
-    border-radius: 10px;
-    margin-bottom: 12px;
-    min-height: auto;
-    padding: 10px;
-    background-color: #fff;
-  }
-
-  .calendar-day-other-month {
-    display: none;
-    /* Hide prev/next month days */
-  }
-
-  .calendar-day-today {
-    border: 2px solid #0d6efd;
-    background-color: #f8fbff;
-  }
-
-  .calendar-day-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-  }
-
-  .day-name {
-    display: inline;
-    font-weight: 600;
-    margin-right: 4px;
-  }
-
-  .day-date {
-    font-weight: 700;
-  }
-
-  .calendar-day-number {
-    font-size: 1rem;
-    font-weight: 700;
-  }
-
-  .calendar-day-content {
-    max-height: none;
-    overflow: visible;
-    gap: 6px;
-  }
-
-  .calendar-event {
-    font-size: 0.8rem;
-    padding: 6px 8px;
-    border-radius: 6px;
-  }
-}
-
-.task-statistics .rounded {
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  text-align: center;
-  word-break: break-word;
-}
-
-
-/* EXPERTISE CARDS  */
-
+/* DASHBOARD EXPERTISE CARDS  */
 .expertise-card {
   background-color: var(--card-color);
   border-radius: 14px;
@@ -31643,4 +31458,79 @@ Form label
   font-size: 0.95rem;
   font-weight: 500;
   opacity: 0.95;
+}
+
+
+.task-statistics .rounded {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  text-align: center;
+  word-break: break-word;
+}
+
+/* //new calendar css */
+
+.calendar-container {
+  margin-top: 10px;
+}
+
+.calendar-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.calendar-week {
+  display: contents;
+}
+
+.calendar-day {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  padding: 12px;
+  min-height: 160px;
+}
+
+.calendar-day-other-month {
+  display: none;
+}
+
+.calendar-day-today {
+  border: 2px solid #0d6efd;
+  background-color: #f8fbff;
+}
+
+.calendar-day-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.day-name {
+  color: #6c757d;
+}
+
+.calendar-day-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calendar-event {
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .calendar-body {
+    grid-template-columns: 1fr;
+  }
 }

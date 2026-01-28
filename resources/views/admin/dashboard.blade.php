@@ -1,90 +1,77 @@
 @extends('admin.layouts.app')
+
 @section('content')
-    <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2">
+    <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2 mb-3">
         <div>
             <nav>
                 <ol class="breadcrumb mb-1">
                     <li class="breadcrumb-item active"><a href="javascript:void(0);">Dashboard</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Today's Tasks</li>
+                    <li class="breadcrumb-item">Today's Tasks</li>
                 </ol>
             </nav>
             <h1 class="page-title fw-medium fs-18 mb-0">Dashboard</h1>
         </div>
     </div>
 
-
     <div class="row">
-        <div class="col-xl-12">
+        <div class="col-12">
             <div class="card custom-card">
+
+                {{-- Tabs --}}
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <ul class="nav nav-tabs card-header-tabs">
                         <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#task-statistics"
-                                type="button" role="tab">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#task-statistics">
                                 Task Statistics
                             </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#today-tasks-tab" type="button"
-                                role="tab">
-                                Today's Task and Followups
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#today-tasks-tab">
+                                Today's Task & Followups
                             </button>
                         </li>
                     </ul>
                 </div>
+
                 <div class="card-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="task-statistics" role="tabpanel">
 
+                        {{-- ================= TAB 1 ================= --}}
+                        <div class="tab-pane fade show active" id="task-statistics">
+
+                            {{-- Expertise Cards --}}
                             <div class="row mb-4">
-                                <div class="col-xl-12">
+                                <div class="col-12">
                                     <div class="card custom-card">
-                                        <div class="card-body p-0">
-                                            {{-- <div
-                                                class="d-flex justify-content-between align-items-center p-3 border-bottom">
-                                                <h6 class="mb-0">Task Statistics</h6>
-                                            </div> --}}
+                                        <div class="card-body">
+                                            <div class="row g-4 text-center">
+                                                @foreach ($expertises as $expertise)
+                                                    @php
+                                                        $stats = $expertiseTaskCounts[$expertise->id] ?? null;
+                                                        $done = $stats->done_tasks ?? 0;
+                                                        $total = $stats->total_tasks ?? 0;
+                                                    @endphp
 
-                                            <div class="p-3">
-                                                <div class="row g-4 text-center">
-                                                    @foreach ($expertises as $expertise)
-                                                        @php
-                                                            $stats = $expertiseTaskCounts[$expertise->id] ?? null;
-                                                            $done = $stats->done_tasks ?? 0;
-                                                            $total = $stats->total_tasks ?? 0;
-                                                        @endphp
-
-                                                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                                            <div class="expertise-card h-100"
-                                                                style="--card-color: {{ $expertise->color_name ?? '#6c757d' }};">
-
-                                                                {{-- Done / Total --}}
-                                                                <div class="task-count">
-                                                                    {{ $done }} / {{ $total }}
-                                                                </div>
-
-                                                                {{-- Expertise Name --}}
-                                                                <div class="expertise-name">
-                                                                    {{ $expertise->name }}
-                                                                </div>
-                                                            </div>
+                                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                                        <div class="expertise-card h-100"
+                                                            style="--card-color: {{ $expertise->color_name ?? '#6c757d' }};">
+                                                            <div class="task-count">{{ $done }} /
+                                                                {{ $total }}</div>
+                                                            <div class="expertise-name">{{ $expertise->name }}</div>
                                                         </div>
-                                                    @endforeach
-                                                </div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            {{-- Month Navigation --}}
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="mb-0">{{ $monthName }}</h5>
-                                        </div>
+                                        <h5 class="mb-0">{{ $monthName }}</h5>
                                         <div class="d-flex gap-2">
                                             <a href="{{ route('dashboard', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
                                                 class="btn btn-sm btn-outline-secondary">
@@ -99,143 +86,114 @@
                                 </div>
                             </div>
 
-                            <!-- Calendar -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="calendar-container">
-                                        <div class="calendar-header">
-                                            <div class="calendar-day-header">Sun</div>
-                                            <div class="calendar-day-header">Mon</div>
-                                            <div class="calendar-day-header">Tue</div>
-                                            <div class="calendar-day-header">Wed</div>
-                                            <div class="calendar-day-header">Thu</div>
-                                            <div class="calendar-day-header">Fri</div>
-                                            <div class="calendar-day-header">Sat</div>
-                                        </div>
+                            {{-- ================= CALENDAR ================= --}}
+                            <div class="calendar-container">
+                                <div class="calendar-body">
+                                    @php
+                                        $firstDay = Carbon\Carbon::createFromDate($selectedYear, $selectedMonth, 1);
+                                        $daysInMonth = $firstDay->daysInMonth;
+                                        $startDay = $firstDay->dayOfWeek;
+                                        $prevMonth = $firstDay->copy()->subMonth();
+                                        $prevMonthDays = $prevMonth->daysInMonth;
+                                        $dayCount = 1;
+                                        $nextMonthDay = 1;
+                                    @endphp
 
-                                        <div class="calendar-body">
-                                            @php
-                                                $firstDay = Carbon\Carbon::createFromDate(
-                                                    $selectedYear,
-                                                    $selectedMonth,
-                                                    1,
-                                                );
-                                                $daysInMonth = $firstDay->daysInMonth;
-                                                $startDay = $firstDay->dayOfWeek;
+                                    @for ($i = 0; $i < 6; $i++)
+                                        <div class="calendar-week">
+                                            @for ($j = 0; $j < 7; $j++)
+                                                @php
+                                                    $isCurrentMonth = false;
+                                                    $isToday = false;
 
-                                                $prevMonth = $firstDay->copy()->subMonth();
-                                                $prevMonthDays = $prevMonth->daysInMonth;
+                                                    if ($i === 0 && $j < $startDay) {
+                                                        $dayNumber = $prevMonthDays - ($startDay - $j - 1);
+                                                        $currentDay = Carbon\Carbon::createFromDate(
+                                                            $prevMonth->year,
+                                                            $prevMonth->month,
+                                                            $dayNumber,
+                                                        );
+                                                    } elseif ($dayCount <= $daysInMonth) {
+                                                        $dayNumber = $dayCount;
+                                                        $isCurrentMonth = true;
+                                                        $currentDay = Carbon\Carbon::createFromDate(
+                                                            $selectedYear,
+                                                            $selectedMonth,
+                                                            $dayNumber,
+                                                        );
+                                                        $isToday = $currentDay->isToday();
+                                                        $dayCount++;
+                                                    } else {
+                                                        $dayNumber = $nextMonthDay++;
+                                                        $nextMonth = $firstDay->copy()->addMonth();
+                                                        $currentDay = Carbon\Carbon::createFromDate(
+                                                            $nextMonth->year,
+                                                            $nextMonth->month,
+                                                            $dayNumber,
+                                                        );
+                                                    }
 
-                                                $dayCount = 1;
-                                                $nextMonthDay = 1;
-                                            @endphp
+                                                    $dateKey = $currentDay->format('Y-m-d');
+                                                    $dateConsultings = $consultingsByDate[$dateKey] ?? [];
+                                                @endphp
 
-                                            @for ($i = 0; $i < 6; $i++)
-                                                {{-- 6 weeks max --}}
-                                                <div class="calendar-week">
-                                                    @for ($j = 0; $j < 7; $j++)
-                                                        @php
-                                                            $dayNumber = null;
-                                                            $isCurrentMonth = false;
-                                                            $isToday = false;
-                                                            $currentDay = null;
+                                                <div
+                                                    class="calendar-day {{ !$isCurrentMonth ? 'calendar-day-other-month' : '' }} {{ $isToday ? 'calendar-day-today' : '' }}">
+                                                    <div class="calendar-day-header">
+                                                        <span>
+                                                            <span class="day-name">{{ $currentDay->format('D') }},</span>
+                                                            <span class="day-date">{{ $currentDay->format('d') }}</span>
+                                                        </span>
 
-                                                            if ($i === 0 && $j < $startDay) {
-                                                                $dayNumber = $prevMonthDays - ($startDay - $j - 1);
-                                                                $currentDay = Carbon\Carbon::createFromDate(
-                                                                    $prevMonth->year,
-                                                                    $prevMonth->month,
-                                                                    $dayNumber,
+                                                        @if ($isCurrentMonth && $canCreateConsulting)
+                                                            <button class="btn btn-sm btn-link p-0 calendar-add-btn"
+                                                                data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
+                                                                data-date="{{ $currentDay->format('Y-m-d') }}">
+                                                                <i class="bi bi-plus-circle text-success"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+
+                                                    <div class="calendar-day-content">
+                                                        @foreach ($dateConsultings as $consulting)
+                                                            @php
+                                                                $expertise = $consulting->expertise_manager;
+                                                                $initial = strtoupper(
+                                                                    substr($expertise->name ?? 'N', 0, 1),
                                                                 );
-                                                            } elseif ($dayCount <= $daysInMonth) {
-                                                                $dayNumber = $dayCount;
-                                                                $isCurrentMonth = true;
-                                                                $currentDay = Carbon\Carbon::createFromDate(
-                                                                    $selectedYear,
-                                                                    $selectedMonth,
-                                                                    $dayNumber,
-                                                                );
-                                                                $isToday = $currentDay->isToday();
-                                                                $dayCount++;
-                                                            } else {
-                                                                $dayNumber = $nextMonthDay;
-                                                                $nextMonth = $firstDay->copy()->addMonth();
-                                                                $currentDay = Carbon\Carbon::createFromDate(
-                                                                    $nextMonth->year,
-                                                                    $nextMonth->month,
-                                                                    $dayNumber,
-                                                                );
-                                                                $nextMonthDay++;
-                                                            }
-
-                                                            $dateKey = $currentDay->format('Y-m-d');
-                                                            $dateConsultings = $consultingsByDate[$dateKey] ?? [];
-                                                        @endphp
-
-                                                        <div
-                                                            class="calendar-day {{ !$isCurrentMonth ? 'calendar-day-other-month' : '' }} {{ $isToday ? 'calendar-day-today' : '' }}">
-                                                            <div class="calendar-day-header">
-                                                                <span class="calendar-day-number">
-                                                                    <span
-                                                                        class="day-name">{{ $currentDay->format('D') . "," }}</span>
-                                                                    <span
-                                                                        class="day-date">{{ $currentDay->format('d') }}</span>
-                                                                </span>
-
-                                                                @if ($isCurrentMonth && $canCreateConsulting)
-                                                                    <button type="button"
-                                                                        data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
-                                                                        class="btn btn-sm btn-link p-0 calendar-add-btn"
-                                                                        data-date="{{ $currentDay->format('Y-m-d') }}">
-                                                                        <i class="bi bi-plus-circle text-success"></i>
-                                                                    </button>
-                                                                @endif
+                                                                $color = $expertise->color_name ?? '#6c757d';
+                                                            @endphp
+                                                            <div class="calendar-event"
+                                                                style="background-color: {{ $color }}">
+                                                                <small>
+                                                                    ({{ $initial }})
+                                                                    {{ $consulting->client_objective->client->client_name ?? 'N/A' }}<br>
+                                                                    {{ $consulting->consulting_datetime ? \Carbon\Carbon::parse($consulting->consulting_datetime)->format('h:i A') : '-' }}
+                                                                </small>
                                                             </div>
-
-                                                            <div class="calendar-day-content">
-                                                                @foreach ($dateConsultings as $consulting)
-                                                                    @php
-                                                                        $expertise = $consulting->expertise_manager;
-                                                                        $expertiseInitial = strtoupper(
-                                                                            substr($expertise->name ?? 'N', 0, 1),
-                                                                        );
-                                                                        $expertiseColor =
-                                                                            $expertise->color_name ?? '#6c757d';
-                                                                    @endphp
-                                                                    <div class="calendar-event mb-1">
-                                                                        <div class="d-flex align-items-center gap-1"
-                                                                            style="background-color: {{ $expertiseColor }}">
-                                                                            <span class="calendar-event-badge"></span>
-                                                                            <small class="calendar-event-text">
-                                                                                ({{ $expertiseInitial }})
-                                                                                {{ $consulting->client_objective->client->client_name ?? 'N/A' }}
-                                                                                </br>
-                                                                                {{ $consulting->consulting_datetime ? \Carbon\Carbon::parse($consulting->consulting_datetime)->format('h:i A') : '-' }}
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        </div>
-                                                    @endfor
+                                                        @endforeach
+                                                    </div>
                                                 </div>
                                             @endfor
                                         </div>
-                                    </div>
+                                    @endfor
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Other Tab -->
-                        <div class="tab-pane fade" id="today-tasks-tab" role="tabpanel">
-                            <p>Other content goes here...</p>
+                        {{-- ================= TAB 2 ================= --}}
+                        <div class="tab-pane fade" id="today-tasks-tab">
+                            <p>Other content goes here…</p>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Placeholder -->
-    <div id="modal-container"></div>
+@endsection
+
+@section('script')
+    <script src="{{ asset('admin/assets/js/custom/dashboard.js') }}"></script>
 @endsection
