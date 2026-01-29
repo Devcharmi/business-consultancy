@@ -12,10 +12,10 @@ class StatusManagerController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:status manager.allow')->only(['index', 'show']);
-        $this->middleware('permission:status manager.create')->only(['store']);
-        $this->middleware('permission:status manager.edit')->only(['update']);
-        $this->middleware('permission:status manager.delete')->only(['destroy']);
+        $this->middleware('permission:status-manager.allow')->only(['index', 'show']);
+        $this->middleware('permission:status-manager.create')->only(['store']);
+        $this->middleware('permission:status-manager.edit')->only(['update']);
+        $this->middleware('permission:status-manager.delete')->only(['destroy']);
     }
 
     /**

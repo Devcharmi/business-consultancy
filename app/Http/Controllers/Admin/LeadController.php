@@ -17,6 +17,14 @@ use Illuminate\Validation\Rule;
 
 class LeadController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:leads.allow')->only(['index', 'show']);
+        $this->middleware('permission:leads.create')->only(['store']);
+        $this->middleware('permission:leads.edit')->only(['update']);
+        $this->middleware('permission:leads.delete')->only(['destroy']);
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {

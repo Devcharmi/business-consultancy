@@ -12,10 +12,10 @@ class ObjectiveManagerController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:objective manager.allow')->only(['index', 'show']);
-        $this->middleware('permission:objective manager.create')->only(['store']);
-        $this->middleware('permission:objective manager.edit')->only(['update']);
-        $this->middleware('permission:objective manager.delete')->only(['destroy']);
+        $this->middleware('permission:objective.allow')->only(['index', 'show']);
+        $this->middleware('permission:objective.create')->only(['store']);
+        $this->middleware('permission:objective.edit')->only(['update']);
+        $this->middleware('permission:objective.delete')->only(['destroy']);
     }
 
     /**

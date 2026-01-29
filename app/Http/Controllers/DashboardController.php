@@ -39,6 +39,7 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect()->route('login');
         }
+        $userExpertiseIds = $user->expertiseManagers()->pluck('expertise_managers.id');
 
         $selectedMonth = $request->input('month', date('m'));
         $selectedYear = $request->input('year', date('Y'));
@@ -63,9 +64,24 @@ class DashboardController extends Controller
 
         $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
 
-        $consultings = Consulting::with(['expertise_manager', 'client_objective.client'])
+        // $consultings = Consulting::with(['expertise_manager', 'client_objective.client'])
+        //     // ->whereIn('expertise_manager_id', $userExpertiseIds)
+        //     ->whereMonth('consulting_datetime', $selectedMonth)
+        //     ->whereYear('consulting_datetime', $selectedYear)
+        //     ->orderBy('consulting_datetime')
+        //     ->get();
+        $consultingQuery = Consulting::with(['expertise_manager', 'client_objective.client'])
             ->whereMonth('consulting_datetime', $selectedMonth)
-            ->whereYear('consulting_datetime', $selectedYear)
+            ->whereYear('consulting_datetime', $selectedYear);
+
+        if (!$user->hasRole('Super Admin')) {
+            $consultingQuery->whereIn(
+                'expertise_manager_id',
+                $user->expertiseManagers()->pluck('expertise_managers.id')
+            );
+        }
+
+        $consultings = $consultingQuery
             ->orderBy('consulting_datetime')
             ->get();
 

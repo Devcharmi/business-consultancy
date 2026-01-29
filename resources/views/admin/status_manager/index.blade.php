@@ -22,7 +22,7 @@
                     </div>
                     {{-- @if (canAccess('status manager.create')) --}}
                     <a href="#" data-url="{{ route('status-manager.show', ['status_manager' => 'new']) }}"
-                        class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('status manager.create') ? '' : 'disabled' }}">+
+                        class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('status-manager.create') ? '' : 'disabled' }}">+
                         Add Status</a>
                     {{-- @endif --}}
                 </div>
@@ -53,8 +53,8 @@
         var csrf_token = '{{ csrf_token() }}';
         var edit_path = "{{ route('status-manager.show', ['status_manager' => ':status_manager']) }}";
         var delete_path = "{{ route('status-manager.destroy', ['status_manager' => ':status_manager']) }}";
-        window.canEditTask = @json(canAccess('status manager.edit'));
-        window.canDeleteTask = @json(canAccess('status manager.delete'));
+        window.canEditTask = @json(canAccess('status-manager.edit'));
+        window.canDeleteTask = @json(canAccess('status-manager.delete'));
     </script>
     <script src="{{ asset('admin/assets/js/custom/status_manager.js') }}"></script>
 @endsection
