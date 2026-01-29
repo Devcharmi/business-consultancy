@@ -42,28 +42,28 @@
                             {{-- Expertise Cards --}}
                             <div class="row mb-4">
                                 <div class="col-12">
-                                    <div class="card custom-card">
-                                        <div class="card-body">
-                                            <div class="row g-4 text-center">
-                                                @foreach ($expertises as $expertise)
-                                                    @php
-                                                        $stats = $expertiseTaskCounts[$expertise->id] ?? null;
-                                                        $done = $stats->done_tasks ?? 0;
-                                                        $total = $stats->total_tasks ?? 0;
-                                                    @endphp
+                                    {{-- <div class="card custom-card">
+                                        <div class="card-body"> --}}
+                                    <div class="row g-4 text-center">
+                                        @foreach ($expertises as $expertise)
+                                            @php
+                                                $stats = $expertiseTaskCounts[$expertise->id] ?? null;
+                                                $done = $stats->done_tasks ?? 0;
+                                                $total = $stats->total_tasks ?? 0;
+                                            @endphp
 
-                                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div class="expertise-card h-100"
-                                                            style="--card-color: {{ $expertise->color_name ?? '#6c757d' }};">
-                                                            <div class="task-count">{{ $done }} /
-                                                                {{ $total }}</div>
-                                                            <div class="expertise-name">{{ $expertise->name }}</div>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
+                                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                                <div class="expertise-card h-100"
+                                                    style="--card-color: {{ $expertise->color_name ?? '#6c757d' }};">
+                                                    <div class="task-count">{{ $done }} /
+                                                        {{ $total }}</div>
+                                                    <div class="expertise-name">{{ $expertise->name }}</div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endforeach
                                     </div>
+                                    {{-- </div>
+                                    </div> --}}
                                 </div>
                             </div>
 

@@ -188,3 +188,138 @@ $(document).ready(function () {
         });
     });
 });
+
+let taskModalTable = null;
+
+function loadTaskModalTable(clientObjectiveId) {
+    if (taskModalTable) {
+        taskModalTable.destroy();
+        $("#task_modal_table tbody").empty();
+    }
+
+    taskModalTable = $("#task_modal_table").DataTable({
+        order: [[0, "desc"]],
+        autoWidth: false,
+        processing: true,
+        serverSide: true,
+        serverMethod: "GET",
+        pageLength: 25,
+        lengthMenu: [
+            [25, 100, 200, 250],
+            [25, 100, 200, 250],
+        ],
+
+        ajax: {
+            url: $("#task_modal_table").attr("data-url"),
+            data: function (d) {
+                d.client_objective_id = clientObjectiveId;
+            },
+        },
+
+        columns: [
+            // 1️⃣ Sr No
+            {
+                data: "id",
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                },
+            },
+
+            // 2️⃣ Expertise
+            {
+                data: "expertise_manager",
+                render: function (data) {
+                    return data ? data.name : "-";
+                },
+            },
+
+            // 3️⃣ Due Date
+            {
+                data: "task_due_date",
+                render: function (data) {
+                    return data ? moment(data).format("DD-MM-YYYY HH:mm") : "-";
+                },
+            },
+
+            // 4️⃣ Status
+            {
+                data: "status_manager",
+                render: function (v, t, o) {
+                    if (o.status_manager) {
+                        let name = o.status_manager.name;
+                        let color = o.status_manager.color_name || "gray";
+
+                        return `
+                            <span style="
+                                background:${color};
+                                color:#fff;
+                                padding:2px 6px;
+                                border-radius:4px;
+                                font-size:11px;
+                            ">
+                                ${name}
+                            </span>`;
+                    }
+                    return "N/A";
+                },
+            },
+
+            // 5️⃣ Action
+            {
+                data: "id",
+                orderable: false,
+                searchable: false,
+                className: "text-center",
+                render: function (id) {
+                    let pdf_path_set = pdf_path.replace(":task", id);
+                    let edit_path_set = edit_path.replace(":task", id);
+                    let delete_path_set = delete_path.replace(":task", id);
+
+                    let editDisabled = window.canEditTask
+                        ? ""
+                        : "style='pointer-events:none;opacity:0.4;'";
+
+                    let deleteDisabled = window.canDeleteTask
+                        ? ""
+                        : "style='pointer-events:none;opacity:0.4;'";
+
+                    return `
+                        <a href="${pdf_path_set}" target="_blank" title="PDF">
+                            <i class="fas fa-file-pdf p-1 text-secondary"></i>
+                        </a>
+
+                        <a href="${edit_path_set}"
+                           class="open-modal"
+                           title="Edit"
+                           ${editDisabled}>
+                            <i class="fas fa-pen p-1 text-primary"></i>
+                        </a>
+
+                        <a href="javascript:void(0);"
+                           class="delete-data"
+                           data-url="${delete_path_set}"
+                           title="Delete"
+                           ${deleteDisabled}>
+                            <i class="fas fa-trash p-1 text-danger"></i>
+                        </a>
+                    `;
+                },
+            },
+        ],
+
+        language: {
+            searchPlaceholder: "Search...",
+            sSearch: "",
+            lengthMenu: "_MENU_&nbsp; items/page",
+        },
+    });
+}
+
+$(document).on("click", ".open-task-modal", function () {
+    let clientObjectiveId = $(this).data("client-objective-id");
+
+    // set modal title earlier (already implemented by you)
+    loadTaskModalTable(clientObjectiveId);
+
+    $("#taskModal").modal("show");
+});
