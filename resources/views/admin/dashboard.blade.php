@@ -146,9 +146,10 @@
                                                         </span>
 
                                                         @if ($isCurrentMonth && $canCreateConsulting)
-                                                            <button class="btn btn-sm btn-link p-0 calendar-add-btn"
+                                                            <button class="btn btn-link p-0 calendar-add-btn"
                                                                 data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
-                                                                data-date="{{ $currentDay->format('Y-m-d') }}">
+                                                                data-date="{{ $currentDay->format('Y-m-d') }}"
+                                                                title="Add Consulting">
                                                                 <i class="bi bi-plus-circle text-success"></i>
                                                             </button>
                                                         @endif
@@ -163,13 +164,57 @@
                                                                 );
                                                                 $color = $expertise->color_name ?? '#6c757d';
                                                             @endphp
-                                                            <div class="calendar-event"
+                                                            {{-- <div class="calendar-event"
                                                                 style="background-color: {{ $color }}">
                                                                 <small>
                                                                     ({{ $initial }})
                                                                     {{ $consulting->client_objective->client->client_name ?? 'N/A' }}<br>
                                                                     {{ $consulting->consulting_datetime ? \Carbon\Carbon::parse($consulting->consulting_datetime)->format('h:i A') : '-' }}
                                                                 </small>
+                                                            </div> --}}
+                                                            <div class="calendar-event d-flex justify-content-between align-items-start"
+                                                                style="background-color: {{ $color }}">
+
+                                                                <small>
+                                                                    ({{ $initial }})
+                                                                    {{ \Carbon\Carbon::parse($consulting->consulting_datetime)->format('h:i A') }}
+                                                                    -
+                                                                    {{ $consulting->client_objective->client->client_name ?? 'N/A' }}
+                                                                </small>
+                                                                <div class="d-inline-flex align-items-center"
+                                                                    style="gap:2px;">
+
+                                                                    {{-- Related Tasks --}}
+                                                                    <button
+                                                                        class="btn btn-light p-0 open-task-modal d-inline-flex align-items-center justify-content-center"
+                                                                        data-client-objective-id="{{ $consulting->client_objective_id }}"
+                                                                        title="View Related Tasks"
+                                                                        style="width:16px; height:16px;">
+                                                                        <i class="bi bi-list-task"
+                                                                            style="font-size:11px; line-height:1;"></i>
+                                                                    </button>
+
+                                                                    {{-- Edit --}}
+                                                                    <button
+                                                                        class="btn btn-light p-0 calendar-edit-btn d-inline-flex align-items-center justify-content-center"
+                                                                        data-url="{{ route('consulting.show', $consulting->id) }}"
+                                                                        title="Edit Consulting"
+                                                                        style="width:16px; height:16px;">
+                                                                        <i class="bi bi-pencil"
+                                                                            style="font-size:11px; line-height:1;"></i>
+                                                                    </button>
+
+                                                                    {{-- Delete --}}
+                                                                    <button
+                                                                        class="btn btn-light p-0 calendar-delete-btn d-inline-flex align-items-center justify-content-center"
+                                                                        data-url="{{ route('consulting.destroy', $consulting->id) }}"
+                                                                        title="Delete Consulting"
+                                                                        style="width:16px; height:16px;">
+                                                                        <i class="bi bi-trash text-danger"
+                                                                            style="font-size:11px; line-height:1;"></i>
+                                                                    </button>
+                                                                </div>
+
                                                             </div>
                                                         @endforeach
                                                     </div>
