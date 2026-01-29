@@ -24,18 +24,21 @@
                         class="btn btn-success {{ canAccess('client.create') ? '' : 'disabled' }}">+ Add Client</a>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-list" id="client_table" data-url="{{ route('clients.index') }}">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-list" id="client_table"
+                            data-url="{{ route('clients.index') }}">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
