@@ -50,7 +50,7 @@
                 <div class="accordion-body">
 
                     {{-- ================= Content (1 per day) ================= --}}
-                    <h6 class="mt-3 mb-2 text-success fw-bold">📝 Content</h6>
+                    <h6 class="mt-3 mb-2 text-success fw-bold">📝 Meeting Details</h6>
                     <textarea class="form-control mb-3" name="content[{{ $date }}]"
                         id="content_{{ \Illuminate\Support\Str::slug($date) }}">
                         {{ optional($contentByDate->get($date))->task_content }}

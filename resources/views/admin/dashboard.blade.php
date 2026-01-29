@@ -195,5 +195,8 @@
 @endsection
 
 @section('script')
+    <script>
+        var csrf_token = "{{ csrf_token() }}";
+    </script>
     <script src="{{ asset('admin/assets/js/custom/dashboard.js') }}"></script>
 @endsection

@@ -47,7 +47,7 @@ $(document).ready(function () {
 
         let formData = new FormData(form[0]);
 
-        formData.append("_token", "{{ csrf_token() }}");
+        formData.append("_token", csrf_token);
 
         $.ajax({
             url: url,

@@ -509,6 +509,9 @@ class TaskController extends Controller
             'deliverables' => function ($q) {
                 $q->orderBy('deliverable_date', 'desc');
             },
+            'content' => function ($q) {
+                $q->orderBy('content_date', 'desc');
+            },
         ])->findOrFail($id);
 
         // Group commitments date-wise
@@ -525,7 +528,7 @@ class TaskController extends Controller
         $fileName = "task-{$safeClient}-{$date}-{$task->id}.pdf";
         // ------------------------------------------------
 
-        $pdf = Pdf::loadView('admin.pdf.task', compact('task', 'commitmentsByDate'))
+        $pdf = Pdf::loadView('admin.pdf.task-sectionwise', compact('task', 'commitmentsByDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream($fileName);
