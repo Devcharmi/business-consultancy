@@ -411,9 +411,9 @@ $(document).on("click", ".open-meeting-modal", function (e) {
     loadTaskModalTable(currentClientObjectiveId);
 });
 
-$(document).on("click", ".calendar-dot", function (e) {
-    e.stopPropagation();
-});
+// $(document).on("click", ".calendar-dot", function (e) {
+//     e.stopPropagation();
+// });
 
 $(document).on("click", ".calendar-day", function () {
     const date = $(this).data("date");
