@@ -528,7 +528,7 @@ class TaskController extends Controller
         $fileName = "task-{$safeClient}-{$date}-{$task->id}.pdf";
         // ------------------------------------------------
 
-        $pdf = Pdf::loadView('admin.pdf.task-sectionwise', compact('task', 'commitmentsByDate'))
+        $pdf = Pdf::loadView('admin.pdf.task-content', compact('task', 'commitmentsByDate'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->stream($fileName);

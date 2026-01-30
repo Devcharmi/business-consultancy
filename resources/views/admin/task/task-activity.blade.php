@@ -1,7 +1,7 @@
-{{-- ================= Task Timeline Heading + Export ================= --}}
+{{-- ================= Meeting Timeline Heading + Export ================= --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="text-primary fw-bold mb-0">
-        📅 Task Timeline
+        📅 Meeting Timeline
     </h3>
     @if (!empty($taskData))
         <a href="{{ route('task.pdf', ['task' => $taskData->id]) }}" target="_blank"

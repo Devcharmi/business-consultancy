@@ -25,7 +25,7 @@
                         <div class="row">
 
                             {{-- Objective --}}
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <label>Objective</label><span class="text-danger">*</span>
                                 <select name="objective_manager_id" class="form-control select2">
                                     <option value="">Select Objective</option>
@@ -37,7 +37,7 @@
                                     @endforeach
                                 </select>
                                 <small class="text-danger" id="objective_manager_id_error"></small>
-                            </div>
+                            </div> --}}
 
                             {{-- Client --}}
                             <div class="col-md-6 mb-3">

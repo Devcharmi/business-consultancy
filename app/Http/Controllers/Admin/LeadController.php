@@ -36,7 +36,6 @@ class LeadController extends Controller
                 'name',
                 'email',
                 'phone',
-                'objective_manager_id',
                 'user_id',
                 'status',
                 'created_at',
@@ -49,7 +48,6 @@ class LeadController extends Controller
             //     ->select($columns);
 
             $tableData = Lead::with([
-                'objective_manager:id,name',
                 'user:id,name',
                 'followUps'
             ])
@@ -102,16 +100,12 @@ class LeadController extends Controller
     {
         // ✅ SINGLE validation block
         $validated = $request->validate([
-            'objective_manager_id' => 'required|exists:objective_managers,id',
-
             'client_id' => 'nullable|exists:clients,id',
-
             'name'  => 'required|string|max:255',
-
             'phone' => [
                 'required',
                 'string',
-                'max:20',
+                'max:10',
 
                 // ✅ Only check uniqueness when client NOT selected
                 Rule::unique('clients', 'phone')
@@ -135,7 +129,6 @@ class LeadController extends Controller
         ]);
 
         try {
-
             $validated['user_id'] = Auth::id();
 
             $lead = Lead::create($validated);

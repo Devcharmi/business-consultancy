@@ -315,7 +315,7 @@ function loadTaskModalTable(clientObjectiveId) {
     });
 }
 
-$(document).on("click", ".open-task-modal", function () {
+$(document).on("click", ".open-meeting-modal", function () {
     let clientObjectiveId = $(this).data("client-objective-id");
 
     // set modal title earlier (already implemented by you)

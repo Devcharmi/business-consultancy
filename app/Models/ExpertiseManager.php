@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,6 +27,18 @@ class ExpertiseManager extends Model
             User::class,
             'users_expertise_manager'
         )->withPivot('is_primary')->withTimestamps();
+    }
+
+    public function scopeAccessibleBy(Builder $query, $user)
+    {
+        if (!$user || $user->hasRole('Super Admin')) {
+            return $query;
+        }
+
+        return $query->whereIn(
+            'id',
+            $user->expertiseManagers()->pluck('expertise_managers.id')
+        );
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])

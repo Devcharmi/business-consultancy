@@ -235,6 +235,14 @@ $(document).on("click", ".open-modal", function () {
         success: function (data) {
             $("#modal_show_html").html(data.html);
             $("#modalForm").modal("show");
+
+            $(".select2").select2({
+                placeholder: "Select...",
+                width: "100%",
+                dropdownParent: $("#modalForm"),
+                // allowClear: true,
+                // closeOnSelect: false, // keep dropdown open for multiple selections
+            });
         },
     });
     return false;

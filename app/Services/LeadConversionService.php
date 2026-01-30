@@ -25,23 +25,6 @@ class LeadConversionService
         DB::transaction(function () use ($lead) {
 
             /* ============================
-               1️⃣ FIND EXISTING CLIENT
-            ============================ */
-
-            // $client = Client::where(function ($q) use ($lead) {
-
-            //     if ($lead->phone && $lead->email) {
-            //         $q->where('phone', $lead->phone)
-            //             ->orWhere('email', $lead->email);
-            //     } elseif ($lead->phone) {
-            //         $q->where('phone', $lead->phone);
-            //     } elseif ($lead->email) {
-            //         $q->where('email', $lead->email);
-            //     }
-            // })->first();
-
-
-            /* ============================
                2️⃣ CREATE CLIENT IF NOT FOUND
             ============================ */
 
@@ -68,18 +51,18 @@ class LeadConversionService
                4️⃣ CLIENT OBJECTIVE
             ============================ */
 
-            if ($lead->objective_manager_id) {
-                ClientObjective::firstOrCreate(
-                    [
-                        'client_id'             => $client->id,
-                        'objective_manager_id'  => $lead->objective_manager_id,
-                    ],
-                    [
-                        'status'     => '1',
-                        'created_by' => auth()->id(),
-                    ]
-                );
-            }
+            // if ($lead->objective_manager_id) {
+            //     ClientObjective::firstOrCreate(
+            //         [
+            //             'client_id'             => $client->id,
+            //             'objective_manager_id'  => $lead->objective_manager_id,
+            //         ],
+            //         [
+            //             'status'     => '1',
+            //             'created_by' => auth()->id(),
+            //         ]
+            //     );
+            // }
         });
     }
 }

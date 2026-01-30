@@ -39,7 +39,7 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect()->route('login');
         }
-        $userExpertiseIds = $user->expertiseManagers()->pluck('expertise_managers.id');
+        // $userExpertiseIds = $user->expertiseManagers()->pluck('expertise_managers.id');
 
         $selectedMonth = $request->input('month', date('m'));
         $selectedYear = $request->input('year', date('Y'));
@@ -47,6 +47,7 @@ class DashboardController extends Controller
         $monthName = Carbon::createFromDate($selectedYear, $selectedMonth, 1)->format('F Y');
 
         $expertises = ExpertiseManager::activeExpertise()
+            ->accessibleBy($user)
             ->get(['id', 'name', 'color_name']);
 
         $statuses = StatusManager::whereIn('name', ['Done'])
@@ -54,15 +55,15 @@ class DashboardController extends Controller
 
         $DONE_STATUS_ID = $statuses['Done'] ?? null;
 
-        $expertiseTasks = Task::select(
-            'expertise_manager_id',
-            DB::raw('COUNT(*) as total_tasks'),
-            DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
-        )
-            ->groupBy('expertise_manager_id')
-            ->get();
+        // $expertiseTasks = Task::select(
+        //     'expertise_manager_id',
+        //     DB::raw('COUNT(*) as total_tasks'),
+        //     DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
+        // )
+        //     ->groupBy('expertise_manager_id')
+        //     ->get();
 
-        $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
+        // $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
 
         // $consultings = Consulting::with(['expertise_manager', 'client_objective.client'])
         //     // ->whereIn('expertise_manager_id', $userExpertiseIds)
@@ -70,16 +71,29 @@ class DashboardController extends Controller
         //     ->whereYear('consulting_datetime', $selectedYear)
         //     ->orderBy('consulting_datetime')
         //     ->get();
+
+        $expertiseTasks = Task::accessibleBy($user)
+            ->select(
+                'expertise_manager_id',
+                DB::raw('COUNT(*) as total_tasks'),
+                DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
+            )
+            ->groupBy('expertise_manager_id')
+            ->get();
+
+        $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
+
         $consultingQuery = Consulting::with(['expertise_manager', 'client_objective.client'])
             ->whereMonth('consulting_datetime', $selectedMonth)
-            ->whereYear('consulting_datetime', $selectedYear);
+            ->whereYear('consulting_datetime', $selectedYear)
+            ->accessibleBy($user);
 
-        if (!$user->hasRole('Super Admin')) {
-            $consultingQuery->whereIn(
-                'expertise_manager_id',
-                $user->expertiseManagers()->pluck('expertise_managers.id')
-            );
-        }
+        // if (!$user->hasRole('Super Admin')) {
+        //     $consultingQuery->whereIn(
+        //         'expertise_manager_id',
+        //         $user->expertiseManagers()->pluck('expertise_managers.id')
+        //     );
+        // }
 
         $consultings = $consultingQuery
             ->orderBy('consulting_datetime')

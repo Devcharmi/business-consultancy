@@ -128,7 +128,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M4.5 6.75h15M4.5 12h15M4.5 17.25h15M5.25 6.75l1.5 1.5L9 5.25M5.25 12l1.5 1.5L9 10.5M5.25 17.25l1.5 1.5L9 15.75" />
                             </svg>
-                            <span class="side-menu__label">Tasks</span>
+                            <span class="side-menu__label">Meetings</span>
                         </a>
                     </li>
                 @endif

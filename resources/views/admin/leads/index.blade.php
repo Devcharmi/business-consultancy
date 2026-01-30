@@ -29,12 +29,12 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Date</th>
                                     <th>Name</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     {{-- <th>Objective</th> --}}
                                     <th style="width: 140px">Status</th>
-                                    <th>Date</th>
                                 </tr>
                             </thead>
                         </table>

@@ -10,7 +10,6 @@ class Lead extends Model
     protected $fillable = [
         'client_id',
         'user_id',
-        'objective_manager_id',
         'name',
         'phone',
         'email',
@@ -26,11 +25,6 @@ class Lead extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
-    }
-
-    public function objective_manager()
-    {
-        return $this->belongsTo(ObjectiveManager::class, 'objective_manager_id');
     }
 
     public function followUps()

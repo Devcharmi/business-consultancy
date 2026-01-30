@@ -73,7 +73,7 @@
                                 <thead class="bg-light">
                                     <tr>
                                         <th>#</th>
-                                        <th>Task</th>
+                                        <th>Meeting Title</th>
                                         {{-- <th>Task Details</th> --}}
                                         <th>Due Date</th>
                                         <th>Status</th>
@@ -141,23 +141,16 @@
                         <div class="d-flex justify-content-end gap-2 mt-3">
                             <a href="{{ route('task.show', 'new') }}?client_objective_id={{ $clientObjective->id }}&expertise_manager_id={{ $expertise->id }}"
                                 class="btn btn-success open-task-modal">
-                                <i class="fas fa-plus-circle me-1"></i> Add Task
+                                <i class="fas fa-plus-circle me-1"></i> Add Meeting
                             </a>
-
-                            <a href="javascript:void(0)" class="btn btn-outline-primary open-followup-modal"
-                                data-client-objective-id="{{ $clientObjective->id }}"
-                                data-expertise-manager-id="{{ $expertise->id }}">
-                                <i class="fas fa-comments me-1"></i> Add Follow-up
-                            </a>
-
                         </div>
                     @else
                         <div class="p-5 text-center">
                             <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-                            <h6 class="text-muted mb-3">No tasks found</h6>
+                            <h6 class="text-muted mb-3">No meetings found</h6>
                             <a href="{{ route('task.show', 'new') }}?client_objective_id={{ $clientObjective->id }}&expertise_manager_id={{ $expertise->id }}"
                                 class="btn btn-success open-task-modal">
-                                <i class="fas fa-plus-circle me-1"></i> Add First Task
+                                <i class="fas fa-plus-circle me-1"></i> Add First Meeting
                             </a>
                         </div>
                     @endif

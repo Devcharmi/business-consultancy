@@ -66,6 +66,12 @@ var leads_table = $("#leads_table").DataTable({
 
                 return html;
             },
+        },        
+        {
+            data: "created_at",
+            mRender: function (v) {
+                return moment(v).format("D-M-Y");
+            },
         },
         { data: "name" },
         { data: "phone" },
@@ -106,12 +112,6 @@ var leads_table = $("#leads_table").DataTable({
                 //     "_",
                 //     " "
                 // )}</span>`;
-            },
-        },
-        {
-            data: "created_at",
-            mRender: function (v) {
-                return moment(v).format("D-M-Y");
             },
         },
     ],

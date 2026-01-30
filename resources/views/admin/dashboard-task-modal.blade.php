@@ -1,9 +1,9 @@
 <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header py-2">
+            <div class="modal-header">
                 <h6 class="modal-title fw-semibold" id="taskModalTitle">
-                    Tasks
+                    Meetings
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>

@@ -18,7 +18,7 @@
         <div class="col-xl-12">
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Task Manager</h4>
+                    <h4 class="card-title">Meeting Manager</h4>
                     <a href="{{ route('task.index') }}" class="btn btn-primary mt-10 d-block text-center">
                         Back
                     </a>
@@ -53,7 +53,7 @@
                                 <div class="row">
 
                                     {{-- Client Objective --}}
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-9 mb-3">
                                         <label class="required">Client Objective</label>
 
                                         <select name="client_objective_id" class="form-control select2">
@@ -78,28 +78,6 @@
                                         <small class="text-danger" id="client_objective_id_error">
                                             {{ $errors->first('client_objective_id') }}
                                         </small>
-                                    </div>
-
-                                    {{-- <div class="col-md-6 mb-3">
-                                        <label class="required">Client Objective</label>
-                                        <select name="client_objective_id" class="form-control select2">
-                                            <option value="">Select Client Objective</option>
-                                            @foreach ($clientObjectives as $co)
-                                                <option value="{{ $co->id }}" @selected(old('client_objective_id', optional($taskData)->client_objective_id) == $co->id)>
-                                                    {{ $co->client->client_name }} - {{ $co->objective_manager->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <small class="text-danger"
-                                            id="client_objective_id_error">{{ $errors->first('client_objective_id') }}</small>
-                                    </div> --}}
-
-                                    {{-- Title --}}
-                                    <div class="col-md-6 mb-3">
-                                        <label class="required">Task Title</label>
-                                        <input type="text" name="title" id="title" class="form-control"
-                                            value="{{ old('title', optional($taskData)->title) }}">
-                                        <small class="text-danger" id="title_error">{{ $errors->first('title') }}</small>
                                     </div>
 
                                     {{-- Expertise --}}
@@ -130,18 +108,13 @@
                                         </small>
                                     </div>
 
-                                    {{-- <div class="col-md-3 mb-3">
-                                        <label class="required">Expertise</label>
-                                        <select name="expertise_manager_id" class="form-select">
-                                            @foreach ($expertises as $expertise)
-                                                <option value="{{ $expertise->id }}" @selected(old('expertise_manager_id', optional($taskData)->expertise_manager_id) == $expertise->id)>
-                                                    {{ $expertise->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <small class="text-danger"
-                                            id="expertise_manager_id_error">{{ $errors->first('expertise_manager_id') }}</small>
-                                    </div> --}}
+                                    {{-- Title --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="required">Meeting Title</label>
+                                        <input type="text" name="title" id="title" class="form-control"
+                                            value="{{ old('title', optional($taskData)->title) }}">
+                                        <small class="text-danger" id="title_error">{{ $errors->first('title') }}</small>
+                                    </div>
 
                                     {{-- Due Date --}}
                                     <div class="col-md-3 mb-3">
@@ -154,21 +127,6 @@
                                         <small class="text-danger"
                                             id="task_due_date_error">{{ $errors->first('task_due_date') }}</small>
 
-                                    </div>
-
-                                    {{-- Type --}}
-                                    <div class="col-md-3 mb-3">
-                                        <label class="required">Type</label>
-                                        <select name="type" id="type" class="form-select">
-                                            {{-- <option value="">Select Type</option> --}}
-                                            <option value="meeting" @selected(old('type', optional($taskData)->type) === 'meeting')>
-                                                Meeting
-                                            </option>
-                                            <option value="task" @selected(old('type', optional($taskData)->type) === 'task')>
-                                                Task
-                                            </option>
-                                        </select>
-                                        <small class="text-danger" id="type_error">{{ $errors->first('type') }}</small>
                                     </div>
 
                                     {{-- Expertise --}}
@@ -257,7 +215,7 @@
                             {{-- Footer --}}
                             <div class="d-flex justify-content-end mt-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ !empty($taskData) ? 'Update Task' : 'Create Task' }}
+                                    {{ !empty($taskData) ? 'Update Meeting' : 'Create Meeting' }}
                                 </button>
                             </div>
                         </div>

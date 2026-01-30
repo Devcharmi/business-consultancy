@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\FiltersByExpertiseManager;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    use FiltersByExpertiseManager;
+
     protected $fillable = [
         'client_objective_id',
         'expertise_manager_id',
