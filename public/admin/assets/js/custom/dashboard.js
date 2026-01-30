@@ -386,10 +386,18 @@ $(document).on("click", ".open-meeting-modal", function (e) {
         </span>
     `);
 
-    // update Add button URL
-    $("#addMeetingBtn").attr(
+    const $addBtn = $("#addMeetingBtn");
+
+    // store base url only once
+    if (!$addBtn.data("base-url")) {
+        $addBtn.data("base-url", $addBtn.attr("href"));
+    }
+
+    // append client_objective_id
+    $addBtn.attr(
         "href",
-        "{{ route('task.show', 'new') }}?client_objective_id=" +
+        $addBtn.data("base-url") +
+            "?client_objective_id=" +
             currentClientObjectiveId,
     );
 
