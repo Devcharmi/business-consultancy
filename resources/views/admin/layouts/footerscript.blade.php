@@ -255,3 +255,18 @@
             }
         }
     </script>
+    <script>
+        // 🔥 Global stacked modal handler (SweetAlert-like behavior)
+        $(document).on("show.bs.modal", ".modal", function() {
+            const zIndex = 1050 + 10 * $(".modal.show").length;
+            $(this).css("z-index", zIndex);
+
+            setTimeout(() => {
+                $(".modal-backdrop")
+                    .not(".modal-stack")
+                    .first()
+                    .css("z-index", zIndex - 1)
+                    .addClass("modal-stack");
+            }, 0);
+        });
+    </script>

@@ -65,6 +65,11 @@ class Task extends Model
         //     $query->whereDate('created_at', '>=', $from);
         //     $query->whereDate('created_at', '<=', $to);
         // }
+        /* ================= CLIENT OBJECTIVE FILTER ================= */
+
+        if (!empty($filters['client_objective_id'])) {
+            $query->where('client_objective_id', $filters['client_objective_id']);
+        }
 
         if (!empty($filters['search']) or !empty($filters['search']['value'])) {
             $term = is_array($filters['search']) ? $filters['search']['value'] : $filters['search'];

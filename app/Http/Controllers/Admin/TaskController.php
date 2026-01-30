@@ -37,6 +37,7 @@ class TaskController extends Controller
             $data = $request->all();
             $columns = [
                 'id',
+                'title',
                 'client_objective_id',
                 'expertise_manager_id',
                 'task_due_date',

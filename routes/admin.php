@@ -41,6 +41,11 @@ Route::middleware('auth')->get('/admin/clear-cache', function () {
 Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
         ->name('dashboard');
+    Route::get(
+        '/dashboard/day-consultings',
+        [DashboardController::class, 'dayConsultings']
+    )->name('dashboard.dayConsultings');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('admin.profile.destroy');
@@ -96,8 +101,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::get('/client-objective/{id}/details', [ClientObjectiveController::class, 'getObjectiveDetails'])->name('client-objective.details');
     Route::resource('consulting', ConsultingController::class);
     Route::resource('task', TaskController::class);
-    Route::delete('/task/attachments/{attachment}',[TaskController::class,'destroyAttachment'])->name('task.attachments.delete');
+    Route::delete('/task/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])->name('task.attachments.delete');
     Route::get('task/{task}/pdf', [TaskController::class, 'taskPdf'])
-    ->name('task.pdf');
-
+        ->name('task.pdf');
 });

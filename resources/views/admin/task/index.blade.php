@@ -33,6 +33,7 @@
                             <thead>
                                 <tr>
                                     <th>Sr No.</th>
+                                    <th>Title</th>
                                     <th>Client Name</th>
                                     <th>Objective</th>
                                     <th>Expertise</th>

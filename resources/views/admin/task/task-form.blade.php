@@ -85,7 +85,7 @@
                                         <label class="required">Expertise</label>
 
                                         <select name="expertise_manager_id" class="form-select">
-                                            <option value="">Select Expertise</option>
+                                            {{-- <option value="">Select Expertise</option> --}}
 
                                             @foreach ($expertises as $expertise)
                                                 @php
@@ -122,8 +122,11 @@
                                         <input type="date" name="task_due_date" id="task_due_date" class="form-control"
                                             value="{{ old(
                                                 'task_due_date',
-                                                optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : '',
+                                                optional($taskData)->task_due_date
+                                                    ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d')
+                                                    : now()->format('Y-m-d'),
                                             ) }}">
+
                                         <small class="text-danger"
                                             id="task_due_date_error">{{ $errors->first('task_due_date') }}</small>
 

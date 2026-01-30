@@ -126,4 +126,29 @@ class DashboardController extends Controller
             'expertiseTaskCounts'
         ));
     }
+
+    public function dayConsultings(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+        ]);
+
+        $user = auth()->user();
+        $date = $request->date;
+
+        $consultings = Consulting::with([
+            'expertise_manager',
+            'client_objective.client',
+            'client_objective.objective_manager',
+        ])
+            ->whereDate('consulting_datetime', $date)
+            ->accessibleBy($user)
+            ->orderBy('consulting_datetime')
+            ->get();
+
+        return view('admin.day-consulting-modal', compact(
+            'consultings',
+            'date'
+        ))->render();
+    }
 }

@@ -38,6 +38,7 @@
 
         <!-- Start::main-modal -->
         <div id="modal_show_html"></div>
+        <div id="sub_modal_show_html"></div>
         <!-- End::main-modal -->
 
         <!-- Start::main-footer -->

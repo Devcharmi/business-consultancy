@@ -42,7 +42,22 @@ var consulting_table = $(".table-list").DataTable({
         {
             data: "expertise_manager",
             render: function (data) {
-                return data ? data.name : "-";
+                if (!data) return "-";
+
+                return `
+            <span
+                class="badge"
+                style="
+                    background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+                    color: #fff;
+                    font-size: 11px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                "
+            >
+                ${data.name}
+            </span>
+        `;
             },
         },
 

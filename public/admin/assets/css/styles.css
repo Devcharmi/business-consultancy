@@ -31527,7 +31527,8 @@ Form label
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
-  overflow-x: auto;                 /* enable horizontal scroll */
+  overflow-x: auto;
+  /* enable horizontal scroll */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -31628,4 +31629,18 @@ Form label
     width: 6px;
     height: 6px;
   }
+}
+
+/* Disable background modal when stacked */
+.modal.modal-disabled {
+  pointer-events: none;
+}
+
+.modal.modal-disabled .modal-content {
+  opacity: 0;
+}
+
+.modal-stack {
+  opacity: 0.5;
+  /* optional: same feel as swal */
 }

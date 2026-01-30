@@ -20,6 +20,14 @@ var task_table = $(".table-list").DataTable({
             },
         },
 
+        // 2️⃣ title
+        {
+            data: "title",
+            render: function (data) {
+                return data ? data : "-";
+            },
+        },
+
         // 2️⃣ Client Name
         {
             data: "client_objective",
@@ -42,7 +50,22 @@ var task_table = $(".table-list").DataTable({
         {
             data: "expertise_manager",
             render: function (data) {
-                return data ? data.name : "-";
+                if (!data) return "-";
+
+                return `
+            <span
+                class="badge"
+                style="
+                    background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+                    color: #fff;
+                    font-size: 11px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                "
+            >
+                ${data.name}
+            </span>
+        `;
             },
         },
 
@@ -74,8 +97,6 @@ var task_table = $(".table-list").DataTable({
                 let pdf_path_set = pdf_path.replace(":task", id);
                 let edit_path_set = edit_path.replace(":task", id);
                 let delete_path_set = delete_path.replace(":task", id);
-
-             
 
                 let editDisabled = window.canEditTask
                     ? ""
@@ -134,7 +155,7 @@ var task_table = $(".table-list").DataTable({
 $("#task_form").on("submit", function (e) {
     e.preventDefault();
     updateTextareasFromEditors();
-    
+
     $("#commitments_input").val(JSON.stringify(commitments));
     $("#commitments_delete_input").val(JSON.stringify(commitmentsToDelete));
 

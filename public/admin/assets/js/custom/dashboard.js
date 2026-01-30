@@ -3,7 +3,7 @@ $(document).ready(function () {
         const date = $(this).data("date");
         const url = $(this).data("url");
 
-        $("#modal_show_html").html(
+        $("#sub_modal_show_html").html(
             '<div class="text-center p-5"><i class="bi bi-hourglass-split fs-1"></i><p>Loading...</p></div>',
         );
 
@@ -12,7 +12,7 @@ $(document).ready(function () {
             method: "GET",
             dataType: "json",
             success: function (response) {
-                $("#modal_show_html").html(response.html);
+                $("#sub_modal_show_html").html(response.html);
 
                 const datetimeInput = $("#consulting_datetime");
                 if (datetimeInput.length) {
@@ -141,7 +141,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 // alert(data.html);
-                $("#modal_show_html").html(data.html);
+                $("#sub_modal_show_html").html(data.html);
                 $("#consultingForm").modal("show");
                 $(".select2").select2({
                     placeholder: "Select...",
@@ -190,11 +190,14 @@ $(document).ready(function () {
 });
 
 let taskModalTable = null;
+let currentClientObjectiveId = null;
 
 function loadTaskModalTable(clientObjectiveId) {
+    currentClientObjectiveId = clientObjectiveId;
+
     if (taskModalTable) {
-        taskModalTable.destroy();
-        $("#task_modal_table tbody").empty();
+        taskModalTable.ajax.reload(null, true);
+        return;
     }
 
     taskModalTable = $("#task_modal_table").DataTable({
@@ -212,7 +215,7 @@ function loadTaskModalTable(clientObjectiveId) {
         ajax: {
             url: $("#task_modal_table").attr("data-url"),
             data: function (d) {
-                d.client_objective_id = clientObjectiveId;
+                d.client_objective_id = currentClientObjectiveId;
             },
         },
 
@@ -225,11 +228,34 @@ function loadTaskModalTable(clientObjectiveId) {
                 },
             },
 
-            // 2️⃣ Expertise
+            // 2️⃣ title
+            {
+                data: "title",
+                render: function (data) {
+                    return data ? data : "-";
+                },
+            },
+
+            // 4️⃣ Expertise
             {
                 data: "expertise_manager",
                 render: function (data) {
-                    return data ? data.name : "-";
+                    if (!data) return "-";
+
+                    return `
+            <span
+                class="badge"
+                style="
+                    background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+                    color: #fff;
+                    font-size: 11px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                "
+            >
+                ${data.name}
+            </span>
+        `;
                 },
             },
 
@@ -315,11 +341,88 @@ function loadTaskModalTable(clientObjectiveId) {
     });
 }
 
-$(document).on("click", ".open-meeting-modal", function () {
-    let clientObjectiveId = $(this).data("client-objective-id");
+$(document).on("click", ".delete-data", function () {
+    event.preventDefault();
+    swal.fire({
+        title: "Are you sure to delete this record?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var delete_url = $(this).attr("data-url");
+            $.ajax({
+                url: delete_url,
+                type: "DELETE",
+                data: {
+                    _token: csrf_token,
+                },
+                success: function (result) {
+                    $("[id$='_error']").empty();
+                    taskModalTable.draw();
+                    showToastr("success", result.message);
+                },
+                error: function (result) {
+                    showToastr("error", result.responseJSON.message);
+                },
+            });
+        }
+    });
+});
 
-    // set modal title earlier (already implemented by you)
-    loadTaskModalTable(clientObjectiveId);
+$(document).on("click", ".open-meeting-modal", function (e) {
+    e.preventDefault();
 
-    $("#taskModal").modal("show");
+    currentClientObjectiveId = $(this).data("client-objective-id");
+    const clientName = $(this).data("client-name");
+    const objectiveName = $(this).data("objective-name");
+
+    $("#taskModalTitle").html(`
+        Meetings
+        <span class="text-muted fw-normal">
+            — ${clientName}${objectiveName ? " / " + objectiveName : ""}
+        </span>
+    `);
+
+    // update Add button URL
+    $("#addMeetingBtn").attr(
+        "href",
+        "{{ route('task.show', 'new') }}?client_objective_id=" +
+            currentClientObjectiveId,
+    );
+
+    const modal = new bootstrap.Modal("#taskModal", {
+        backdrop: "static",
+        keyboard: false,
+    });
+    modal.show();
+
+    // ✅ this is all you need
+    loadTaskModalTable(currentClientObjectiveId);
+});
+
+$(document).on("click", ".calendar-dot", function (e) {
+    e.stopPropagation();
+});
+
+$(document).on("click", ".calendar-day", function () {
+    const date = $(this).data("date");
+    if (!date) return;
+
+    $.ajax({
+        url: routeDayConsultings,
+        type: "GET",
+        data: { date },
+        success: function (html) {
+            $("#modal_show_html").html(html);
+            $("#dayConsultingModal").modal("show");
+        },
+        error: function () {
+            $("#dayConsultingBody").html(
+                '<div class="text-danger text-center py-4">Failed to load consultings</div>',
+            );
+        },
+    });
 });
