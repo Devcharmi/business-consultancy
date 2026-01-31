@@ -132,7 +132,7 @@
 
                                     </div>
 
-                                    {{-- Expertise --}}
+                                    {{-- Status --}}
                                     <div class="col-md-3 mb-3">
                                         <label class="required">Status</label>
                                         <select name="status_manager_id" class="form-select">

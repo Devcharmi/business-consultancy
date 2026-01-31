@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\StatusManagerController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserManagerController;
 use App\Http\Controllers\Admin\UserPermissionController;
+use App\Http\Controllers\Admin\UserTaskController;
 use App\Http\Controllers\Admin\VendorServiceController;
 use App\Http\Controllers\DashboardController;
 use App\Models\VendorService;
@@ -104,4 +105,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::delete('/task/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])->name('task.attachments.delete');
     Route::get('task/{task}/pdf', [TaskController::class, 'taskPdf'])
         ->name('task.pdf');
+
+    Route::resource('user-task', UserTaskController::class);
+
 });

@@ -73,7 +73,7 @@ var task_table = $(".table-list").DataTable({
         {
             data: "task_due_date",
             render: function (data) {
-                return data ? moment(data).format("DD-MM-YYYY HH:mm") : "-";
+                return data ? moment(data).format("DD-MM-YYYY") : "-";
             },
         },
         {

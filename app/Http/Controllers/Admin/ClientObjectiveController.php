@@ -98,69 +98,75 @@ class ClientObjectiveController extends Controller
     //     ]);
     // }
 
-public function getObjectiveDetails(Request $request, $id)
-{
-    $clientObjective = ClientObjective::with(['client', 'objective_manager'])
-        ->findOrFail($id);
+    public function getObjectiveDetails(Request $request, $id)
+    {
+        $user = auth()->user();
 
-    $expertiseManagers = ExpertiseManager::activeExpertise()->get();
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
-    // 🔥 active expertise (from request OR first)
-    $activeExpertiseId = $request->expertise_manager_id
-        ?? $expertiseManagers->first()?->id;
+        $clientObjective = ClientObjective::with(['client', 'objective_manager'])
+            ->findOrFail($id);
 
-    /*
+        $expertiseManagers = ExpertiseManager::activeExpertise()->accessibleBy($user)->get();
+
+        // 🔥 active expertise (from request OR first)
+        $activeExpertiseId = $request->expertise_manager_id
+            ?? $expertiseManagers->first()?->id;
+
+        /*
     |--------------------------------------------------------------------------
     | 1️⃣ GET TOTAL COUNTS (ALL expertise)
     |--------------------------------------------------------------------------
     */
-    $taskCounts = Task::where('client_objective_id', $id)
-        ->selectRaw('expertise_manager_id, COUNT(*) as total')
-        ->groupBy('expertise_manager_id')
-        ->pluck('total', 'expertise_manager_id');
+        $taskCounts = Task::accessibleBy($user)->where('client_objective_id', $id)
+            ->selectRaw('expertise_manager_id, COUNT(*) as total')
+            ->groupBy('expertise_manager_id')
+            ->pluck('total', 'expertise_manager_id');
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | 2️⃣ GET TASKS FOR ACTIVE EXPERTISE ONLY
     |--------------------------------------------------------------------------
     */
-    $activeTasks = Task::where('client_objective_id', $id)
-        ->where('expertise_manager_id', $activeExpertiseId)
-        ->with(['content', 'status_manager'])
-        ->get();
+        $activeTasks = Task::accessibleBy($user)->where('client_objective_id', $id)
+            ->where('expertise_manager_id', $activeExpertiseId)
+            ->with(['content', 'status_manager'])
+            ->get();
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | 3️⃣ MAP DATA TO EXPERTISE
     |--------------------------------------------------------------------------
     */
-    $expertiseManagers = $expertiseManagers->map(function ($expertise) use (
-        $taskCounts,
-        $activeExpertiseId,
-        $activeTasks
-    ) {
-        $expertise->total_tasks = $taskCounts[$expertise->id] ?? 0;
+        $expertiseManagers = $expertiseManagers->map(function ($expertise) use (
+            $taskCounts,
+            $activeExpertiseId,
+            $activeTasks
+        ) {
+            $expertise->total_tasks = $taskCounts[$expertise->id] ?? 0;
 
-        $expertise->tasks = $expertise->id == $activeExpertiseId
-            ? $activeTasks
-            : collect();
+            $expertise->tasks = $expertise->id == $activeExpertiseId
+                ? $activeTasks
+                : collect();
 
-        $expertise->is_active = $expertise->id == $activeExpertiseId;
+            $expertise->is_active = $expertise->id == $activeExpertiseId;
 
-        return $expertise;
-    });
+            return $expertise;
+        });
 
-    $html = view(
-        'admin.client_objective.objective-details',
-        compact('clientObjective', 'expertiseManagers')
-    )->render();
+        $html = view(
+            'admin.client_objective.objective-details',
+            compact('clientObjective', 'expertiseManagers')
+        )->render();
 
-    return response()->json([
-        'success' => true,
-        'html' => $html,
-        'activeExpertiseId' => $activeExpertiseId
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'activeExpertiseId' => $activeExpertiseId
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
