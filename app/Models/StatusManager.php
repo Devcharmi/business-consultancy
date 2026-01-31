@@ -14,10 +14,20 @@ class StatusManager extends Model
         'color_name',
         'status'
     ];
-    
+
     public function scopeActiveStatus($query)
     {
         return $query->where('status', '1');
+    }
+
+    public static function pendingId()
+    {
+        return static::where('name', 'Pending')->value('id');
+    }
+
+    public static function doneId()
+    {
+        return static::where('name', 'Done')->value('id');
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])

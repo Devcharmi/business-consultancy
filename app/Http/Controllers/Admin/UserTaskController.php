@@ -36,6 +36,7 @@ class UserTaskController extends Controller
             'task_due_date',
             'status_manager_id',
             'created_by',
+            'source_type',
         ];
 
         if ($request->ajax()) {

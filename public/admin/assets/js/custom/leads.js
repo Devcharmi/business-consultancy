@@ -66,7 +66,7 @@ var leads_table = $("#leads_table").DataTable({
 
                 return html;
             },
-        },        
+        },
         {
             data: "created_at",
             mRender: function (v) {
@@ -185,17 +185,52 @@ $(document).on("submit", "#followUpForm", function (e) {
     e.preventDefault();
 
     let form = $(this);
+    let url = form.data("url");
 
-    $.post(form.data("url"), form.serialize(), function (res) {
-        toastr.success(res.message);
+    // clear old errors
+    form.find("small.text-danger").text("");
+    form.find(".is-invalid").removeClass("is-invalid");
 
-        loadFollowUps();
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: form.serialize(),
+        success: function (res) {
+            toastr.success(res.message);
 
-        // reload table to reflect lead status
-        $("#leads_table").DataTable().ajax.reload(null, false);
+            loadFollowUps();
 
-        form[0].reset();
+            // reload lead table
+            $("#leads_table").DataTable().ajax.reload(null, false);
+
+            form[0].reset();
+        },
+        error: function (xhr) {
+            // 🔴 Validation errors (422)
+            if (xhr.status === 422) {
+                let errors = xhr.responseJSON.errors;
+
+                $.each(errors, function (key, messages) {
+                    let input = form.find(`[name="${key}"]`);
+                    input.addClass("is-invalid");
+                    $("#" + key + "_error").text(messages[0]);
+                });
+            }
+            // 🔴 Custom backend error (closed lead)
+            else if (xhr.responseJSON?.message) {
+                toastr.error(xhr.responseJSON.message);
+            }
+            // 🔴 Fallback
+            else {
+                toastr.error("Something went wrong. Please try again.");
+            }
+        },
     });
+});
+
+$("#followUpForm").on("input change", "input", function () {
+    $(this).removeClass("is-invalid");
+    $("#" + this.name + "_error").text("");
 });
 
 function loadFollowUps() {

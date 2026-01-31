@@ -40,7 +40,10 @@ var columns = [
                     ? taskName.substring(0, 25) + "..."
                     : taskName;
 
-            return shortName;
+            return `
+            <span title="${taskName}">
+                ${shortName}
+            </span>`;
         },
     },
     {
@@ -121,6 +124,15 @@ var columns = [
                     </span>`;
         },
     },
+    {
+        data: "source_type",
+        mRender: function (v, t, o) {
+            if (!o.source_type) return "-";
+            return (
+                o.source_type.charAt(0).toUpperCase() + o.source_type.slice(1)
+            );
+        },
+    },
 ];
 
 var task_table = $(".table-list").DataTable({
@@ -169,16 +181,6 @@ var task_table = $(".table-list").DataTable({
         },
     },
     columns: columns,
-    createdRow: function (row, data) {
-        // If staff_manager_id is null → highlight
-        if (
-            data.staff_manager_id === null ||
-            data.staff_manager_id === "" ||
-            data.staff_manager_id === "null"
-        ) {
-            $(row).addClass("bold-row");
-        }
-    },
     drawCallback: function () {
         // Initialize Bootstrap tooltips after table draw
         const tooltipTriggerList = [].slice.call(

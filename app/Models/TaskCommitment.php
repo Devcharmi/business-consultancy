@@ -25,8 +25,8 @@ class TaskCommitment extends Model
        Relationships
     ====================== */
 
-    public function task()
+    public function task() // this is meeting
     {
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(Task::class, 'task_id');
     }
 }

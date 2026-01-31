@@ -14,4 +14,10 @@ class PriorityManager extends Model
         'color_name',
         'status'
     ];
+
+    
+    public static function mediumId()
+    {
+        return static::where('name', 'Medium')->value('id');
+    }
 }

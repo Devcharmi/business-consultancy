@@ -99,34 +99,21 @@ class LeadController extends Controller
     public function store(Request $request)
     {
         // ✅ SINGLE validation block
-        $validated = $request->validate([
+
+        $rules = [
             'client_id' => 'nullable|exists:clients,id',
-            'name'  => 'required|string|max:255',
-            'phone' => [
-                'required',
-                'string',
-                'max:10',
+            'name'      => 'required|string|max:255',
+            'phone'     => ['required', 'string', 'max:10'],
+            'email'     => ['nullable', 'email'],
+        ];
 
-                // ✅ Only check uniqueness when client NOT selected
-                Rule::unique('clients', 'phone')
-                    ->when(!$request->client_id, function ($query) {
-                        return $query;
-                    }),
-            ],
+        // ✅ Apply unique only when client_id is NULL
+        if (is_null($request->client_id)) {
+            $rules['phone'][] = Rule::unique('clients', 'phone');
+            $rules['email'][] = Rule::unique('clients', 'email');
+        }
 
-            'email' => [
-                'nullable',
-                'email',
-
-                Rule::unique('clients', 'email')
-                    ->when(!$request->client_id, function ($query) {
-                        return $query;
-                    }),
-            ],
-
-            'status' => 'required|in:new,contacted,converted,lost',
-            'note'   => 'nullable|string',
-        ]);
+        $validated = $request->validate($rules);
 
         try {
             $validated['user_id'] = Auth::id();
@@ -157,14 +144,27 @@ class LeadController extends Controller
     {
 
         // ✅ SINGLE validation block
+
         $validated = $request->validate([
-            'objective_manager_id' => 'required',
-            'name'       => 'required|string|max:255',
-            'phone'      => 'required|string|max:20',
-            'email'      => 'nullable|email',
-            'status'     => 'required|in:new,contacted,converted,lost',
-            'note'       => 'nullable|string',
+            'name'   => 'required|string|max:255',
+
+            'phone'  => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('leads', 'phone')->ignore($lead->id),
+            ],
+
+            'email'  => [
+                'nullable',
+                'email',
+                Rule::unique('leads', 'email')->ignore($lead->id),
+            ],
+
+            'status' => 'required|in:new,contacted,converted,lost',
+            'note'   => 'nullable|string',
         ]);
+
 
         try {
 
@@ -208,7 +208,7 @@ class LeadController extends Controller
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
             'remark' => 'required|string',
-            'next_follow_up_at' => 'nullable|date',
+            'next_follow_up_at' => 'required|date',
         ]);
 
         $lead = Lead::findOrFail($request->lead_id);

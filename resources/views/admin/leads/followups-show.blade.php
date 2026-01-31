@@ -21,13 +21,16 @@
                         <div class="col-md-3">
                             <label class="form-label">Next Follow Up Date</label>
                             <input type="datetime-local" name="next_follow_up_at" class="form-control">
+                            <small class="text-danger"
+                                id="next_follow_up_at_error">{{ $errors->first('next_follow_up_at') }}</small>
                         </div>
 
                         {{-- REMARK --}}
                         <div class="col-md-5">
                             <label class="form-label">Remark</label>
                             <input type="text" name="remark" class="form-control"
-                                placeholder="Call summary / discussion note" required>
+                                placeholder="Call summary / discussion note">
+                            <small class="text-danger" id="remark_error">{{ $errors->first('remark') }}</small>
                         </div>
 
                         {{-- SUBMIT --}}

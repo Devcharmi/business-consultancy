@@ -369,12 +369,23 @@ class TaskController extends Controller
                 continue;
             }
 
-            TaskCommitment::where('id', $id)
+            $commitment = TaskCommitment::where('id', $id)
                 ->where('task_id', $task->id)
-                ->update([
+                ->first();
+
+            if ($commitment) {
+                // TaskCommitment::where('id', $id)
+                //     ->where('task_id', $task->id)
+                //     ->update([
+                //         'commitment' => $item['text'],
+                //         'due_date' => $item['due_date']
+                //     ]);
+                $commitment->update([
                     'commitment' => $item['text'],
                     'due_date'   => $item['due_date'],
+                    'status'        => $item['status'] ?? 1,
                 ]);
+            }
         }
 
         // ---------------- CREATE NEW ----------------
@@ -426,13 +437,17 @@ class TaskController extends Controller
                 continue;
             }
 
-            TaskDeliverable::where('id', $id)
+            $commitment = TaskDeliverable::where('id', $id)
                 ->where('task_id', $task->id)
-                ->update([
-                    'deliverable'   => $item['text'],
-                    'expected_date' => $item['expected_date'] ?? null,
+                ->first();
+
+            if ($commitment) {
+                $commitment->update([
+                    'deliverable' => $item['text'],
+                    'expected_date'   => $item['expected_date'],
                     'status'        => $item['status'] ?? 1,
                 ]);
+            }
         }
 
         // ---------------- CREATE NEW ----------------

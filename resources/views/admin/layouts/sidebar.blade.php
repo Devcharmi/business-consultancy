@@ -124,10 +124,18 @@
                             class="side-menu__item {{ request()->routeIs('task.*') ? 'active' : '' }}">
 
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4.5 6.75h15M4.5 12h15M4.5 17.25h15M5.25 6.75l1.5 1.5L9 5.25M5.25 12l1.5 1.5L9 10.5M5.25 17.25l1.5 1.5L9 15.75" />
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2">
+                                </rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                                <circle cx="12" cy="15" r="3"></circle>
+                                <line x1="12" y1="15" x2="12" y2="13"></line>
+                                <line x1="12" y1="15" x2="14" y2="15"></line>
                             </svg>
+
                             <span class="side-menu__label">Meetings</span>
                         </a>
                     </li>

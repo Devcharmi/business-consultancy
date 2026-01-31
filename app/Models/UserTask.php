@@ -21,6 +21,8 @@ class UserTask extends Model
         'status_manager_id',
         'description',
         'last_reminder_sent_at',
+        'source_type',
+        'source_id',
     ];
 
     protected $casts = [
@@ -99,6 +101,7 @@ class UserTask extends Model
         // 🔹 Restrict staff view for non-admin users
         if (!auth()->user()->hasRole(['Super Admin', 'Admin'])) {
             $query->where('staff_manager_id', auth()->id());
+            $query->where('created_by', auth()->id());
         }
 
         // ====================================

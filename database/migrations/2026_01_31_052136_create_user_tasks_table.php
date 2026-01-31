@@ -27,6 +27,10 @@ return new class extends Migration
             $table->foreignId('status_manager_id')->nullable()->constrained('status_managers')->nullOnDelete();
             $table->text('description')->nullable();
             $table->timestamp('last_reminder_sent_at')->nullable();
+            $table->string('source_type')->default('general')->nullable(); // commitment | deliverable
+            $table->unsignedBigInteger('source_id')->nullable();
+
+            $table->unique(['source_type', 'source_id']);
             $table->timestamps();
         });
     }

@@ -68,7 +68,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th style="width:150px;">Created Date</th>
-                                    <th style="width:150px;">Commitment Date</th>
+                                    <th style="width:150px;">Due Date</th>
                                     <th>Commitment</th>
                                     <th style="width:80px;">Action</th>
                                 </tr>
@@ -123,7 +123,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th style="width:150px;">Created Date</th>
-                                    <th style="width:150px;">Expected Date</th>
+                                    <th style="width:150px;">Due Date</th>
                                     <th>Deliverable</th>
                                     <th style="width:80px;">Action</th>
                                 </tr>
