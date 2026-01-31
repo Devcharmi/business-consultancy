@@ -50,6 +50,7 @@
     <script>
         var csrf_token = "{{ csrf_token() }}";
         var updateLeadStatusUrl = "{{ route('admin.leads.update-status') }}";
+        var updateFollowupStatus = "{{ route('admin.leads.followups.status', ':followUp') }}";
         var follow_up_list_url = "{{ route('admin.leads.followups.list', ':lead') }}";
         var edit_path = "{{ route('lead.show', ['lead' => ':id']) }}";
         var delete_path = "{{ route('lead.destroy', ['lead' => ':id']) }}";

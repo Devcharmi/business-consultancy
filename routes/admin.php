@@ -96,6 +96,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
 
         Route::get('{lead}/follow-ups', [LeadController::class, 'followUpsList'])
             ->name('followups.list');
+        Route::post('followups/{followUp}/complete', [LeadController::class, 'markCompleted'])->name('followups.status');
     });
 
     Route::resource('client-objective-manager', ClientObjectiveController::class);
@@ -107,5 +108,4 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         ->name('task.pdf');
 
     Route::resource('user-task', UserTaskController::class);
-
 });

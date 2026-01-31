@@ -190,6 +190,30 @@ class LeadController extends Controller
         }
     }
 
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'status'  => 'required|in:new,contacted,converted,lost'
+        ]);
+
+        $lead = Lead::findOrFail($request->lead_id);
+
+        LeadConversionService::convertIfRequired(
+            $lead,
+            $request->status
+        );
+
+        $lead->update([
+            'status' => $request->status,
+        ]);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Status updated successfully'
+        ]);
+    }
+
     public function destroy($id)
     {
         try {
@@ -245,27 +269,12 @@ class LeadController extends Controller
         );
     }
 
-    public function updateStatus(Request $request)
+    public function markCompleted(LeadFollowUp $followUp)
     {
-        $request->validate([
-            'lead_id' => 'required|exists:leads,id',
-            'status'  => 'required|in:new,contacted,converted,lost'
-        ]);
-
-        $lead = Lead::findOrFail($request->lead_id);
-
-        LeadConversionService::convertIfRequired(
-            $lead,
-            $request->status
-        );
-
-        $lead->update([
-            'status' => $request->status,
-        ]);
+        $followUp->markCompleted();
 
         return response()->json([
-            'status'  => true,
-            'message' => 'Status updated successfully'
+            'message' => 'Follow-up marked as completed'
         ]);
     }
 }

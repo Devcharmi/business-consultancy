@@ -194,7 +194,7 @@
         var delete_path = "{{ route('task.destroy', ['task' => ':task']) }}";
         var pdf_path = "{{ route('task.pdf', ['task' => ':task']) }}";
         var routeDayConsultings = "{{ route('dashboard.dayConsultings') }}";
-        
+
         window.canEditTask = @json(canAccess('task.edit'));
         window.canDeleteTask = @json(canAccess('task.delete'));
     </script>

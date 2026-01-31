@@ -334,3 +334,24 @@ $(document).on("click", ".delete-lead", function (event) {
         }
     });
 });
+
+$(document).on("click", ".mark-followup-completed", function () {
+    let btn = $(this);
+    let id = btn.data("id");
+
+    updateFollowupStatusUrl = updateFollowupStatus.replace(
+        ":followUp",
+        id,
+    );
+
+    $.post(updateFollowupStatusUrl, {
+        _token: $('meta[name="csrf-token"]').attr("content"),
+    })
+        .done(function (res) {
+            toastr.success(res.message);
+            loadFollowUps(); // reload list
+        })
+        .fail(function () {
+            toastr.error("Failed to mark follow-up as completed");
+        });
+});
