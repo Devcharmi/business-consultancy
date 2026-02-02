@@ -21,12 +21,17 @@ class UserTask extends Model
         'status_manager_id',
         'description',
         'last_reminder_sent_at',
+        'completed_at',
         'source_type',
         'source_id',
     ];
 
     protected $casts = [
         'last_reminder_sent_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'task_start_date' => 'date',
+        'task_due_date'   => 'date',
+        'task_end_date'   => 'date',
     ];
 
     public function clients()
@@ -56,9 +61,6 @@ class UserTask extends Model
 
     public function scopeFilters($query, $filters = [], $columns = [])
     {
-        // 🟦 Always apply this → show only records from 1 Dec
-        $query->whereDate('created_at', '>=', '2025-12-01');
-
         // if (!empty($filters['date_range'])) {
         //     $explode = explode(' - ', $filters['date_range']);
         //     $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');

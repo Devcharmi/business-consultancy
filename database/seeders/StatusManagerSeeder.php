@@ -17,6 +17,7 @@ class StatusManagerSeeder extends Seeder
             ['name' => 'Pending', 'color_name' => 'Red'],
             ['name' => 'In Progress', 'color_name' => 'Orange'],
             ['name' => 'Done', 'color_name' => 'Green'],
+            ['name' => 'Cancelled', 'color_name' => 'Grey']
         ];
 
         foreach ($statuses as $status) {

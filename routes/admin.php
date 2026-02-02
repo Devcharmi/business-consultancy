@@ -108,4 +108,9 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         ->name('task.pdf');
 
     Route::resource('user-task', UserTaskController::class);
+
+    Route::post(
+        'dashboard/update-status',
+        [DashboardController::class, 'updateStatus']
+    )->name('dashboard.update-status');
 });

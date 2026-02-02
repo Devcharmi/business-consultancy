@@ -6,32 +6,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Consulting;
 use App\Models\ExpertiseManager;
+use App\Models\LeadFollowUp;
 use App\Models\StatusManager;
 use App\Models\Task;
+use App\Models\UserTask;
+use App\Services\StatusUpdateService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    // public function dashboard()
-    // {
-    //     $user = auth()->user();
-    //     // Log::info(auth()->user());
-    //     // Optional: ensure user is authenticated
-    //     if (!$user) {
-    //         return redirect()->route('login');
-    //     }
-
-    //     // // Check for User role
-    //     // if ($user->hasRole('User')) {
-    //     //     // Log::info($user->roles->first()?->name);
-    //     //     return view('user.dashboard');
-    //     // }
-
-    //     // Default dashboard for super admin n others roles
-    //     return view('admin.dashboard');
-    // }
-
     public function dashboard(Request $request)
     {
         $user = auth()->user();
@@ -55,23 +39,6 @@ class DashboardController extends Controller
 
         $DONE_STATUS_ID = $statuses['Done'] ?? null;
 
-        // $expertiseTasks = Task::select(
-        //     'expertise_manager_id',
-        //     DB::raw('COUNT(*) as total_tasks'),
-        //     DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
-        // )
-        //     ->groupBy('expertise_manager_id')
-        //     ->get();
-
-        // $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
-
-        // $consultings = Consulting::with(['expertise_manager', 'client_objective.client'])
-        //     // ->whereIn('expertise_manager_id', $userExpertiseIds)
-        //     ->whereMonth('consulting_datetime', $selectedMonth)
-        //     ->whereYear('consulting_datetime', $selectedYear)
-        //     ->orderBy('consulting_datetime')
-        //     ->get();
-
         $expertiseTasks = Task::accessibleBy($user)
             ->select(
                 'expertise_manager_id',
@@ -87,13 +54,6 @@ class DashboardController extends Controller
             ->whereMonth('consulting_datetime', $selectedMonth)
             ->whereYear('consulting_datetime', $selectedYear)
             ->accessibleBy($user);
-
-        // if (!$user->hasRole('Super Admin')) {
-        //     $consultingQuery->whereIn(
-        //         'expertise_manager_id',
-        //         $user->expertiseManagers()->pluck('expertise_managers.id')
-        //     );
-        // }
 
         $consultings = $consultingQuery
             ->orderBy('consulting_datetime')
@@ -113,18 +73,79 @@ class DashboardController extends Controller
         $nextMonth = $currentDate->copy()->addMonth();
 
         $canCreateConsulting = $user->can('consulting.create');
+        $todayData = $this->getTodayDashboardData($user);
 
-        return view('admin.dashboard', compact(
-            'expertises',
-            'consultingsByDate',
-            'selectedMonth',
-            'selectedYear',
-            'monthName',
-            'prevMonth',
-            'nextMonth',
-            'canCreateConsulting',
-            'expertiseTaskCounts'
+        return view('admin.dashboard', array_merge(
+            compact(
+                'expertises',
+                'consultingsByDate',
+                'selectedMonth',
+                'selectedYear',
+                'monthName',
+                'prevMonth',
+                'nextMonth',
+                'canCreateConsulting',
+                'expertiseTaskCounts'
+            ),
+            $todayData
         ));
+    }
+
+    private function getTodayDashboardData($user)
+    {
+        $today = now()->toDateString();
+
+        return [
+            'todayFollowUps' => LeadFollowUp::whereDate('next_follow_up_at', $today)
+                ->latest()
+                ->take(3)
+                ->get(),
+
+            'todayTasks' => UserTask::whereDate('task_due_date', $today)
+                ->with('status_manager')
+                ->latest()
+                ->take(3)
+                ->get(),
+
+            'pendingTasks' => UserTask::whereDate('task_start_date', '<=', today())
+                ->whereDate('task_due_date', '>=', today())
+                ->whereHas('status_manager', function ($q) {
+                    $q->where('name', '!=', 'Done');
+                })
+                ->with('status_manager')
+                ->latest()
+                ->take(3)
+                ->get(),
+
+            'overdueTasks' => UserTask::whereDate('task_due_date', '<', $today)
+                ->whereHas('status_manager', function ($q) {
+                    $q->where('name', '!=', 'Done');
+                })
+                ->with('status_manager')
+                ->latest()
+                ->take(3)
+                ->get(),
+        ];
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:followup,task',
+            'id'   => 'required|integer',
+            'status' => 'required|string',
+        ]);
+
+        StatusUpdateService::update(
+            $request->type,
+            $request->id,
+            $request->status
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated successfully',
+        ]);
     }
 
     public function dayConsultings(Request $request)

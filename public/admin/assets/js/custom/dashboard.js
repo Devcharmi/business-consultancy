@@ -434,3 +434,38 @@ $(document).on("click", ".calendar-day", function () {
         },
     });
 });
+
+$(document).ready(function () {
+    let activeTabId = localStorage.getItem("dashboardActiveTab");
+
+    if (activeTabId) {
+        let tabBtn = document.getElementById(activeTabId);
+
+        if (tabBtn) {
+            new bootstrap.Tab(tabBtn).show();
+        }
+
+        localStorage.removeItem("dashboardActiveTab");
+    }
+});
+
+$(document).on("click", ".mark-completed", function () {
+    let activeTabId = $(".nav-tabs .nav-link.active").attr("id");
+
+    $.post(
+        routeUpdateStatue,
+        {
+            _token: csrf_token,
+            type: $(this).data("type"), // followup | task
+            id: $(this).data("id"),
+            status: "completed",
+        },
+        function () {
+            // remember active tab
+            localStorage.setItem("dashboardActiveTab", activeTabId);
+
+            // reload full page
+            location.reload();
+        },
+    );
+});

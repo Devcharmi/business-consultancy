@@ -269,4 +269,5 @@
                     .addClass("modal-stack");
             }, 0);
         });
+
     </script>

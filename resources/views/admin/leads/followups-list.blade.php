@@ -33,7 +33,7 @@
                         @if ($f->status === 'pending' && !in_array($lead->status, ['converted', 'lost']))
                             <button
                                 class="btn btn-sm btn-outline-success mark-followup-completed"
-                                data-id="{{ $f->id }}">
+                                data-id="{{ $f->id }}" title="Mark Completed">
                                 <i class="fas fa-check"></i>
                             </button>
                         @endif

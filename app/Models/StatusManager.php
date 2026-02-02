@@ -30,6 +30,34 @@ class StatusManager extends Model
         return static::where('name', 'Done')->value('id');
     }
 
+    public function bootstrapColor(): string
+    {
+        return match (strtolower($this->color_name)) {
+            'green' => 'success',
+            'red' => 'danger',
+            'orange' => 'warning',
+            'blue' => 'primary',
+            'gray', 'grey' => 'secondary',
+            default => 'secondary',
+        };
+    }
+
+    public function icon(): string
+    {
+        return match (strtolower($this->color_name)) {
+            'green' => 'fa-check-circle',
+            'red' => 'fa-exclamation-circle',
+            'orange' => 'fa-hourglass-half',
+            'blue' => 'fa-spinner',
+            default => 'fa-question-circle',
+        };
+    }
+
+    public function isCompleted(): bool
+    {
+        return strtolower($this->name) === 'Done';
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         // if (!empty($filters['date_range'])) {

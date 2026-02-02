@@ -86,7 +86,6 @@ class LeadController extends Controller
         if ($id !== 'new') {
             $leadData = Lead::with([
                 'client',
-                'objective_manager',
                 'followUps',
             ])->findOrFail($id);
 

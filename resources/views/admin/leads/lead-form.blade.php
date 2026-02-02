@@ -10,7 +10,20 @@
                     <div class="card-title">
                         {{ isset($leadData) ? 'Edit Lead' : 'Create Lead' }}
                     </div>
-                    <a href="{{ route('lead.index') }}" class="btn btn-primary">Back</a>
+
+                    <div class="d-flex align-items-center gap-2">
+                        @isset($leadData)
+                            <button class="btn btn-sm btn-info view-followups"
+                                data-url="{{ route('admin.leads.followups.list', ['lead' => $leadData->id]) }}"
+                                data-lead-id="{{ $leadData->id }}" title="View Follow Ups">
+                                <i class="fas fa-comments me-1"></i> Follow Ups
+                            </button>
+                        @endisset
+
+                        <a href="{{ route('lead.index') }}" class="btn btn-sm btn-primary">
+                            Back
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -130,6 +143,7 @@
 
         </div>
     </div>
+    @include('admin.leads.followups-show')
 @endsection
 
 @section('script')
