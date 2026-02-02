@@ -20,13 +20,17 @@
                 {{-- Tabs --}}
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <ul class="nav nav-tabs card-header-tabs">
+                        @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
+                            <li class="nav-item">
+                                <button class="nav-link active" id="tab-task-statistics" data-bs-toggle="tab"
+                                    data-bs-target="#task-statistics">
+                                    Task Statistics
+                                </button>
+                            </li>
+                        @endif
                         <li class="nav-item">
-                            <button class="nav-link active" id="tab-task-statistics" data-bs-toggle="tab" data-bs-target="#task-statistics">
-                                Task Statistics
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link"  id="tab-today-tasks" data-bs-toggle="tab" data-bs-target="#today-tasks-tab">
+                            <button class="nav-link" id="tab-today-tasks" data-bs-toggle="tab"
+                                data-bs-target="#today-tasks-tab">
                                 Today's Task & Followups
                             </button>
                         </li>
@@ -36,11 +40,12 @@
                 {{-- <div class="card-body"> --}}
                 <div class="tab-content">
 
-                    {{-- ================= TAB 1 ================= --}}
-                    <div class="tab-pane fade show active" id="task-statistics">
-                        @include('admin.dashboard-calendar-tab')
-                    </div>
-
+                    @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
+                        {{-- ================= TAB 1 ================= --}}
+                        <div class="tab-pane fade show active" id="task-statistics">
+                            @include('admin.dashboard-calendar-tab')
+                        </div>
+                    @endif
                     {{-- ================= TAB 2 ================= --}}
                     <div class="tab-pane fade" id="today-tasks-tab">
                         @include('admin.dashboard-task-tab')
