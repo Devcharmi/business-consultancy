@@ -8,6 +8,14 @@ $(document).on("click", ".open-commitment-modal", function () {
     $("#commitment_due_date").val(date);
 
     $("#commitmentModal").modal("show");
+
+    $(".select2").select2({
+        placeholder: "Select...",
+        width: "100%",
+        dropdownParent: $("#commitmentModal"),
+        // allowClear: true,
+        // closeOnSelect: false, // keep dropdown open for multiple selections
+    });
 });
 
 // $("#commitment_form").on("submit", function (e) {
@@ -62,6 +70,7 @@ $("#commitment_form").on("submit", function (e) {
     let date = $("#commitment_date").val();
     let text = $("#commitment").val().trim();
     let due = $("#commitment_due_date").val();
+    let staffManagerId = $("#staff_manager_id").val();
 
     if (!text) return;
 
@@ -80,9 +89,15 @@ $("#commitment_form").on("submit", function (e) {
         row.find(`input[name="commitments_existing[${id}][due_date]"]`).val(
             due,
         );
+        row.find(
+            `input[name="commitments_existing[${id}][staff_manager_id]"]`,
+        ).val(staffManagerId);
 
         // update edit button dataset
-        row.find(".edit-commitment").data("text", text).data("due", due);
+        row.find(".edit-commitment")
+            .data("text", text)
+            .data("due", due)
+            .data("staff_manager_id", staffManagerId);
 
         $("#commitmentModal").modal("hide");
         return;
@@ -123,6 +138,7 @@ $("#commitment_form").on("submit", function (e) {
         text,
         commitment_due_date: due,
         created_at: date,
+        staff_manager_id: staffManagerId,
         // created_at: moment().format("YYYY-MM-DD"),
     });
 
@@ -173,42 +189,6 @@ function renderCommitments(date) {
     });
 }
 
-// function renderCommitments(date) {
-//     let wrapper = $("#commitments_" + date);
-//     wrapper.html("");
-//     let items = commitments[date] ?? [];
-
-//     if (items.length === 0) {
-//         wrapper.html(
-//             `<tr><td colspan="4" class="text-muted text-center">No commitments for this date</td></tr>`,
-//         );
-//         return;
-//     }
-
-//     items.forEach((item) => {
-//         let createdDate = item.created_at
-//             ? moment(item.created_at).format("DD MMM YYYY")
-//             : "-";
-//         let dueDate = moment(item.commitment_due_date).format("DD MMM YYYY");
-//         wrapper.append(`
-//             <tr
-//                 ${item.id ? `data-id="${item.id}"` : ""}
-//                 ${item._tmp_id ? `data-tmp-id="${item._tmp_id}"` : ""}
-//                 >
-//                 <td>${createdDate}</td>
-//                 <td>${dueDate}</td>
-//                 <td>${item.text}</td>
-//                 <td class="text-center">
-//                     <button type="button" class="btn btn-sm btn-primary edit-commitment" data-id="${item.id ?? ""}" data-tmp-id="${item._tmp_id ?? ""}" data-text="${item.text}" data-due="${item.commitment_due_date}" data-date="${date}">✎</button>
-//                     <button type="button" class="btn btn-sm btn-danger delete-commitment" data-id="${item.id ?? ""}" data-tmp-id="${item._tmp_id ?? ""}" data-date="${date}">✕</button>
-//                 </td>
-//             </tr>
-//         `);
-//     });
-// }
-
-// --------------- Commitments ----------------
-
 $(document).on("click", ".edit-commitment", function () {
     $("#commitment_id").val($(this).data("id") || "");
     $("#commitment_tmp_id").val($(this).data("tmp-id") || "");
@@ -217,7 +197,19 @@ $(document).on("click", ".edit-commitment", function () {
     $("#commitment_due_date").val($(this).data("due"));
     $("#commitment_date").val($(this).data("date"));
 
+    // ✅ SET STAFF MANAGER
+    const staffId = $(this).data("staff-manager-id");
+    $("#staff_manager_id").val(staffId).trigger("change");
+
     $("#commitmentModal").modal("show");
+
+    $(".select2").select2({
+        placeholder: "Select...",
+        width: "100%",
+        dropdownParent: $("#commitmentModal"),
+        // allowClear: true,
+        // closeOnSelect: false, // keep dropdown open for multiple selections
+    });
 });
 
 $(document).on("click", ".delete-commitment", function () {

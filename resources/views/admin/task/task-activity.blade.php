@@ -89,11 +89,16 @@
                                             <input type="hidden"
                                                 name="commitments_existing[{{ $commitment->id }}][due_date]"
                                                 value="{{ $commitment->due_date->toDateString() }}">
+
+                                            <input type="hidden"
+                                                name="commitments_existing[{{ $commitment->id }}][staff_manager_id]"
+                                                value="{{ $commitment->staff_manager_id }}">
                                         </td>
                                         <td class="text-center">
                                             <button type="button" class="btn btn-sm btn-primary edit-commitment"
                                                 data-id="{{ $commitment->id }}"
                                                 data-text="{{ $commitment->commitment }}"
+                                                data-staff-manager-id="{{ $commitment->staff_manager_id ?? auth()->id() }}"
                                                 data-due="{{ $commitment->due_date->toDateString() }}"
                                                 data-date="{{ $date }}">✎</button>
                                             <button type="button" class="btn btn-sm btn-danger delete-commitment"
@@ -166,7 +171,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

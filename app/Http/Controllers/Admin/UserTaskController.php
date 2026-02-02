@@ -186,9 +186,6 @@ class UserTaskController extends Controller
             $task->created_at = now();
             $task->save();
 
-            // When a task is assigned or updated, set assign_status = 0 for its related work_manager
-            // WorkManager::where('id', $request->work_manager_id)
-            //     ->update(['assign_status' => '0']);
 
             return response()->json(['success' => true, 'message' => 'Task created successfully'], 200);
         } catch (\Throwable $th) {

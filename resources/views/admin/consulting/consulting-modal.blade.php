@@ -1,5 +1,5 @@
 <!-- Modal Body-->
-<div class="modal fade" id="consultingForm" tabindex="-1" status="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+<div class="modal fade" id="consultingModal" tabindex="-1" status="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
     <div class="modal-dialog" status="document">
         <div class="modal-content">
             <div class="modal-header">

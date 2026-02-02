@@ -14,6 +14,7 @@ class TaskCommitment extends Model
         'commitment',
         'commitment_date',
         'due_date',
+        'staff_manager_id',
         'status',
     ];
 
@@ -28,5 +29,10 @@ class TaskCommitment extends Model
     public function task() // this is meeting
     {
         return $this->belongsTo(Task::class, 'task_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'staff_manager_id');
     }
 }

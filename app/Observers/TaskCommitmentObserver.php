@@ -46,7 +46,7 @@ class TaskCommitmentObserver
                 'task_due_date'    => $commitment->due_date,
                 'priority_manager_id' => PriorityManager::mediumId(),
                 'status_manager_id' => StatusManager::pendingId(),
-                'staff_manager_id' => auth()->id(),
+                'staff_manager_id' => $commitment->staff_manager_id ?? auth()->id(),
                 'created_by'       => auth()->id(),
             ]
         );

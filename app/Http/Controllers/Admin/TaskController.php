@@ -11,6 +11,7 @@ use App\Models\TaskAttachment;
 use App\Models\TaskCommitment;
 use App\Models\TaskContent;
 use App\Models\TaskDeliverable;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -82,6 +83,7 @@ class TaskController extends Controller
         $user = auth()->user();
         $clientObjectiveId   = $request->query('client_objective_id');
         $expertiseManagerId  = $request->query('expertise_manager_id');
+        $staffs = User::get();
         /* ============================
        Expertise & Status
         ============================ */
@@ -153,7 +155,8 @@ class TaskController extends Controller
             'deliverablesByDate',
             'contentByDate',
             'clientObjectiveId',
-            'expertiseManagerId'
+            'expertiseManagerId',
+            'staffs'
         ));
     }
 
@@ -256,6 +259,7 @@ class TaskController extends Controller
             // ✅ Content
             $this->syncTaskContent($task, $request->content);
 
+            // dd($request->commitments_existing);
             // ✅ Commitments
             $this->syncCommitmentActivities(
                 $task,
@@ -384,6 +388,7 @@ class TaskController extends Controller
                     'commitment' => $item['text'],
                     'due_date'   => $item['due_date'],
                     'status'        => $item['status'] ?? 1,
+                    'staff_manager_id' => $item['staff_manager_id'] ?? 1,
                 ]);
             }
         }
@@ -414,6 +419,7 @@ class TaskController extends Controller
                     'commitment'      => $item['text'],
                     'due_date'        => $item['commitment_due_date'],
                     'status'          => $item['status'] ?? 1,
+                    'staff_manager_id' => $item['staff_manager_id'] ?? 1,
                 ]);
             }
         }

@@ -34,6 +34,25 @@ class UserTask extends Model
         'task_end_date'   => 'date',
     ];
 
+    protected static function booted()
+    {
+        static::saving(function ($task) {
+
+            // Load related status if only ID is present
+            if ($task->status_manager_id) {
+                $status = StatusManager::find($task->status_manager_id);
+
+                if ($status && $status->isCompleted()) {
+                    // Set completed_at if Done and not already set
+                    $task->completed_at = $task->completed_at ?? Carbon::now();
+                } else {
+                    // Clear completed_at if not Done
+                    $task->completed_at = null;
+                }
+            }
+        });
+    }
+
     public function clients()
     {
         return $this->belongsTo(Client::class, 'client_id');

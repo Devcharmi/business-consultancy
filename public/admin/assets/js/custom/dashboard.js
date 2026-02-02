@@ -23,12 +23,12 @@ $(document).ready(function () {
                     $(".select2").select2({
                         placeholder: "Select...",
                         width: "100%",
-                        dropdownParent: $("#consultingForm"),
+                        dropdownParent: $("#consultingModal"),
                         allowClear: true,
                     });
                 }
 
-                $("#consultingForm").modal("show");
+                $("#consultingModal").modal("show");
             },
             error: function () {
                 showToastr("error", "Error loading form");
@@ -58,7 +58,7 @@ $(document).ready(function () {
     //         dataType: "json",
     //         success: function (result) {
     //             if (result.success) {
-    //                 $("#consultingForm").modal("hide");
+    //                 $("#consultingModal").modal("hide");
 
     //                 let message = result.message;
     //                 if (result.task_id) {
@@ -109,7 +109,7 @@ $(document).ready(function () {
             },
             beforeSubmit: function () {},
             success: function (result) {
-                $("#consultingForm").modal("hide");
+                $("#consultingModal").modal("hide");
                 showToastr("success", result.message);
                 setTimeout(function () {
                     window.location.reload();
@@ -130,7 +130,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $(document).on("hidden.bs.modal", "#consultingForm", function () {
+    $(document).on("hidden.bs.modal", "#consultingModal", function () {
         $("[id$='_error']").empty();
     });
 
@@ -142,11 +142,11 @@ $(document).ready(function () {
             success: function (data) {
                 // alert(data.html);
                 $("#sub_modal_show_html").html(data.html);
-                $("#consultingForm").modal("show");
+                $("#consultingModal").modal("show");
                 $(".select2").select2({
                     placeholder: "Select...",
                     width: "100%",
-                    dropdownParent: $("#consultingForm"),
+                    dropdownParent: $("#consultingModal"),
                     // allowClear: true,
                     // closeOnSelect: false, // keep dropdown open for multiple selections
                 });

@@ -122,11 +122,11 @@ $(document).on("click", ".open-modal", function () {
         success: function (data) {
             // alert(data.html);
             $("#modal_show_html").html(data.html);
-            $("#consultingForm").modal("show");
+            $("#consultingModal").modal("show");
             $(".select2").select2({
                 placeholder: "Select...",
                 width: "100%",
-                dropdownParent: $("#consultingForm"),
+                dropdownParent: $("#consultingModal"),
                 // allowClear: true,
                 // closeOnSelect: false, // keep dropdown open for multiple selections
             });
@@ -149,7 +149,7 @@ $(document).on("click", "#consulting_form_button", function () {
         beforeSubmit: function () {},
         success: function (result) {
             consulting_table.draw();
-            $("#consultingForm").modal("hide");
+            $("#consultingModal").modal("hide");
             showToastr("success", result.message);
         },
         error: function (result) {
