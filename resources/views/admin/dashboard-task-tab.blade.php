@@ -37,6 +37,8 @@
                             <span
                                 class="badge rounded-pill
                         bg-{{ $followup->status === 'completed' ? 'success' : 'warning' }}">
+                                <i
+                                    class="fas {{ $followup->status === 'completed' ? 'fa-check-circle' : 'fa-hourglass-half' }} me-1"></i>
                                 {{ ucfirst($followup->status) }}
                             </span>
 
@@ -161,10 +163,10 @@
                         <div class="d-flex align-items-center gap-1">
 
                             {{-- STATUS BADGE --}}
-                            <span class="badge rounded-pill bg-{{ $task->status_manager->bootstrapColor() }}">
+                            {{-- <span class="badge rounded-pill bg-{{ $task->status_manager->bootstrapColor() }}">
                                 <i class="fas {{ $task->status_manager->icon() }} me-1"></i>
                                 {{ $task->status_manager->name }}
-                            </span>
+                            </span> --}}
 
                             {{-- MARK DONE --}}
                             @if (!$task->status_manager->isCompleted())

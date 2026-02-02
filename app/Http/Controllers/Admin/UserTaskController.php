@@ -128,7 +128,6 @@ class UserTaskController extends Controller
 
     private function getTaskCounts($data, $columns)
     {
-
         return [
             'all' => UserTask::Filters($data, $columns)
                 ->tap(fn($q) => $this->applyTaskStatusFilter($q, 'all'))

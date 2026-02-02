@@ -158,6 +158,9 @@ var task_table = $(".table-list").DataTable({
     `,
     ajax: {
         url: $("#task_table").attr("data-url"),
+        data: function (d) {
+            d.status = $("#taskTabs .nav-link.active").data("status"); // send tab status
+        },
         dataSrc: function (json) {
             // console.log(json);
             // 🔹 Update tab counts (if available)
@@ -211,6 +214,28 @@ $(".date-range").on(
         toggleTodayTab();
     },
 );
+
+function toggleTodayTab() {
+    let dateRange = $(".date-range").val() || ""; // prevents undefined
+    let todayTab = $('a[data-status="today"]').closest("li");
+    let allTab = $('a[data-status="all"]');
+
+    if (dateRange.trim() !== "") {
+        // Hide Today tab
+        todayTab.hide();
+
+        // Activate ALL tab
+        $("#taskTabs .nav-link").removeClass("active");
+        allTab.addClass("active");
+    } else {
+        // Show Today tab
+        todayTab.show();
+
+        // Activate Today tab
+        $("#taskTabs .nav-link").removeClass("active");
+        $('a[data-status="today"]').addClass("active");
+    }
+}
 
 // Reset Filters Button
 $(document).on("click", "#resetFilters", function () {

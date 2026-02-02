@@ -14,8 +14,8 @@ class StatusManagerSeeder extends Seeder
     public function run(): void
     {
         $statuses = [
-            ['name' => 'Pending', 'color_name' => 'Red'],
-            ['name' => 'In Progress', 'color_name' => 'Orange'],
+            ['name' => 'Pending', 'color_name' => 'Orange'],
+            ['name' => 'In Progress', 'color_name' => 'Blue'],
             ['name' => 'Done', 'color_name' => 'Green'],
             ['name' => 'Cancelled', 'color_name' => 'Grey']
         ];
