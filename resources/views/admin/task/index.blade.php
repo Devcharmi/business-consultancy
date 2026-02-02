@@ -27,6 +27,7 @@
                     {{-- @endif --}}
                 </div>
                 <div class="card-body">
+                    @include('admin.filters.common-filters')
                     <div class="table-responsive">
                         <table id="task_table" data-url="{{ route('task.index') }}"
                             class="table table-bordered text-nowrap w-100 table-list">
@@ -56,7 +57,7 @@
         var csrf_token = '{{ csrf_token() }}';
         var edit_path = "{{ route('task.show', ['task' => ':task']) }}";
         var delete_path = "{{ route('task.destroy', ['task' => ':task']) }}";
-        var pdf_path = "{{ route('task.pdf',  ['task' => ':task']) }}";
+        var pdf_path = "{{ route('task.pdf', ['task' => ':task']) }}";
         window.canEditTask = @json(canAccess('task.edit'));
         window.canDeleteTask = @json(canAccess('task.delete'));
     </script>

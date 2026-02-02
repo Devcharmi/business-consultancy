@@ -119,6 +119,8 @@
                 </div>
 
                 <div class="card-body">
+                    
+                    @include('admin.filters.common-filters')
 
                     <ul class="nav nav-tabs mb-3" id="taskTabs">
                         <li class="nav-item">

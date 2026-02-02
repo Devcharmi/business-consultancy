@@ -8,6 +8,7 @@ use App\Models\PriorityManager;
 use App\Models\StatusManager;
 use App\Models\User;
 use App\Models\UserTask;
+use App\Services\FilterDropdownService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -41,8 +42,16 @@ class UserTaskController extends Controller
 
         if ($request->ajax()) {
 
-            $data = $request->all();
+             $data = $request->all();
             // dd($data);
+            // Apply external filters
+            $data['date_range']     = $request->get('dateRange');
+            $data['filterClient']    = $request->get('filterClient');
+            $data['filterStaff']  = $request->get('filterStaff');
+            $data['filterCreatedBy'] = $request->get('filterCreatedBy');
+            $data['filterStatus'] = $request->get('filterStatus');
+            $data['filterPriority'] = $request->get('filterPriority');
+
 
             $status = $request->get('status', 'all');
 
@@ -87,9 +96,15 @@ class UserTaskController extends Controller
         }
 
         // Non AJAX
-        $staffList = User::get();
-        $priorities = PriorityManager::where('status', '1')->get();
-        return view('admin.user_task.index', compact('staffList', 'priorities'));
+        // $filters = FilterDropdownService::get();
+        $filterRouteConfig = config('filter.route_filters');
+
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+
+        return view('admin.user_task.index', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
     }
 
     private function applyTaskStatusFilter($query, $status)

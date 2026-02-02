@@ -80,18 +80,12 @@ class UserTask extends Model
 
     public function scopeFilters($query, $filters = [], $columns = [])
     {
-        // if (!empty($filters['date_range'])) {
-        //     $explode = explode(' - ', $filters['date_range']);
-        //     $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
-        //     $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
-        //     $query->whereDate('task_start_date', '>=', $from);
-        //     $query->whereDate('task_start_date', '<=', $to);
-        // }
         if (!empty($filters['date_range'])) {
-
             $explode = explode(' - ', $filters['date_range']);
             $from = Carbon::parse($explode[0])->startOfDay();
             $to   = Carbon::parse($explode[1])->endOfDay();
+            $query->whereDate('task_start_date', '>=', $from);
+            $query->whereDate('task_start_date', '<=', $to);
         }
 
         // 🔹 Search filter
@@ -104,6 +98,11 @@ class UserTask extends Model
             });
         }
 
+        // 🔹 Created by filter
+        if (!empty($filters['filterCreatedBy'])) {
+            $query->where('created_by', $filters['filterCreatedBy']);
+        }
+
         // 🔹 Staff filter
         if (!empty($filters['filterStaff'])) {
             $query->where('staff_manager_id', $filters['filterStaff']);
@@ -112,6 +111,11 @@ class UserTask extends Model
         // 🔹 Project filter
         if (!empty($filters['filterClient'])) {
             $query->where('client_id', $filters['filterClient']);
+        }
+
+        // 🔹 Status filter
+        if (!empty($filters['filterStatus'])) {
+            $query->where('status_manager_id', $filters['filterStatus']);
         }
 
         // 🔹 Priority filter

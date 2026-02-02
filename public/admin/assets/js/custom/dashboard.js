@@ -469,3 +469,9 @@ $(document).on("click", ".mark-completed", function () {
         },
     );
 });
+
+// Reset Filters Button
+$(document).on("click", "#resetFilters", function () {
+    // Clear all filter dropdowns
+    $(".applyFilters").val("").trigger("change");
+});

@@ -160,6 +160,12 @@ var task_table = $(".table-list").DataTable({
         url: $("#task_table").attr("data-url"),
         data: function (d) {
             d.status = $("#taskTabs .nav-link.active").data("status"); // send tab status
+            d.dateRange = $("#dateRange").val();
+            d.filterClient = $("#filterClient").val();
+            d.filterStaff = $("#filterStaff").val();
+            d.filterCreatedBy = $("#filterCreatedBy").val();
+            d.filterStatus = $("#filterStatus").val();
+            d.filterPriority = $("#filterPriority").val();
         },
         dataSrc: function (json) {
             // console.log(json);

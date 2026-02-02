@@ -27,6 +27,7 @@
                     {{-- @endif --}}
                 </div>
                 <div class="card-body">
+                    @include('admin.filters.common-filters')
                     <div class="table-responsive">
                         <table id="consulting_table" data-url="{{ route('consulting.index') }}"
                             class="table table-bordered text-nowrap w-100 table-list">

@@ -15,7 +15,11 @@ class PriorityManager extends Model
         'status'
     ];
 
-    
+    public function scopeActivePriorities($query)
+    {
+        return $query->where('status', '1');
+    }
+
     public static function mediumId()
     {
         return static::where('name', 'Medium')->value('id');
