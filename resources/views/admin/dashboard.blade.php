@@ -33,7 +33,7 @@
                         <li class="nav-item">
                             <button class="nav-link" id="tab-today-tasks" data-bs-toggle="tab"
                                 data-bs-target="#today-tasks-tab">
-                                Today's Task & Followups
+                                Task & Followups
                             </button>
                         </li>
                     </ul>

@@ -3,7 +3,7 @@
         <div class="card shadow-sm border-0 h-100 dashboard-card followup-card">
             <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
                 <h6 class="mb-0 fw-semibold text-primary">
-                    <i class="fas fa-calendar-check me-2"></i> Today's Follow-ups
+                    <i class="fas fa-calendar-check me-2"></i> Follow-ups
                 </h6>
                 <span class="badge bg-primary-subtle text-primary">
                     {{ $todayFollowUps->count() }}
@@ -71,7 +71,7 @@
         <div class="card shadow-sm border-0 h-100 dashboard-card task-card">
             <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
                 <h6 class="mb-0 fw-semibold text-success">
-                    <i class="fas fa-tasks me-2"></i> Today's Tasks
+                    <i class="fas fa-tasks me-2"></i> Tasks
                 </h6>
                 <span class="badge bg-success-subtle text-success">
                     {{ $todayTasks->count() }}

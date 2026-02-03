@@ -321,6 +321,7 @@ class ConsultingController extends Controller
         $task->client_objective_id = $consulting->client_objective_id;
         $task->expertise_manager_id = $consulting->expertise_manager_id;
         $task->title = $focusArea ? $focusArea->name : 'Consulting Task';
+        $task->task_start_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
         $task->task_due_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
         $task->updated_by = auth()->id();
         $task->save();
