@@ -1,3 +1,19 @@
+$(document).on("change", "#dateRange", function () {
+    let dateRange = $(this).val();
+
+    let url = new URL(window.location.href);
+    url.searchParams.set("date_range", dateRange);
+
+    window.location.href = url.toString();
+});
+
+// Reset Filters Button
+$(document).on("click", "#resetFilters", function () {
+    let url = new URL(window.location.href);
+    url.searchParams.delete("date_range");
+    window.location.href = url.toString();
+});
+
 $(document).ready(function () {
     $(document).on("click", ".calendar-add-btn", function () {
         const date = $(this).data("date");

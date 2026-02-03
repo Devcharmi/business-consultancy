@@ -131,7 +131,7 @@ $(document).on("click", "#resetFilters", function () {
     $(".applyFilters").val("").trigger("change");
 
     // ✅ If you're using DataTables with AJAX filtering:
-    if (typeof task_table !== "undefined") {
+    if (typeof consulting_table !== "undefined") {
         consulting_table.draw();
     }
 });

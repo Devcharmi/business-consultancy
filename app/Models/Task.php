@@ -69,7 +69,7 @@ class Task extends Model
             $from = Carbon::parse($explode[0])->startOfDay();
             $to   = Carbon::parse($explode[1])->endOfDay();
             $query->whereDate('task_start_date', '>=', $from);
-            $query->whereDate('task_start_date', '<=', $to);
+            $query->whereDate('task_due_date', '<=', $to);
         }
 
         /* ================= CLIENT OBJECTIVE FILTER ================= */

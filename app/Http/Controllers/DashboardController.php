@@ -25,6 +25,17 @@ class DashboardController extends Controller
         }
         // $userExpertiseIds = $user->expertiseManagers()->pluck('expertise_managers.id');
 
+        $dateRange = $request->input('date_range');
+
+        $fromDate = null;
+        $toDate   = null;
+
+        if ($dateRange) {
+            [$from, $to] = explode(' - ', $dateRange);
+            $fromDate = Carbon::parse($from)->startOfDay();
+            $toDate   = Carbon::parse($to)->endOfDay();
+        }
+
         $selectedMonth = $request->input('month', date('m'));
         $selectedYear = $request->input('year', date('Y'));
 
@@ -39,21 +50,39 @@ class DashboardController extends Controller
 
         $DONE_STATUS_ID = $statuses['Done'] ?? null;
 
-        $expertiseTasks = Task::accessibleBy($user)
+        $expertiseTasksQuery = Task::accessibleBy($user)
             ->select(
                 'expertise_manager_id',
                 DB::raw('COUNT(*) as total_tasks'),
                 DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
-            )
+            );
+
+
+        if ($fromDate && $toDate) {
+            $expertiseTasksQuery->whereBetween('task_start_date', [$fromDate, $toDate]);
+        }
+
+        $expertiseTasks = $expertiseTasksQuery
             ->groupBy('expertise_manager_id')
             ->get();
 
         $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
 
+        // $consultingQuery = Consulting::with(['expertise_manager', 'client_objective.client'])
+        //     ->whereMonth('consulting_datetime', $selectedMonth)
+        //     ->whereYear('consulting_datetime', $selectedYear)
+        //     ->accessibleBy($user);
         $consultingQuery = Consulting::with(['expertise_manager', 'client_objective.client'])
-            ->whereMonth('consulting_datetime', $selectedMonth)
-            ->whereYear('consulting_datetime', $selectedYear)
             ->accessibleBy($user);
+
+        if ($fromDate && $toDate) {
+            $consultingQuery->whereBetween('consulting_datetime', [$fromDate, $toDate]);
+        } else {
+            // fallback month/year (optional)
+            $consultingQuery
+                ->whereMonth('consulting_datetime', $selectedMonth)
+                ->whereYear('consulting_datetime', $selectedYear);
+        }
 
         $consultings = $consultingQuery
             ->orderBy('consulting_datetime')
