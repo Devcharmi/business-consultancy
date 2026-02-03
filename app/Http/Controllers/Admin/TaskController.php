@@ -36,11 +36,20 @@ class TaskController extends Controller
     {
         if (request()->ajax()) {
             $data = $request->all();
+            // Apply external filters
+            $data['date_range']     = $request->get('dateRange');
+            $data['filterClient']    = $request->get('filterClient');
+            $data['filterObjective']  = $request->get('filterObjective');
+            $data['filterExpertise'] = $request->get('filterExpertise');
+            $data['filterCreatedBy'] = $request->get('filterCreatedBy');
+            $data['filterStatus'] = $request->get('filterStatus');
+
             $columns = [
                 'id',
                 'title',
                 'client_objective_id',
                 'expertise_manager_id',
+                'task_start_date',
                 'task_due_date',
                 'status_manager_id'
             ];
@@ -61,7 +70,13 @@ class TaskController extends Controller
             $response['aaData'] = $tableData->toArray();
             return $response;
         }
-        return view('admin.task.index');
+        $filterRouteConfig = config('filter.route_filters');
+
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+        return view('admin.task.index', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
     }
 
     /**
@@ -168,7 +183,8 @@ class TaskController extends Controller
         $request->validate([
             'client_objective_id' => ['required', 'integer', 'exists:client_objectives,id'],
             'expertise_manager_id' => ['required', 'integer', 'exists:expertise_managers,id'],
-            'task_due_date' => ['required', 'date'],
+            'task_start_date' => ['required', 'date'],
+            'task_due_date' => ['required', 'date', 'after_or_equal:task_start_date'],
         ]);
 
         try {
@@ -241,7 +257,8 @@ class TaskController extends Controller
         $request->validate([
             'client_objective_id' => ['required', 'integer', 'exists:client_objectives,id'],
             'expertise_manager_id' => ['required', 'integer', 'exists:expertise_managers,id'],
-            'task_due_date' => ['required', 'date'],
+            'task_start_date' => ['required', 'date'],
+            'task_due_date' => ['required', 'date', 'after_or_equal:task_start_date'],
         ]);
 
         try {
@@ -251,6 +268,7 @@ class TaskController extends Controller
                 'client_objective_id',
                 'title',
                 'expertise_manager_id',
+                'task_start_date',
                 'task_due_date',
                 'type',
                 'status_manager_id',

@@ -35,32 +35,6 @@
             </div>
         @endif
 
-        {{-- Created By --}}
-        @if (auth()->user()->hasRole(['Super Admin', 'Admin']) && showFilter('created_by', $enabledFilters))
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Created By</label>
-                <select id="filterCreatedBy" class="form-control select2 applyFilters">
-                    <option value="">All Users</option>
-                    @foreach ($createdByUsers as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        @endif
-
-        {{-- Staff (Admin only) --}}
-        @if (auth()->user()->hasRole(['Super Admin', 'Admin']) && showFilter('staff', $enabledFilters))
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Assign to</label>
-                <select id="filterStaff" class="form-control select2 applyFilters">
-                    <option value="">All Staff</option>
-                    @foreach ($staffList as $staff)
-                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        @endif
-
         {{-- Objective --}}
         @if (showFilter('objective', $enabledFilters))
             <div class="col-md-3 mb-3">
@@ -69,19 +43,6 @@
                     <option value="">All Objectives</option>
                     @foreach ($objectives as $objective)
                         <option value="{{ $objective->id }}">{{ $objective->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        @endif
-
-        {{-- Status --}}
-        @if (showFilter('status', $enabledFilters))
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Status</label>
-                <select id="filterStatus" class="form-control select2 applyFilters">
-                    <option value="">All Status</option>
-                    @foreach ($statuses as $status)
-                        <option value="{{ $status->id }}">{{ $status->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -121,6 +82,45 @@
                     <option value="">All Priority</option>
                     @foreach ($priorities as $priority)
                         <option value="{{ $priority->id }}">{{ $priority->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+        
+        {{-- Status --}}
+        @if (showFilter('status', $enabledFilters))
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Status</label>
+                <select id="filterStatus" class="form-control select2 applyFilters">
+                    <option value="">All Status</option>
+                    @foreach ($statuses as $status)
+                        <option value="{{ $status->id }}">{{ $status->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+
+        {{-- Created By --}}
+        @if (auth()->user()->hasRole(['Super Admin', 'Admin']) && showFilter('created_by', $enabledFilters))
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Created By</label>
+                <select id="filterCreatedBy" class="form-control select2 applyFilters">
+                    <option value="">All Users</option>
+                    @foreach ($createdByUsers as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+        
+        {{-- Staff (Admin only) --}}
+        @if (auth()->user()->hasRole(['Super Admin', 'Admin']) && showFilter('staff', $enabledFilters))
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Assign to</label>
+                <select id="filterStaff" class="form-control select2 applyFilters">
+                    <option value="">All Staff</option>
+                    @foreach ($staffList as $staff)
+                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                     @endforeach
                 </select>
             </div>

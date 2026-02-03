@@ -10,6 +10,14 @@ var task_table = $(".table-list").DataTable({
     ],
     ajax: {
         url: $("#task_table").attr("data-url"),
+        data: function (d) {
+            d.dateRange = $("#dateRange").val();
+            d.filterClient = $("#filterClient").val();
+            d.filterObjective = $("#filterObjective").val();
+            d.filterExpertise = $("#filterExpertise").val();
+            d.filterCreatedBy = $("#filterCreatedBy").val();
+            d.filterStatus = $("#filterStatus").val();
+        },
     },
     columns: [
         // 1️⃣ Sr No
@@ -17,6 +25,14 @@ var task_table = $(".table-list").DataTable({
             data: "id",
             render: function (data, type, row, meta) {
                 return meta.row + meta.settings._iDisplayStart + 1;
+            },
+        },
+
+        // 6️⃣ Date
+        {
+            data: "task_start_date",
+            render: function (data) {
+                return data ? moment(data).format("DD-MM-YYYY") : "-";
             },
         },
 
@@ -69,13 +85,14 @@ var task_table = $(".table-list").DataTable({
             },
         },
 
-        // 6️⃣ Date
+        // 6️⃣ Due Date
         {
             data: "task_due_date",
             render: function (data) {
                 return data ? moment(data).format("DD-MM-YYYY") : "-";
             },
         },
+
         {
             data: "status_manager",
             mRender: function (v, t, o) {
@@ -128,29 +145,20 @@ var task_table = $(".table-list").DataTable({
     },
 });
 
-// $(document).on("click", ".open-modal", function () {
-//     $.ajax({
-//         url: $(this).attr("data-url"),
-//         type: "GET",
-//         dataType: "json",
-//         success: function (data) {
-//             // alert(data.html);
-//             $("#modal_show_html").html(data.html);
-//             $("#taskForm").modal("show");
-//             $(".select2").select2({
-//                 placeholder: "Select...",
-//                 width: "100%",
-//                 dropdownParent: $("#taskForm"),
-//                 // allowClear: true,
-//                 // closeOnSelect: false, // keep dropdown open for multiple selections
-//             });
-//             initAllCKEditors([
-//                 "content",
-//             ]);
-//         },
-//     });
-//     return false;
-// });
+$(document).on("change", ".applyFilters", function () {
+    task_table.draw();
+});
+
+// Reset Filters Button
+$(document).on("click", "#resetFilters", function () {
+    // Clear all filter dropdowns
+    $(".applyFilters").val("").trigger("change");
+
+    // ✅ If you're using DataTables with AJAX filtering:
+    if (typeof task_table !== "undefined") {
+        task_table.draw();
+    }
+});
 
 $("#task_form").on("submit", function (e) {
     e.preventDefault();

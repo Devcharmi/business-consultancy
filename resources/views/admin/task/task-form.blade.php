@@ -109,7 +109,7 @@
                                     </div>
 
                                     {{-- Title --}}
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-5 mb-3">
                                         <label class="required">Meeting Title</label>
                                         <input type="text" name="title" id="title" class="form-control"
                                             value="{{ old('title', optional($taskData)->title) }}">
@@ -117,7 +117,24 @@
                                     </div>
 
                                     {{-- Due Date --}}
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
+                                        <label>Meeting Date</label>
+                                        <input type="date" name="task_start_date" id="task_start_date"
+                                            class="form-control"
+                                            value="{{ old(
+                                                'task_start_date',
+                                                optional($taskData)->task_start_date
+                                                    ? \Carbon\Carbon::parse($taskData->task_start_date)->format('Y-m-d')
+                                                    : now()->format('Y-m-d'),
+                                            ) }}">
+
+                                        <small class="text-danger"
+                                            id="task_start_date_error">{{ $errors->first('task_start_date') }}</small>
+
+                                    </div>
+
+                                    {{-- Due Date --}}
+                                    <div class="col-md-2 mb-3">
                                         <label>Due Date</label>
                                         <input type="date" name="task_due_date" id="task_due_date" class="form-control"
                                             value="{{ old(

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\FiltersByExpertiseManager;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
@@ -19,6 +20,11 @@ class Task extends Model
         'status_manager_id',
         'created_by',
         'updated_by',
+    ];
+
+    protected $casts = [
+        'task_start_date' => 'date',
+        'task_due_date'   => 'date',
     ];
 
     public function client_objective()
@@ -58,13 +64,14 @@ class Task extends Model
 
     public function scopeFilters($query, $filters = [], $columns = [])
     {
-        // if (!empty($filters['date_range'])) {
-        //     $explode = explode(' - ', $filters['date_range']);
-        //     $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
-        //     $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
-        //     $query->whereDate('created_at', '>=', $from);
-        //     $query->whereDate('created_at', '<=', $to);
-        // }
+        if (!empty($filters['date_range'])) {
+            $explode = explode(' - ', $filters['date_range']);
+            $from = Carbon::parse($explode[0])->startOfDay();
+            $to   = Carbon::parse($explode[1])->endOfDay();
+            $query->whereDate('task_start_date', '>=', $from);
+            $query->whereDate('task_start_date', '<=', $to);
+        }
+
         /* ================= CLIENT OBJECTIVE FILTER ================= */
 
         if (!empty($filters['client_objective_id'])) {
@@ -90,6 +97,36 @@ class Task extends Model
                     });
             });
         }
+
+        // 🔹 Created by filter
+        if (!empty($filters['filterCreatedBy'])) {
+            $query->where('created_by', $filters['filterCreatedBy']);
+        }
+
+        // 🔹 Project filter
+        if (!empty($filters['filterClient'])) {
+            $query->whereHas('client_objective', function ($qc) use ($filters) {
+                $qc->where('client_id', $filters['filterClient']);
+            });
+        }
+
+        // 🔹 Status filter
+        if (!empty($filters['filterStatus'])) {
+            $query->where('status_manager_id', $filters['filterStatus']);
+        }
+
+        // 🔹 Project filter
+        if (!empty($filters['filterObjective'])) {
+            $query->whereHas('client_objective', function ($qc) use ($filters) {
+                $qc->where('objective_manager_id', $filters['filterObjective']);
+            });
+        }
+
+        // 🔹 Status filter
+        if (!empty($filters['filterExpertise'])) {
+            $query->where('expertise_manager_id', $filters['filterExpertise']);
+        }
+
         if (!empty($filters['sort'])) {
             $sort = $filters['sort'];
 

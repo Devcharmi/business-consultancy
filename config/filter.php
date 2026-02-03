@@ -22,13 +22,13 @@ return [
 
         'task.index' => [
             'daterange',
-            'created_by',
-            'staff',
             'client',
+            'objective',
+            'expertise',
+            'created_by',
             'status',
-            'priority',
         ],
-
+    
         'consulting.index' => [
             'daterange',
             'created_by',
