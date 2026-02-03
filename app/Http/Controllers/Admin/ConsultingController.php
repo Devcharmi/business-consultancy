@@ -30,6 +30,12 @@ class ConsultingController extends Controller
     {
         if (request()->ajax()) {
             $data = $request->all();
+            $data['date_range']     = $request->get('dateRange');
+            $data['filterClient']    = $request->get('filterClient');
+            $data['filterObjective']  = $request->get('filterObjective');
+            $data['filterExpertise'] = $request->get('filterExpertise');
+            $data['filterFocusArea'] = $request->get('filterFocusArea');
+
             $columns = [
                 'id',
                 'client_objective_id',
@@ -55,7 +61,13 @@ class ConsultingController extends Controller
 
             return $response;
         }
-        return view('admin.consulting.index');
+        $filterRouteConfig = config('filter.route_filters');
+
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+        return view('admin.consulting.index', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
     }
 
     /**
@@ -328,7 +340,6 @@ class ConsultingController extends Controller
             if ($pendingStatus) {
                 $task->status_manager_id = $pendingStatus->id;
             }
-
         }
 
         $task->client_objective_id = $consulting->client_objective_id;
@@ -342,18 +353,18 @@ class ConsultingController extends Controller
     }
 
     private function getPendingStatus()
-{
-    $status = StatusManager::where(function($query) {
+    {
+        $status = StatusManager::where(function ($query) {
             $query->whereRaw('LOWER(name) LIKE ?', ['%Pending%'])
-                  ->orWhereRaw('LOWER(name) LIKE ?', ['%Pending%']);
+                ->orWhereRaw('LOWER(name) LIKE ?', ['%Pending%']);
         })
-        ->activeStatus()
-        ->first();
+            ->activeStatus()
+            ->first();
 
-    if (!$status) {
-        $status = StatusManager::activeStatus()->first();
+        if (!$status) {
+            $status = StatusManager::activeStatus()->first();
+        }
+
+        return $status;
     }
-
-    return $status;
-}
 }

@@ -28,17 +28,13 @@ return [
             'created_by',
             'status',
         ],
-    
+
         'consulting.index' => [
             'daterange',
-            'created_by',
-            'staff',
             'client',
             'objective',
-            'status',
             'expertise',
             'focus_area',
-            // priority intentionally hidden
         ],
 
     ],

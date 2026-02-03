@@ -10,6 +10,13 @@ var consulting_table = $(".table-list").DataTable({
     ],
     ajax: {
         url: $("#consulting_table").attr("data-url"),
+        data: function (d) {
+            d.dateRange = $("#dateRange").val();
+            d.filterClient = $("#filterClient").val();
+            d.filterObjective = $("#filterObjective").val();
+            d.filterExpertise = $("#filterExpertise").val();
+            d.filterFocusArea = $("#filterFocusArea").val();
+        },
     },
     columns: [
         // 1️⃣ Sr No
@@ -112,6 +119,21 @@ var consulting_table = $(".table-list").DataTable({
         sSearch: "",
         lengthMenu: "_MENU_&nbsp; items/page",
     },
+});
+
+$(document).on("change", ".applyFilters", function () {
+    consulting_table.draw();
+});
+
+// Reset Filters Button
+$(document).on("click", "#resetFilters", function () {
+    // Clear all filter dropdowns
+    $(".applyFilters").val("").trigger("change");
+
+    // ✅ If you're using DataTables with AJAX filtering:
+    if (typeof task_table !== "undefined") {
+        consulting_table.draw();
+    }
 });
 
 $(document).on("click", ".open-modal", function () {

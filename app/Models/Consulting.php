@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\FiltersByExpertiseManager;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Consulting extends Model
 {
     use FiltersByExpertiseManager;
-    
+
     protected $fillable = [
         'client_objective_id',
         'expertise_manager_id',
@@ -35,13 +36,13 @@ class Consulting extends Model
 
     public function scopeFilters($query, $filters = [], $columns = [])
     {
-        // if (!empty($filters['date_range'])) {
-        //     $explode = explode(' - ', $filters['date_range']);
-        //     $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
-        //     $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
-        //     $query->whereDate('created_at', '>=', $from);
-        //     $query->whereDate('created_at', '<=', $to);
-        // }
+        if (!empty($filters['date_range'])) {
+            $explode = explode(' - ', $filters['date_range']);
+            $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
+            $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
+            $query->whereDate('created_at', '>=', $from);
+            $query->whereDate('created_at', '<=', $to);
+        }
 
         if (!empty($filters['search']) or !empty($filters['search']['value'])) {
             $term = is_array($filters['search']) ? $filters['search']['value'] : $filters['search'];
@@ -66,6 +67,31 @@ class Consulting extends Model
                     });
             });
         }
+
+        // 🔹 Project filter
+        if (!empty($filters['filterClient'])) {
+            $query->whereHas('client_objective', function ($qc) use ($filters) {
+                $qc->where('client_id', $filters['filterClient']);
+            });
+        }
+
+        // 🔹 Project filter
+        if (!empty($filters['filterObjective'])) {
+            $query->whereHas('client_objective', function ($qc) use ($filters) {
+                $qc->where('objective_manager_id', $filters['filterObjective']);
+            });
+        }
+
+        // 🔹 Status filter
+        if (!empty($filters['filterExpertise'])) {
+            $query->where('expertise_manager_id', $filters['filterExpertise']);
+        }
+
+        // 🔹 Status filter
+        if (!empty($filters['filterFocusArea'])) {
+            $query->where('focus_area_manager_id', $filters['filterFocusArea']);
+        }
+
         if (!empty($filters['sort'])) {
             $sort = $filters['sort'];
 
