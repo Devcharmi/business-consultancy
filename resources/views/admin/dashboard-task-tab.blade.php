@@ -24,10 +24,9 @@
                                 </div>
 
                                 <small class="text-muted">
-                                    {{ $followup->next_follow_up_at->format('h:i A') }}
+                                    {{ $followup->next_follow_up_at->format('d M Y h:i A') }}
                                 </small>
                             </a>
-
                         </div>
 
                         {{-- RIGHT : STATUS + ACTION --}}

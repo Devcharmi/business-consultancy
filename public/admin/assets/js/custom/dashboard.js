@@ -1,3 +1,29 @@
+$(document).on("shown.bs.tab", 'button[data-bs-toggle="tab"]', function (e) {
+    let activeTab = $(e.target).attr("data-bs-target");
+    localStorage.setItem("dashboard_active_tab", activeTab);
+});
+
+$(document).ready(function () {
+    let lastTab = localStorage.getItem("dashboard_active_tab");
+
+    if (lastTab) {
+        let tabTrigger = document.querySelector(
+            `button[data-bs-toggle="tab"][data-bs-target="${lastTab}"]`,
+        );
+
+        if (tabTrigger) {
+            new bootstrap.Tab(tabTrigger).show();
+        }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const dateRange = params.get("date_range");
+
+    if (dateRange) {
+        $("#dateRange").val(dateRange);
+    }
+});
+
 $(document).on("change", "#dateRange", function () {
     let dateRange = $(this).val();
 

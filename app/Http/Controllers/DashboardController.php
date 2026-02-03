@@ -57,7 +57,6 @@ class DashboardController extends Controller
                 DB::raw("SUM(CASE WHEN status_manager_id = $DONE_STATUS_ID THEN 1 ELSE 0 END) as done_tasks")
             );
 
-
         if ($fromDate && $toDate) {
             $expertiseTasksQuery->whereBetween('task_start_date', [$fromDate, $toDate]);
         }
@@ -102,7 +101,7 @@ class DashboardController extends Controller
         $nextMonth = $currentDate->copy()->addMonth();
 
         $canCreateConsulting = $user->can('consulting.create');
-        $todayData = $this->getTodayDashboardData($user);
+        $todayData = $this->getTodayDashboardData($user, $fromDate, $toDate);
 
         return view('admin.dashboard', array_merge(
             compact(
@@ -120,42 +119,116 @@ class DashboardController extends Controller
         ));
     }
 
-    private function getTodayDashboardData($user)
+    private function getTodayDashboardData($user, $fromDate = null, $toDate = null)
     {
-        $today = now()->toDateString();
+        $today = today();
+
+        /* ================= FOLLOW UPS ================= */
+        $followUps = LeadFollowUp::query();
+
+        if ($fromDate && $toDate) {
+            $followUps->whereBetween('next_follow_up_at', [$fromDate, $toDate]);
+        } else {
+            $followUps->whereDate('next_follow_up_at', $today);
+        }
+
+        /* ================= TASK BASE QUERY ================= */
+        $taskBase = UserTask::with('status_manager');
+
+        /* ================= TODAY / RANGE TASKS ================= */
+        $todayTasks = clone $taskBase;
+
+        if ($fromDate && $toDate) {
+            $todayTasks->whereBetween('task_due_date', [$fromDate, $toDate]);
+        } else {
+            $todayTasks->whereDate('task_due_date', $today);
+        }
+
+        /* ================= PENDING TASKS ================= */
+        $pendingTasks = clone $taskBase;
+
+        if ($fromDate && $toDate) {
+            $pendingTasks
+                ->whereDate('task_start_date', '<=', $toDate)
+                ->whereDate('task_due_date', '>=', $fromDate);
+        } else {
+            $pendingTasks
+                ->whereDate('task_start_date', '<=', $today)
+                ->whereDate('task_due_date', '>=', $today);
+        }
+
+        $pendingTasks->whereHas(
+            'status_manager',
+            fn($q) =>
+            $q->where('name', '!=', 'Done')
+        );
+
+        /* ================= OVERDUE TASKS ================= */
+        $overdueTasks = clone $taskBase;
+
+        if ($fromDate && $toDate) {
+            $overdueTasks
+                ->whereDate('task_due_date', '<', $toDate)
+                ->whereHas(
+                    'status_manager',
+                    fn($q) =>
+                    $q->where('name', '!=', 'Done')
+                );
+        } else {
+            $overdueTasks
+                ->whereDate('task_due_date', '<', $today)
+                ->whereHas(
+                    'status_manager',
+                    fn($q) =>
+                    $q->where('name', '!=', 'Done')
+                );
+        }
 
         return [
-            'todayFollowUps' => LeadFollowUp::whereDate('next_follow_up_at', $today)
-                ->latest()
-                ->take(3)
-                ->get(),
-
-            'todayTasks' => UserTask::whereDate('task_due_date', $today)
-                ->with('status_manager')
-                ->latest()
-                ->take(3)
-                ->get(),
-
-            'pendingTasks' => UserTask::whereDate('task_start_date', '<=', today())
-                ->whereDate('task_due_date', '>=', today())
-                ->whereHas('status_manager', function ($q) {
-                    $q->where('name', '!=', 'Done');
-                })
-                ->with('status_manager')
-                ->latest()
-                ->take(3)
-                ->get(),
-
-            'overdueTasks' => UserTask::whereDate('task_due_date', '<', $today)
-                ->whereHas('status_manager', function ($q) {
-                    $q->where('name', '!=', 'Done');
-                })
-                ->with('status_manager')
-                ->latest()
-                ->take(3)
-                ->get(),
+            'todayFollowUps' => $followUps->latest()->take(3)->get(),
+            'todayTasks'     => $todayTasks->latest()->take(3)->get(),
+            'pendingTasks'   => $pendingTasks->latest()->take(3)->get(),
+            'overdueTasks'   => $overdueTasks->latest()->take(3)->get(),
         ];
     }
+
+
+    // private function getTodayDashboardData($user)
+    // {
+    //     $today = now()->toDateString();
+
+    //     return [
+    //         'todayFollowUps' => LeadFollowUp::whereDate('next_follow_up_at', $today)
+    //             ->latest()
+    //             ->take(3)
+    //             ->get(),
+
+    //         'todayTasks' => UserTask::whereDate('task_due_date', $today)
+    //             ->with('status_manager')
+    //             ->latest()
+    //             ->take(3)
+    //             ->get(),
+
+    //         'pendingTasks' => UserTask::whereDate('task_start_date', '<=', today())
+    //             ->whereDate('task_due_date', '>=', today())
+    //             ->whereHas('status_manager', function ($q) {
+    //                 $q->where('name', '!=', 'Done');
+    //             })
+    //             ->with('status_manager')
+    //             ->latest()
+    //             ->take(3)
+    //             ->get(),
+
+    //         'overdueTasks' => UserTask::whereDate('task_due_date', '<', $today)
+    //             ->whereHas('status_manager', function ($q) {
+    //                 $q->where('name', '!=', 'Done');
+    //             })
+    //             ->with('status_manager')
+    //             ->latest()
+    //             ->take(3)
+    //             ->get(),
+    //     ];
+    // }
 
     public function updateStatus(Request $request)
     {
