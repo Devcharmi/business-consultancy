@@ -15,6 +15,9 @@ class TaskContent extends Model
         'content_date',
     ];
 
+    protected $casts = [
+        'content_date' => 'date',
+    ];
     /* ======================
        Relationships
     ====================== */

@@ -545,22 +545,82 @@ class TaskController extends Controller
             'status_manager',
             'createdBy',
 
-            // Commitments + status
-            'commitments.userTask.status_manager',
             'commitments.staff',
+            'commitments.userTask.status_manager',
 
-            // Deliverables + status
             'deliverables.userTask.status_manager',
 
             'content',
         ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('admin.pdf.task-content', compact('task'))
-            ->setPaper('A4', 'portrait');
+        /**
+         * 🔥 BUILD TIMELINE (ONCE)
+         */
+        $timeline = [];
+
+        foreach ($task->content as $c) {
+            if ($c->content_date) {
+                $date = $c->content_date->toDateString();
+                $timeline[$date]['content'][] = $c;
+            }
+        }
+
+        foreach ($task->commitments as $c) {
+            if ($c->commitment_date) {
+                $date = $c->commitment_date->toDateString();
+                $timeline[$date]['commitments'][] = $c;
+            }
+        }
+
+        foreach ($task->deliverables as $d) {
+            if ($d->deliverable_date) {
+                $date = $d->deliverable_date->toDateString();
+                $timeline[$date]['deliverables'][] = $d;
+            }
+        }
+
+        // Sort dates DESC
+        krsort($timeline);
+
+        $pdf = Pdf::loadView(
+            'admin.pdf.task-content',
+            compact('task', 'timeline')
+        )
+            ->setPaper('A4', 'portrait')
+            ->setOptions([
+                'defaultFont' => 'dejavusans',   // 🔥 MATCH BLADE
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => false,
+                'dpi' => 96,                     // 🔥 SPEED BOOST
+            ]);
 
         return $pdf->stream("task-{$task->id}.pdf");
     }
 
+    // public function taskPdf($id)
+    // {
+    //     $task = Task::with([
+    //         'client_objective.client',
+    //         'client_objective.objective_manager',
+    //         'expertise_manager',
+    //         'status_manager',
+    //         'createdBy',
+
+    //         // Commitments + status
+    //         'commitments.userTask.status_manager',
+    //         'commitments.staff',
+
+    //         // Deliverables + status
+    //         'deliverables.userTask.status_manager',
+
+    //         'content',
+    //     ])->findOrFail($id);
+
+    //     $pdf = Pdf::loadView('admin.pdf.task-content', compact('task'))
+    //         ->setPaper('A4', 'portrait');
+
+    //     return $pdf->stream("task-{$task->id}.pdf");
+    // }
 
     // public function taskPdf($id)
     // {
