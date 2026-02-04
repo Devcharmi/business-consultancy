@@ -232,11 +232,23 @@
                 @endif
                 <!-- End::slide -->
 
-                {{-- @if (canAccess('reports.allow'))
-                    <li
-                        class="slide has-sub {{ request()->routeIs('admin.reports.marketplace-demand') || request()->routeIs('admin.reports.service-demand') || request()->routeIs('admin.reports.vendor-performance') || request()->routeIs('admin.reports.client-engagement') || request()->routeIs('admin.reports.service-click-detail') ? 'open' : '' }} ">
-                        <a href="javascript:void(0);"
-                            class="side-menu__item {{ request()->routeIs('admin.reports.marketplace-demand') || request()->routeIs('admin.reports.service-demand') || request()->routeIs('admin.reports.vendor-performance') || request()->routeIs('admin.reports.client-engagement') || request()->routeIs('admin.reports.service-click-detail') ? 'active' : '' }}">
+                @php
+                    $reportRoutes = [
+                        'reports.marketplace-demand',
+                        'reports.service-demand',
+                        'reports.vendor-performance',
+                        'reports.client-engagement',
+                        'reports.service-click-detail',
+                        'reports.consulting',
+                        'reports.client',
+                    ];
+
+                    $isReportActive = request()->routeIs($reportRoutes);
+                @endphp
+
+                @if (canAccess('reports.allow'))
+                    <li class="slide has-sub {{ $isReportActive ? 'open' : '' }}">
+                        <a href="javascript:void(0);" class="side-menu__item {{ $isReportActive ? 'active' : '' }}">
                             <i class="ri-arrow-right-s-line side-menu__angle"></i>
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" fill="none"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -248,29 +260,32 @@
                             <li class="slide side-menu__label1">
                                 <a href="javascript:void(0)">Reports</a>
                             </li>
+
+                            {{-- Marketplace --}}
                             <li
-                                class="slide {{ request()->routeIs('admin.reports.marketplace-demand') ? 'active' : '' }}">
-                                <a href="{{ route('admin.reports.marketplace-demand') }}"
-                                    class="side-menu__item {{ request()->routeIs('admin.reports.marketplace-demand') ? 'active' : '' }}">Marketplace
-                                    Demand Overview</a>
-                            </li>
-                            <li
-                                class="slide {{ request()->routeIs('admin.reports.service-demand') ? 'active' : '' }}">
-                                <a href="{{ route('admin.reports.service-demand') }}"
-                                    class="side-menu__item {{ request()->routeIs('admin.reports.service-demand') ? 'active' : '' }}">Service
-                                    Demand Report</a>
-                            </li>
-                            <li
-                                class="slide {{ request()->routeIs('admin.reports.vendor-performance') ? 'active' : '' }}">
-                                <a href="{{ route('admin.reports.vendor-performance') }}"
-                                    class="side-menu__item {{ request()->routeIs('admin.reports.vendor-performance') ? 'active' : '' }}">Vendor
-                                    Performance
-                                    Overview</a>
+                                class="slide {{ request()->routeIs('reports.marketplace-demand') ? 'active' : '' }}">
+                                <a href="{{ route('reports.marketplace-demand') }}" class="side-menu__item">
+                                    Marketplace Demand Overview
+                                </a>
                             </li>
 
+                            {{-- Consulting Report --}}
+                            <li class="slide {{ request()->routeIs('reports.consulting') ? 'active' : '' }}">
+                                <a href="{{ route('reports.consulting') }}" class="side-menu__item">
+                                    Consulting Report
+                                </a>
+                            </li>
+
+                            {{-- Client Report --}}
+                            <li class="slide {{ request()->routeIs('reports.client') ? 'active' : '' }}">
+                                <a href="{{ route('reports.client') }}" class="side-menu__item">
+                                    Client Report
+                                </a>
+                            </li>
                         </ul>
                     </li>
-                @endif --}}
+                @endif
+
             </ul>
 
         </nav>

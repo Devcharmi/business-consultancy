@@ -113,4 +113,25 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         'dashboard/update-status',
         [DashboardController::class, 'updateStatus']
     )->name('dashboard.update-status');
+
+    Route::prefix('reports')
+        ->name('reports.')
+        ->group(function () {
+
+            // Existing
+            Route::get('reports/marketplace-demand', [ReportController::class, 'marketplaceDemand'])
+                ->name('marketplace-demand');
+
+            // ================= NEW REPORTS =================
+
+            // Consulting Report
+            Route::get('reports/consulting', [ReportController::class, 'consulting'])
+                ->name('consulting');
+            Route::get('/reports/consulting/data', [ReportController::class, 'consultingData'])
+                ->name('consulting.data');
+
+            // Client Report
+            Route::get('reports/clients', [ReportController::class, 'clientReport'])
+                ->name('client');
+        });
 });

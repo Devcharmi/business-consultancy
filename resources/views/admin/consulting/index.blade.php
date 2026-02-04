@@ -36,12 +36,12 @@
                             <thead>
                                 <tr>
                                     <th>Sr No.</th>
+                                    <th>Date</th>
                                     <th>Client Name</th>
                                     <th>Objective</th>
                                     <th>Expertise</th>
                                     <th>Focus Area</th>
-                                    <th>Date</th>
-                                    <th class="text-center">Action</th>
+                                    <th class="text-center no-export">Action</th>
                                 </tr>
                             </thead>
                             <tbody>

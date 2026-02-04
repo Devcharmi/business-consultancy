@@ -156,7 +156,7 @@
                             class="table table-bordered text-nowrap w-100 table-list">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Action</th>
+                                    <th class="text-center no-export">Action</th>
                                     <th>Client</th>
                                     <th>Task</th>
                                     <th>Start Date</th>

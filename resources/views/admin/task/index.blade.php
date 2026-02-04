@@ -43,7 +43,7 @@
                                     <th>Expertise</th>
                                     <th>Due Date</th>
                                     <th>Status</th>
-                                    <th class="text-center">Action</th>
+                                    <th class="text-center no-export">Action</th>
                                 </tr>
                             </thead>
                             <tbody>

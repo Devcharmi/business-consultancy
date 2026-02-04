@@ -28,7 +28,7 @@
                             data-url="{{ route('lead.index') }}">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center no-export">Action</th>
                                     <th>Date</th>
                                     <th>Name</th>
                                     <th>Phone</th>

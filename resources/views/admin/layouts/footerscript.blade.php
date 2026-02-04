@@ -45,6 +45,12 @@
 
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
     <!-- Apex Charts JS -->
     {{-- <script src="{{ asset('admin/assets/libs/apexcharts/apexcharts.min.js') }}"></script> --}}
@@ -169,7 +175,6 @@
             picker.setEndDate(today);
             $('.date-range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
         }
-
     </script>
     <script>
         // 🔥 Global stacked modal handler (SweetAlert-like behavior)
@@ -185,5 +190,5 @@
                     .addClass("modal-stack");
             }, 0);
         });
-
+        
     </script>

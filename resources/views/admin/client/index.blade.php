@@ -33,7 +33,7 @@
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Status</th>
-                                    <th class="text-center">Action</th>
+                                    <th class="text-center no-export">Action</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
