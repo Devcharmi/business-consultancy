@@ -543,35 +543,61 @@ class TaskController extends Controller
             'client_objective.objective_manager',
             'expertise_manager',
             'status_manager',
-            'commitments' => function ($q) {
-                $q->orderBy('commitment_date', 'desc'); // date-wise desc
-            },
-            'deliverables' => function ($q) {
-                $q->orderBy('deliverable_date', 'desc');
-            },
-            'content' => function ($q) {
-                $q->orderBy('content_date', 'desc');
-            },
+            'createdBy',
+
+            // Commitments + status
+            'commitments.userTask.status_manager',
+            'commitments.staff',
+
+            // Deliverables + status
+            'deliverables.userTask.status_manager',
+
+            'content',
         ])->findOrFail($id);
 
-        // Group commitments date-wise
-        $commitmentsByDate = $task->commitments->groupBy('date');
-
-        // ---------------- FILE NAME ----------------
-        $clientName = $task->client_objective->client->client_name ?? 'client';
-        $safeClient = Str::slug($clientName);
-
-        $date = $task->task_due_date
-            ? \Carbon\Carbon::parse($task->task_due_date)->format('Y-m-d')
-            : now()->format('Y-m-d');
-
-        $fileName = "task-{$safeClient}-{$date}-{$task->id}.pdf";
-        // ------------------------------------------------
-
-        $pdf = Pdf::loadView('admin.pdf.task-content', compact('task', 'commitmentsByDate'))
+        $pdf = Pdf::loadView('admin.pdf.task-content', compact('task'))
             ->setPaper('A4', 'portrait');
 
-        return $pdf->stream($fileName);
-        // return $pdf->download($fileName);
+        return $pdf->stream("task-{$task->id}.pdf");
     }
+
+
+    // public function taskPdf($id)
+    // {
+    //     $task = Task::with([
+    //         'client_objective.client',
+    //         'client_objective.objective_manager',
+    //         'expertise_manager',
+    //         'status_manager',
+    //         'commitments' => function ($q) {
+    //             $q->orderBy('commitment_date', 'desc'); // date-wise desc
+    //         },
+    //         'deliverables' => function ($q) {
+    //             $q->orderBy('deliverable_date', 'desc');
+    //         },
+    //         'content' => function ($q) {
+    //             $q->orderBy('content_date', 'desc');
+    //         },
+    //     ])->findOrFail($id);
+
+    //     // Group commitments date-wise
+    //     $commitmentsByDate = $task->commitments->groupBy('date');
+
+    //     // ---------------- FILE NAME ----------------
+    //     $clientName = $task->client_objective->client->client_name ?? 'client';
+    //     $safeClient = Str::slug($clientName);
+
+    //     $date = $task->task_due_date
+    //         ? \Carbon\Carbon::parse($task->task_due_date)->format('Y-m-d')
+    //         : now()->format('Y-m-d');
+
+    //     $fileName = "task-{$safeClient}-{$date}-{$task->id}.pdf";
+    //     // ------------------------------------------------
+
+    //     $pdf = Pdf::loadView('admin.pdf.task-content', compact('task', 'commitmentsByDate'))
+    //         ->setPaper('A4', 'portrait');
+
+    //     return $pdf->stream($fileName);
+    //     // return $pdf->download($fileName);
+    // }
 }

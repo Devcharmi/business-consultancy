@@ -19,6 +19,7 @@ class TaskCommitment extends Model
     ];
 
     protected $casts = [
+        'commitment_date' => 'date',
         'due_date' => 'date',
     ];
 
@@ -34,5 +35,11 @@ class TaskCommitment extends Model
     public function staff()
     {
         return $this->belongsTo(User::class, 'staff_manager_id');
+    }
+
+    public function userTask()
+    {
+        return $this->hasOne(UserTask::class, 'source_id')
+            ->where('source_type', 'commitment');
     }
 }

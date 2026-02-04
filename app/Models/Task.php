@@ -27,6 +27,16 @@ class Task extends Model
         'task_due_date'   => 'date',
     ];
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function client_objective()
     {
         return $this->belongsTo(ClientObjective::class);

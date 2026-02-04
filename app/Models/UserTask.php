@@ -22,7 +22,7 @@ class UserTask extends Model
         'description',
         'last_reminder_sent_at',
         'completed_at',
-        'source_type',
+        'source_type', //commitment,deliverable
         'source_id',
     ];
 

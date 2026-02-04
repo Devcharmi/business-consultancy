@@ -18,6 +18,7 @@ class TaskDeliverable extends Model
     ];
 
     protected $casts = [
+        'deliverable_date' => 'date',
         'expected_date' => 'date',
     ];
 
@@ -28,5 +29,11 @@ class TaskDeliverable extends Model
     public function task()
     {
         return $this->belongsTo(Task::class);
+    }
+
+    public function userTask()
+    {
+        return $this->hasOne(UserTask::class, 'source_id')
+            ->where('source_type', 'deliverable');
     }
 }

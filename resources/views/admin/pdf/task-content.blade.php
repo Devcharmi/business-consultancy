@@ -3,145 +3,195 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Task PDF</title>
+    {{-- 🔥 PDF TITLE --}}
+    <title>Task Report - {{ $task->title }}</title>
 
     <style>
         body {
             font-family: DejaVu Sans;
-            font-size: 12px;
-            color: #333;
-            line-height: 1.5;
+            font-size: 11.5px;
+            color: #2f2f2f;
+            line-height: 1.6;
         }
 
-        .page-title {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .header {
+            border: 1px solid #dbe3f3;
+            background: #f4f7ff;
+            padding: 14px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+
+        .header-meta {
+            margin-top: 6px;
+            font-size: 11px;
+            color: #555;
         }
 
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         .section-title {
             font-size: 14px;
             font-weight: bold;
+            padding: 6px 10px;
             background: #eef3fb;
-            padding: 8px 10px;
             border-left: 4px solid #2c7be5;
-            margin-bottom: 15px;
-        }
-
-        /* DATE CARD */
-        .date-card {
-            border: 1px solid #cfe0ff;
-            background: #f7faff;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-
-        .date-label {
-            font-size: 14px;
-            font-weight: bold;
-            color: #1f4fd8;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #dbe7ff;
-            padding-bottom: 5px;
-        }
-
-        .sub-title {
-            font-size: 12px;
-            font-weight: bold;
-            margin: 10px 0 6px;
-            color: #444;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
             margin-bottom: 12px;
         }
 
-        th {
-            background: #2c7be5;
-            color: #fff;
-            font-weight: bold;
-            padding: 7px;
-            font-size: 11px;
-            text-align: left;
-        }
-
-        td {
-            border: 1px solid #ddd;
-            padding: 7px;
-            font-size: 11px;
-            vertical-align: top;
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .details-table td {
-            border: none;
-            padding: 4px 6px;
-            font-size: 12px;
+            padding: 6px 8px;
         }
 
         .details-table td:first-child {
-            width: 25%;
+            width: 22%;
             font-weight: bold;
-            color: #555;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 3px;
+        }
+
+        .date-card {
+            border: 1px solid #d6e0ff;
+            background: #f9fbff;
+            padding: 12px;
+            margin-bottom: 18px;
+        }
+
+        .date-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #1f4fd8;
+            border-bottom: 1px solid #dde6ff;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+        }
+
+        .sub-title {
+            font-weight: bold;
+            margin: 10px 0 6px;
+            font-size: 12px;
         }
 
         .content-box {
             background: #ffffff;
             border-left: 4px solid #2c7be5;
             padding: 8px 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        .empty-text {
-            font-style: italic;
-            color: #777;
-            font-size: 11px;
+        .item-row {
+            border: 1px solid #e1e8ff;
+            background: #ffffff;
+            padding: 8px 10px;
+            margin-bottom: 6px;
         }
 
-        .footer {
-            text-align: center;
-            font-size: 10px;
-            color: #999;
-            margin-top: 30px;
+        .item-header {
+            display: table;
+            width: 100%;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+        .item-title {
+            display: table-cell;
             font-weight: bold;
-            color: #fff;
+        }
+
+        .item-status {
+            display: table-cell;
+            text-align: right;
+        }
+
+        .item-meta {
+            font-size: 10px;
+            color: #666;
+            margin-top: 3px;
         }
     </style>
-
 </head>
 
+
 <body>
+    <div style="text-align:center; margin-bottom:14px;">
+        <div
+            style="
+        font-size:18px;
+        font-weight:bold;
+        text-transform:uppercase;
+        color:#2c7be5;
+        letter-spacing:1px;
+    ">
+            Meeting Task Report
+        </div>
+        {{-- <div style="font-size:11px; color:#777;">
+            Detailed Task Summary
+        </div> --}}
+    </div>
 
-    <div class="page-title">Task Report</div>
+    {{-- ================= HEADER ================= --}}
+    <div class="header">
+        <table width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+                {{-- LEFT : TITLE + META --}}
+                <td style="vertical-align: top;">
+                    <h1>{{ $task->title }}</h1>
 
-    <!-- TASK DETAILS -->
+                    <div class="header-meta">
+                        Client: {{ $task->client_objective->client->client_name ?? '-' }} |
+                        Start: {{ $task->task_start_date?->format('d M Y') ?? '-' }} |
+                        Due: {{ $task->task_due_date?->format('d M Y') ?? '-' }}
+                    </div>
+
+                    {{-- 🔥 STATUS NEW LINE --}}
+                    @if ($task->status_manager)
+                        <div style="margin-top:6px;">
+                            <span class="badge" style="background: {{ $task->status_manager->color_name }}">
+                                {{ $task->status_manager->name }}
+                            </span>
+                        </div>
+                    @endif
+                </td>
+
+                {{-- RIGHT : LOGO --}}
+                <td style="text-align:right; width:120px; vertical-align: top;">
+                    <img src="{{ public_path('images/sample-logo.png') }}" style="max-width:100px; height:auto;">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {{-- <div class="header">
+    <h1>{{ $task->title }}</h1>
+
+    <div class="header-meta">
+        Client: {{ $task->client_objective->client->client_name ?? '-' }} |
+        Start: {{ $task->task_start_date?->format('d M Y') ?? '-' }} |
+        Due: {{ $task->task_due_date?->format('d M Y') ?? '-' }}
+    </div>
+</div> --}}
+
+    {{-- ================= TASK INFO ================= --}}
     <div class="section">
-        <div class="section-title">Task Details</div>
+        <div class="section-title">Task Information</div>
         <table class="details-table">
-            <tr>
-                <td>Title</td>
-                <td>{{ $task->title }}</td>
-            </tr>
-            <tr>
-                <td>Client</td>
-                <td>{{ $task->client_objective->client->client_name ?? '-' }}</td>
-            </tr>
             <tr>
                 <td>Objective</td>
                 <td>{{ $task->client_objective->objective_manager->name ?? '-' }}</td>
@@ -153,33 +203,13 @@
                         <span class="badge" style="background: {{ $task->expertise_manager->color_name }}">
                             {{ $task->expertise_manager->name }}
                         </span>
-                    @else
-                        -
                     @endif
-                </td>
-            </tr>
-            <tr>
-                <td>Status</td>
-                <td>
-                    @if ($task->status_manager)
-                        <span class="badge" style="background: {{ $task->status_manager->color_name }}">
-                            {{ $task->status_manager->name }}
-                        </span>
-                    @else
-                        -
-                    @endif
-                </td>
-            </tr>
-            <tr>
-                <td>Due Date</td>
-                <td>
-                    {{ $task->task_due_date ? \Carbon\Carbon::parse($task->task_due_date)->format('d M Y') : '-' }}
                 </td>
             </tr>
         </table>
     </div>
 
-    <!-- DATE WISE TIMELINE -->
+    {{-- ================= TIMELINE ================= --}}
     <div class="section">
         <div class="section-title">Task Timeline</div>
 
@@ -188,91 +218,108 @@
                 ->merge($task->content->pluck('content_date'))
                 ->merge($task->commitments->pluck('commitment_date'))
                 ->merge($task->deliverables->pluck('deliverable_date'))
+                ->filter()
+                ->map(fn($d) => \Carbon\Carbon::parse($d)->toDateString())
                 ->unique()
                 ->sortDesc();
         @endphp
 
-        @forelse($dates as $date)
+        @foreach ($dates as $date)
+            @php
+                $contents = $task->content->filter(
+                    fn($c) => \Carbon\Carbon::parse($c->content_date)->toDateString() === $date,
+                );
+
+                // {{-- SORT COMMITMENTS BY commitment_date DESC --}}
+                $commitments = $task->commitments
+                    ->filter(fn($c) => \Carbon\Carbon::parse($c->commitment_date)->toDateString() === $date)
+                    ->sortByDesc('commitment_date');
+
+                // {{-- SORT DELIVERABLES BY deliverable_date DESC --}}
+                $deliverables = $task->deliverables
+                    ->filter(fn($d) => \Carbon\Carbon::parse($d->deliverable_date)->toDateString() === $date)
+                    ->sortByDesc('deliverable_date');
+            @endphp
 
             <div class="date-card">
-                <div class="date-label">
+                <div class="date-title">
                     {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
                 </div>
 
-                <!-- TASK CONTENT -->
-                @php
-                    $contents = $task->content->where('content_date', $date);
-                @endphp
-
+                {{-- ================= CONTENT ================= --}}
                 @if ($contents->count())
-                    <div class="sub-title">Meeting Details</div>
+                    <div class="sub-title">Meeting Notes</div>
                     @foreach ($contents as $content)
-                        <div class="content-box">
-                            {!! $content->task_content !!}
+                        <div class="content-box">{!! $content->task_content !!}</div>
+                    @endforeach
+                @endif
+
+                {{-- ================= COMMITMENTS ================= --}}
+                @if ($commitments->count())
+                    <div class="sub-title">Commitments</div>
+                    @foreach ($commitments as $c)
+                        <div class="item-row">
+                            <div class="item-header">
+                                <div class="item-title">{{ $c->commitment }}</div>
+                                <div class="item-status">
+                                    @if ($c->userTask?->status_manager)
+                                        <span class="badge"
+                                            style="background: {{ $c->userTask->status_manager->color_name }}">
+                                            {{ $c->userTask->status_manager->name }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- 🔥 COMMITMENT DATE + DUE DATE --}}
+                            <div class="item-meta">
+                                Commitment Date:
+                                {{ $c->commitment_date?->format('d M Y') ?? '-' }}
+                                |
+                                Due:
+                                {{ $c->due_date?->format('d M Y') ?? '-' }}
+                                @if ($c->staff)
+                                    | Assigned to: {{ $c->staff->name }}
+                                @endif
+                            </div>
                         </div>
                     @endforeach
                 @endif
 
-                <!-- COMMITMENTS -->
-                @php
-                    $commitments = $task->commitments->where('commitment_date', $date);
-                @endphp
-
-                @if ($commitments->count())
-                    <div class="sub-title">Commitments</div>
-                    <table>
-                        <tr>
-                            <th style="width:5%">#</th>
-                            <th style="width:20%">Due Date</th>
-                            <th>Commitment</th>
-                        </tr>
-
-                        @foreach ($commitments as $i => $commitment)
-                            <tr>
-                                <td>{{ $i + 1 }}</td>
-                                <td>
-                                    {{ $commitment->due_date ? \Carbon\Carbon::parse($commitment->due_date)->format('d M Y') : '-' }}
-                                </td>
-                                <td>{{ $commitment->commitment }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
-                @endif
-
-                <!-- DELIVERABLES -->
-                @php
-                    $deliverables = $task->deliverables->where('deliverable_date', $date);
-                @endphp
-
+                {{-- ================= DELIVERABLES ================= --}}
                 @if ($deliverables->count())
                     <div class="sub-title">Deliverables</div>
-                    <table>
-                        <tr>
-                            <th style="width:5%">#</th>
-                            <th style="width:20%">Expected Date</th>
-                            <th>Deliverable</th>
-                        </tr>
+                    @foreach ($deliverables as $d)
+                        <div class="item-row">
+                            <div class="item-header">
+                                <div class="item-title">{{ $d->deliverable }}</div>
+                                <div class="item-status">
+                                    @if ($d->userTask?->status_manager)
+                                        <span class="badge"
+                                            style="background: {{ $d->userTask->status_manager->color_name }}">
+                                            {{ $d->userTask->status_manager->name }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
 
-                        @foreach ($deliverables as $j => $deliverable)
-                            <tr>
-                                <td>{{ $j + 1 }}</td>
-                                <td>
-                                    {{ $deliverable->expected_date ? \Carbon\Carbon::parse($deliverable->expected_date)->format('d M Y') : '-' }}
-                                </td>
-                                <td>{{ $deliverable->deliverable }}</td>
-                            </tr>
-                        @endforeach
-                    </table>
+                            {{-- 🔥 DELIVERABLE DATE + EXPECTED DATE --}}
+                            <div class="item-meta">
+                                Deliverable Date:
+                                {{ $d->deliverable_date?->format('d M Y') ?? '-' }}
+                                |
+                                Expected:
+                                {{ $d->expected_date?->format('d M Y') ?? '-' }}
+                            </div>
+                        </div>
+                    @endforeach
                 @endif
-            </div>
 
-        @empty
-            <p class="empty-text">No task activity found.</p>
-        @endforelse
+            </div>
+        @endforeach
     </div>
 
-
-    <div class="footer">
+    <div style="text-align:center;font-size:10px;color:#999">
         Generated on {{ now()->format('d M Y') }}
     </div>
 
