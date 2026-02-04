@@ -160,7 +160,7 @@
                 <!-- End::slide -->
 
                 <!-- Start::slide Staff Maanger-->
-                @if (canAccess('user.allow'))
+                {{-- @if (canAccess('user.allow'))
                     <li class="slide">
                         <a href="{{ route('user-manager.index') }}"
                             class="side-menu__item {{ request()->routeIs('user-manager.*') ? 'active' : '' }} ">
@@ -173,7 +173,7 @@
                             <span class="side-menu__label">User Manager</span>
                         </a>
                     </li>
-                @endif
+                @endif --}}
                 <!-- End::slide -->
 
                 <!-- Start::slide Staff Maanger-->

@@ -301,6 +301,12 @@
                                 Manager</a>
                         </li>
                     @endif
+                    @if (canAccess('user.allow'))
+                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user-manager.index') }}"><i
+                                    class="ri-team-line lh-1 p-1 rounded-circle bg-primary-transparent text-primary me-2 fs-14"></i>User
+                                Manager</a>
+                        </li>
+                    @endif
                     <li>
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">

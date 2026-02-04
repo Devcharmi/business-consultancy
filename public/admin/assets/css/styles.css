@@ -31716,3 +31716,15 @@ Form label
   font-size: 24px;
   margin-bottom: 6px;
 }
+
+
+/* //datatable buttons */
+
+.dt-buttons .btn {
+  margin-right: 4px;
+}
+
+.dt-buttons {
+  flex-wrap: wrap;
+  gap: 6px;
+}

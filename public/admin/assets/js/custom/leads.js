@@ -1,52 +1,28 @@
+// function exportFormatBody(data, row, column, node) {
+//     // If column has select dropdown
+//     let select = $("select", node);
+//     if (select.length) {
+//         return select.find("option:selected").text().trim();
+//     }
+
+//     // If column has input
+//     let input = $("input", node);
+//     if (input.length) {
+//         return input.val();
+//     }
+
+//     // Strip HTML otherwise
+//     return $(node).text().trim();
+// }
+
 var leads_table = $("#leads_table").DataTable({
     order: [[0, "desc"]],
     autoWidth: false,
     processing: true,
     serverSide: true,
     serverMethod: "GET",
-    dom:
-        "<'row align-items-center mb-2'" +
-        "<'col-md-3'l>" +
-        "<'col-md-6 text-center'B>" +
-        "<'col-md-3'f>" +
-        ">" +
-        "<'row'<'col-12'tr>>" +
-        "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
-
-    buttons: [
-        {
-            extend: "excel",
-            className: "btn btn-success btn-sm mx-1",
-            text: '<i class="fas fa-file-excel me-1"></i> Excel',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-        {
-            extend: "csv",
-            className: "btn btn-info btn-sm mx-1",
-            text: '<i class="fas fa-file-csv me-1"></i> CSV',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-        {
-            extend: "pdf",
-            className: "btn btn-danger btn-sm mx-1",
-            text: '<i class="fas fa-file-pdf me-1"></i> PDF',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-        {
-            extend: "print",
-            className: "btn btn-warning btn-sm mx-1",
-            text: '<i class="fas fa-print me-1"></i> Print',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-    ],
+    dom: REPORT_TABLE_DOM,
+    buttons: getReportButtons("Leads_Report"),
     lengthMenu: [
         [20, 100, 200, 250],
         [20, 100, 200, 250],

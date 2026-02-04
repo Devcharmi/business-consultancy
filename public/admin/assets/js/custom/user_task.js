@@ -64,44 +64,54 @@ var columns = [
     },
     {
         data: "created_by.name",
-        mRender: function (v, t, o) {
-            if (!o.created_by || !o.created_by.name) {
-                return `<div class="d-flex justify-content-center">-</div>`;
+        title: "Created By",
+        render: function (data, type, row) {
+            if (!row.created_by || !row.created_by.name) {
+                return type === "display"
+                    ? `<div class="d-flex justify-content-center">-</div>`
+                    : "-";
             }
 
-            const fullName = o.created_by.name;
+            const fullName = row.created_by.name;
             const firstLetter = fullName.charAt(0).toUpperCase();
 
-            return `
+            if (type === "display") {
+                return `
         <div class="d-flex align-items-center justify-content-center">
-            <div class="avatar-circle me-2"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="${fullName}">
+            <div class="avatar-circle me-2" title="${fullName}">
                 ${firstLetter}
             </div>
         </div>`;
+            }
+
+            // For all other types (export, filter, sort)
+            return fullName;
         },
     },
     {
         data: "staff.name",
-        mRender: function (v, t, o) {
-            if (!o.staff || !o.staff.name) {
-                return `<div class="d-flex justify-content-center">-</div>`;
+        title: "Staff",
+        render: function (data, type, row) {
+            if (!row.staff || !row.staff.name) {
+                return type === "display"
+                    ? `<div class="d-flex justify-content-center">-</div>`
+                    : "-";
             }
 
-            const fullName = o.staff.name;
+            const fullName = row.staff.name;
             const firstLetter = fullName.charAt(0).toUpperCase();
 
-            return `
-        <div class="d-flex align-items-center justify-content-center">
-            <div class="avatar-circle me-2"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="${fullName}">
-                ${firstLetter}
-            </div>
-        </div>`;
+            if (type === "display") {
+                return `
+            <div class="d-flex align-items-center justify-content-center">
+                <div class="avatar-circle me-2" title="${fullName}">
+                    ${firstLetter}
+                </div>
+            </div>`;
+            }
+
+            // For export (PDF, Excel, CSV, Print) and sorting
+            return fullName;
         },
     },
     {
@@ -141,48 +151,8 @@ var task_table = $(".table-list").DataTable({
     processing: true,
     serverSide: true,
     serverMethod: "GET",
-    dom:
-        "<'row align-items-center mb-2'" +
-        "<'col-md-3'l>" +
-        "<'col-md-6 text-center'B>" +
-        "<'col-md-3'f>" +
-        ">" +
-        "<'row'<'col-12'tr>>" +
-        "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
-    buttons: [
-        {
-            extend: "excel",
-            className: "btn btn-success btn-sm mx-1",
-            text: '<i class="fas fa-file-excel me-1"></i> Excel',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-        {
-            extend: "csv",
-            className: "btn btn-info btn-sm mx-1",
-            text: '<i class="fas fa-file-csv me-1"></i> CSV',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-        {
-            extend: "pdf",
-            className: "btn btn-danger btn-sm mx-1",
-            text: '<i class="fas fa-file-pdf me-1"></i> PDF',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-        {
-            extend: "print",
-            className: "btn btn-warning btn-sm mx-1",
-            text: '<i class="fas fa-print me-1"></i> Print',
-            exportOptions: {
-                columns: ":not(.no-export)",
-            },
-        },
-    ],
+    dom: REPORT_TABLE_DOM,
+    buttons: getReportButtons("Tasks_Report"),
     lengthMenu: [
         [25, 100, 200, 250],
         [25, 100, 200, 250],

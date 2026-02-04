@@ -190,5 +190,136 @@
                     .addClass("modal-stack");
             }, 0);
         });
-        
+    </script>
+    <script>
+        const REPORT_TABLE_DOM =
+            "<'row align-items-center mb-2'" +
+            "<'col-md-3'l>" +
+            "<'col-md-6 text-center'B>" +
+            "<'col-md-3'f>" +
+            ">" +
+            "<'row'<'col-12'tr>>" +
+            "<'row mt-2'<'col-md-5'i><'col-md-7'p>>";
+
+        function exportFormatBody(data, row, column, node) {
+            if (typeof node === "string") return node.trim();
+
+            const $node = $(node);
+
+            const fullName = $node.find(".export-full-name");
+            if (fullName.length) return fullName.text().trim();
+
+            const select = $node.find("select");
+            if (select.length) return select.find("option:selected").text().trim();
+
+            const input = $node.find("input");
+            if (input.length) return input.val();
+
+            const titledSpan = $node.find("[title]");
+            if (titledSpan.length) return titledSpan.attr("title").trim();
+
+            return $node.text().trim();
+        }
+
+        function pdfWithBorders(doc) {
+            const table = doc.content.find(c => c.table);
+            if (!table) return;
+
+            table.layout = {
+                hLineWidth: () => 0.8,
+                vLineWidth: () => 0.8,
+                hLineColor: () => '#555',
+                vLineColor: () => '#555',
+                paddingLeft: () => 6,
+                paddingRight: () => 6,
+                paddingTop: () => 5,
+                paddingBottom: () => 5
+            };
+
+            // Header row styling
+            table.table.body[0].forEach(cell => {
+                cell.fillColor = '#343a40'; // dark bg
+                cell.color = '#ffffff'; // white text
+                cell.bold = true;
+                cell.alignment = 'center';
+            });
+
+            // Optional: default font size
+            doc.defaultStyle.fontSize = 9;
+        }
+
+        function getReportFileName(baseName) {
+            let dateRange = $('#dateRange').val();
+
+            if (dateRange) {
+                dateRange = dateRange.replace(/\s+/g, '').replace('to', '_to_');
+                return `${baseName}_${dateRange}`;
+            }
+
+            let today = moment().format('DD-MM-YYYY');
+            return `${baseName}_${today}`;
+        }
+
+
+        function getReportButtons(reportName) {
+            return [{
+                    extend: "excel",
+                    className: "btn btn-success btn-sm mx-1",
+                    text: '<i class="fas fa-file-excel me-1"></i> Excel',
+                    title: () => getReportFileName("User_Task_Report"),
+                    exportOptions: {
+                        columns: ":not(.no-export)",
+                        orthogonal: "export",
+                        format: {
+                            body: exportFormatBody
+                        }
+                    }
+                },
+                {
+                    extend: "csv",
+                    className: "btn btn-info btn-sm mx-1",
+                    text: '<i class="fas fa-file-csv me-1"></i> CSV',
+                    title: () => getReportFileName("User_Task_Report"),
+                    exportOptions: {
+                        columns: ":not(.no-export)",
+                        orthogonal: "export",
+                        format: {
+                            body: exportFormatBody
+                        }
+                    }
+                },
+                {
+                    extend: "pdf",
+                    className: "btn btn-danger btn-sm mx-1",
+                    text: '<i class="fas fa-file-pdf me-1"></i> PDF',
+                    orientation: "landscape",
+                    pageSize: "A4",
+                    title: () => getReportFileName("User_Task_Report"),
+                    exportOptions: {
+                        columns: ":not(.no-export)",
+                        orthogonal: "export",
+                        format: {
+                            body: exportFormatBody
+                        }
+                    },
+                    customize: function(doc) {
+                        pdfWithBorders(doc);
+                    }
+                },
+                {
+                    extend: "print",
+                    className: "btn btn-warning btn-sm mx-1",
+                    text: '<i class="fas fa-print me-1"></i> Print',
+                    title: () => getReportFileName("User_Task_Report"),
+                    exportOptions: {
+                        columns: ":not(.no-export)",
+                        orthogonal: "export",
+                        format: {
+                            body: exportFormatBody
+                        }
+                    }
+                }
+            ]
+
+        }
     </script>
