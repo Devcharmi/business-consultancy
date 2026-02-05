@@ -40,7 +40,7 @@ class ClientObjective extends Model
 
     public function meetings()
     {
-        return $this->hasMany(Task::class)->where('type', 'meeting');
+        return $this->hasMany(Task::class);
     }
 
     // Relations

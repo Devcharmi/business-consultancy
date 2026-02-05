@@ -11,45 +11,6 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function marketplaceDemand()
-    {
-        return view('admin.reports.marketplace-demand');
-    }
-
-
-    public function consulting()
-    {
-        return view('admin.reports.consulting');
-    }
-
-    public function consultingData(Request $request)
-    {
-        $query = Consulting::with([
-            'client_objective.client',
-            'expertise_manager',
-            'focus_area_manager',
-        ]);
-
-        // 🔹 Date range
-        if ($request->date_range) {
-            [$from, $to] = explode(' - ', $request->date_range);
-            $query->whereBetween('consulting_datetime', [
-                Carbon::parse($from)->startOfDay(),
-                Carbon::parse($to)->endOfDay(),
-            ]);
-        }
-
-        return datatables()->of($query)
-            ->addIndexColumn()
-            ->addColumn('client', fn($r) => $r->client_objective->client->client_name ?? '-')
-            ->addColumn('objective', fn($r) => $r->client_objective->objective_manager->name ?? '-')
-            ->addColumn('expertise', fn($r) => $r->expertise_manager->name ?? '-')
-            ->addColumn('focus_area', fn($r) => $r->focus_area_manager->name ?? '-')
-            ->addColumn('date', fn($r) => $r->consulting_datetime->format('d-m-Y'))
-            ->rawColumns([])
-            ->make(true);
-    }
-
     public function clientIndex(Request $request)
     {
         if (request()->ajax()) {
@@ -171,6 +132,74 @@ class ReportController extends Controller
         $filters = filterDropdowns(array_keys($filterRouteConfig));
 
         return view('admin.reports.objective', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
+    }
+
+    public function consultingIndex(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $data = $request->all();
+            $data['date_range']     = $request->get('dateRange');
+            $data['filterClient']   = $request->get('filterClient');
+            $data['filterObjective'] = $request->get('filterObjective');
+            $data['filterExpertise'] = $request->get('filterExpertise');
+
+            $columns = [
+                0 => 'client_objective_id',
+                1 => 'expertise_manager_id',
+                2 => 'total_count',
+                3 => 'last_date',
+            ];
+
+            $query = Consulting::select(
+                'client_objective_id',
+                'expertise_manager_id'
+            )
+                ->with([
+                    'client_objective.client:id,client_name',
+                    'client_objective.objective_manager:id,name',
+                    'expertise_manager:id,name,color_name',
+                ])
+                ->selectRaw('COUNT(*) as total_count')
+                ->selectRaw('MAX(consulting_datetime) as last_date')
+                ->groupBy('client_objective_id', 'expertise_manager_id');
+
+            // 🔹 Uses YOUR scopeFilters()
+            $query->filters($data, $columns);
+
+            $totalRecords = $query->count();
+            $records = $query->get();
+
+            return response()->json([
+                'draw'            => intval($request->draw),
+                'recordsTotal'    => $totalRecords,
+                'recordsFiltered' => $totalRecords,
+                'data' => $records->map(function ($row) {
+                    return [
+                        'client'    => optional($row->client_objective->client)->client_name,
+                        'objective' => optional($row->client_objective->objective_manager)->name,
+
+                        'expertise' => [
+                            'name'  => optional($row->expertise_manager)->name,
+                            'color_name' => optional($row->expertise_manager)->color_name, // 👈 important
+                        ],
+
+                        'total'     => $row->total_count,
+                        'last_date' => $row->last_date
+                            ? Carbon::parse($row->last_date)->format('d-m-Y')
+                            : '-',
+                    ];
+                }),
+            ]);
+        }
+
+        $filterRouteConfig = config('filter.route_filters');
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+
+        return view('admin.reports.consulting', array_merge(
             $filters,
             compact('filterRouteConfig')
         ));

@@ -124,17 +124,16 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
 
             // ================= NEW REPORTS =================
 
-            // Consulting Report
-            Route::get('reports/consulting', [ReportController::class, 'consulting'])
-                ->name('consulting');
-            Route::get('/reports/consulting/data', [ReportController::class, 'consultingData'])
-                ->name('consulting.data');
-
             // Client Report
             Route::get('reports/clients', [ReportController::class, 'clientIndex'])
                 ->name('clients');
 
+            // Objective Report
             Route::get('reports/objectives', [ReportController::class, 'objectiveIndex'])
                 ->name('objectives');
+
+            // Consulting Report
+            Route::get('reports/consultings', [ReportController::class, 'consultingIndex'])
+                ->name('consultings');
         });
 });

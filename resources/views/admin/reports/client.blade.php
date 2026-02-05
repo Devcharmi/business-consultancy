@@ -53,5 +53,5 @@
         const csrfToken = "{{ csrf_token() }}";
     </script>
 
-    <script src="{{ asset('admin/assets/js/custom/client_reports.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/reports/client_reports.js') }}"></script>
 @endsection

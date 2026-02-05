@@ -49,6 +49,13 @@ return [
             'client',
             'objective',
         ],
+
+        'reports.consultings' => [
+            'daterange',
+            'client',
+            'objective',
+            'expertise',
+        ],
     ],
 
 ];

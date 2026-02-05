@@ -289,6 +289,13 @@
                                     Objectives Report
                                 </a>
                             </li>
+
+                            {{-- Consulting Report --}}
+                            <li class="slide {{ request()->routeIs('reports.consultings') ? 'active' : '' }}">
+                                <a href="{{ route('reports.consultings') }}" class="side-menu__item">
+                                    Consultings Report
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 @endif
