@@ -134,7 +134,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
             Route::get('reports/clients', [ReportController::class, 'clientIndex'])
                 ->name('clients');
 
-            Route::post('reports/clients/data', [ReportController::class, 'clientData'])
-                ->name('clients.data');
+            Route::get('reports/objectives', [ReportController::class, 'objectiveIndex'])
+                ->name('objectives');
         });
 });

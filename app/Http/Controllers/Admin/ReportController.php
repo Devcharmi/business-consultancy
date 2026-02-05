@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\ClientObjective;
 use App\Models\Consulting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -94,7 +95,7 @@ class ReportController extends Controller
                         'client_name'  => $client->client_name,
                         'email'        => $client->email,
                         'phone'        => $client->phone,
-                        'status'       => $client->status ? 'Active' : 'Inactive',
+                        'status'       => $client->status == 1 ? 'Active' : 'Inactive',
                         'created_by'   => optional($client->createdBy)->name,
                         // 'updated_by'   => optional($client->updatedBy)->name,
                         'objectives'   => $client->client_objectives_count,
@@ -108,6 +109,68 @@ class ReportController extends Controller
 
         $filters = filterDropdowns(array_keys($filterRouteConfig));
         return view('admin.reports.client', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
+    }
+
+    public function objectiveIndex(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $data = $request->all();
+            $data['date_range']     = $request->get('dateRange');
+            $data['filterClient']   = $request->get('filterClient');
+            $data['filterCreatedBy'] = $request->get('filterCreatedBy');
+            $data['filterObjective']   = $request->get('filterObjective');
+
+            $columns = [
+                0 => 'client_id',
+                1 => 'objective_manager_id',
+                3 => 'consultings_count',
+                4 => 'meetings_count',
+                6 => 'created_by',
+            ];
+
+            $query = ClientObjective::with([
+                'client:id,client_name',
+                'objective_manager:id,name',
+                'createdBy:id,name',
+            ])
+                ->withCount([
+                    'consultings',
+                    'meetings',
+                ]);
+
+            // 🔹 same reusable filter scope
+            $query->filters($data, $columns);
+
+            $totalRecords = ClientObjective::count();
+            $filteredRecords = $query->count();
+
+            $objectives = $query->get();
+
+            return response()->json([
+                'draw'            => intval($request->draw),
+                'recordsTotal'    => $totalRecords,
+                'recordsFiltered' => $filteredRecords,
+                'data'            => $objectives->map(function ($obj) {
+                    return [
+                        'client'      => optional($obj->client)->client_name,
+                        'objective'   => optional($obj->objective_manager)->name,
+                        'consultings' => $obj->consultings_count,
+                        'meetings'    => $obj->meetings_count,
+                        'created_by'  => optional($obj->createdBy)->name,
+                    ];
+                }),
+            ]);
+        }
+
+        // 🔹 Filters (same pattern)
+        $filterRouteConfig = config('filter.route_filters');
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+
+        return view('admin.reports.objective', array_merge(
             $filters,
             compact('filterRouteConfig')
         ));

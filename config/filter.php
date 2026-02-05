@@ -42,6 +42,13 @@ return [
             'created_by',
             'client',
         ],
+
+        'reports.objectives' => [
+            'daterange',
+            'created_by',
+            'client',
+            'objective',
+        ],
     ],
 
 ];

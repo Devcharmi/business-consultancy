@@ -279,7 +279,14 @@
                             {{-- Client Report --}}
                             <li class="slide {{ request()->routeIs('reports.clients') ? 'active' : '' }}">
                                 <a href="{{ route('reports.clients') }}" class="side-menu__item">
-                                    Client Report
+                                    Clients Report
+                                </a>
+                            </li>
+
+                            {{-- Objective Report --}}
+                            <li class="slide {{ request()->routeIs('reports.objectives') ? 'active' : '' }}">
+                                <a href="{{ route('reports.objectives') }}" class="side-menu__item">
+                                    Objectives Report
                                 </a>
                             </li>
                         </ul>
