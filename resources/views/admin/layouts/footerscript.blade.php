@@ -225,6 +225,7 @@
             const table = doc.content.find(c => c.table);
             if (!table) return;
 
+
             table.layout = {
                 hLineWidth: () => 0.8,
                 vLineWidth: () => 0.8,
@@ -241,8 +242,9 @@
                 cell.fillColor = '#343a40'; // dark bg
                 cell.color = '#ffffff'; // white text
                 cell.bold = true;
-                cell.alignment = 'center';
+                cell.alignment = 'center'; // center header
             });
+
 
             // Optional: default font size
             doc.defaultStyle.fontSize = 9;
@@ -260,13 +262,12 @@
             return `${baseName}_${today}`;
         }
 
-
         function getReportButtons(reportName) {
             return [{
                     extend: "excel",
                     className: "btn btn-success btn-sm mx-1",
                     text: '<i class="fas fa-file-excel me-1"></i> Excel',
-                    title: () => getReportFileName("User_Task_Report"),
+                    title: () => getReportFileName(reportName),
                     exportOptions: {
                         columns: ":not(.no-export)",
                         orthogonal: "export",
@@ -279,7 +280,7 @@
                     extend: "csv",
                     className: "btn btn-info btn-sm mx-1",
                     text: '<i class="fas fa-file-csv me-1"></i> CSV',
-                    title: () => getReportFileName("User_Task_Report"),
+                    title: () => getReportFileName(reportName),
                     exportOptions: {
                         columns: ":not(.no-export)",
                         orthogonal: "export",
@@ -294,7 +295,7 @@
                     text: '<i class="fas fa-file-pdf me-1"></i> PDF',
                     orientation: "landscape",
                     pageSize: "A4",
-                    title: () => getReportFileName("User_Task_Report"),
+                    title: () => getReportFileName(reportName),
                     exportOptions: {
                         columns: ":not(.no-export)",
                         orthogonal: "export",
@@ -310,7 +311,7 @@
                     extend: "print",
                     className: "btn btn-warning btn-sm mx-1",
                     text: '<i class="fas fa-print me-1"></i> Print',
-                    title: () => getReportFileName("User_Task_Report"),
+                    title: () => getReportFileName(reportName),
                     exportOptions: {
                         columns: ":not(.no-export)",
                         orthogonal: "export",
