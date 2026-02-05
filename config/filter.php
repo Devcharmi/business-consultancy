@@ -37,6 +37,11 @@ return [
             'focus_area',
         ],
 
+        'reports.clients' => [
+            'daterange',
+            'created_by',
+            'client',
+        ],
     ],
 
 ];

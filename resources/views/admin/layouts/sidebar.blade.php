@@ -262,23 +262,23 @@
                             </li>
 
                             {{-- Marketplace --}}
-                            <li
+                            {{-- <li
                                 class="slide {{ request()->routeIs('reports.marketplace-demand') ? 'active' : '' }}">
                                 <a href="{{ route('reports.marketplace-demand') }}" class="side-menu__item">
                                     Marketplace Demand Overview
                                 </a>
-                            </li>
+                            </li> --}}
 
                             {{-- Consulting Report --}}
-                            <li class="slide {{ request()->routeIs('reports.consulting') ? 'active' : '' }}">
+                            {{-- <li class="slide {{ request()->routeIs('reports.consulting') ? 'active' : '' }}">
                                 <a href="{{ route('reports.consulting') }}" class="side-menu__item">
                                     Consulting Report
                                 </a>
-                            </li>
+                            </li> --}}
 
                             {{-- Client Report --}}
-                            <li class="slide {{ request()->routeIs('reports.client') ? 'active' : '' }}">
-                                <a href="{{ route('reports.client') }}" class="side-menu__item">
+                            <li class="slide {{ request()->routeIs('reports.clients') ? 'active' : '' }}">
+                                <a href="{{ route('reports.clients') }}" class="side-menu__item">
                                     Client Report
                                 </a>
                             </li>
