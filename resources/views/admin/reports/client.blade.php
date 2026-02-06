@@ -13,22 +13,24 @@
 
                     @include('admin.filters.common-filters')
 
-                    <table class="table table-bordered table-striped w-100" id="clientReportTable"
-                        data-url="{{ route('reports.clients') }}">
-                        <thead>
-                            <tr>
-                                <th>Client Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th>Created By</th>
-                                {{-- <th>Updated By</th> --}}
-                                <th>No. of Objectives</th>
-                                <th>No. of Consulting</th>
-                                <th>No. of Meetings</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap w-100" id="clientReportTable"
+                            data-url="{{ route('reports.clients') }}">
+                            <thead>
+                                <tr>
+                                    <th>Client Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Created By</th>
+                                    {{-- <th>Updated By</th> --}}
+                                    <th>No. of Objectives</th>
+                                    <th>No. of Consulting</th>
+                                    <th>No. of Meetings</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

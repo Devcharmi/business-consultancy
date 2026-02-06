@@ -192,14 +192,22 @@
         });
     </script>
     <script>
+        // const REPORT_TABLE_DOM =
+        //     "<'row align-items-center mb-2'" +
+        //     "<'col-md-3'l>" +
+        //     "<'col-md-6 text-center'B>" +
+        //     "<'col-md-3'f>" +
+        //     ">" +
+        //     "<'row'<'col-12'tr>>" +
+        //     "<'row mt-2'<'col-md-5'i><'col-md-7'p>>";
         const REPORT_TABLE_DOM =
             "<'row align-items-center mb-2'" +
-            "<'col-md-3'l>" +
-            "<'col-md-6 text-center'B>" +
-            "<'col-md-3'f>" +
+            "<'col-md-6 d-flex align-items-center'lB>" +
+            "<'col-md-6 text-end'f>" +
             ">" +
             "<'row'<'col-12'tr>>" +
             "<'row mt-2'<'col-md-5'i><'col-md-7'p>>";
+
 
         function exportFormatBody(data, row, column, node) {
             if (typeof node === "string") return node.trim();
@@ -264,63 +272,126 @@
 
         function getReportButtons(reportName) {
             return [{
-                    extend: "excel",
-                    className: "btn btn-success btn-sm mx-1",
-                    text: '<i class="fas fa-file-excel me-1"></i> Excel',
-                    title: () => getReportFileName(reportName),
-                    exportOptions: {
-                        columns: ":not(.no-export)",
-                        orthogonal: "export",
-                        format: {
-                            body: exportFormatBody
-                        }
-                    }
-                },
-                {
-                    extend: "csv",
-                    className: "btn btn-info btn-sm mx-1",
-                    text: '<i class="fas fa-file-csv me-1"></i> CSV',
-                    title: () => getReportFileName(reportName),
-                    exportOptions: {
-                        columns: ":not(.no-export)",
-                        orthogonal: "export",
-                        format: {
-                            body: exportFormatBody
-                        }
-                    }
-                },
-                {
-                    extend: "pdf",
-                    className: "btn btn-danger btn-sm mx-1",
-                    text: '<i class="fas fa-file-pdf me-1"></i> PDF',
-                    orientation: "landscape",
-                    pageSize: "A4",
-                    title: () => getReportFileName(reportName),
-                    exportOptions: {
-                        columns: ":not(.no-export)",
-                        orthogonal: "export",
-                        format: {
-                            body: exportFormatBody
+                extend: "collection",
+                className: "btn btn-secondary btn-sm",
+                text: '<i class="fas fa-ellipsis-v"></i>',
+                titleAttr: "Export Options",
+                buttons: [{
+                        extend: "excel",
+                        text: '<i class="fas fa-file-excel me-2 text-success"></i> Excel',
+                        title: () => getReportFileName(reportName),
+                        exportOptions: {
+                            columns: ":not(.no-export)",
+                            orthogonal: "export",
+                            format: {
+                                body: exportFormatBody
+                            }
                         }
                     },
-                    customize: function(doc) {
-                        pdfWithBorders(doc);
-                    }
-                },
-                {
-                    extend: "print",
-                    className: "btn btn-warning btn-sm mx-1",
-                    text: '<i class="fas fa-print me-1"></i> Print',
-                    title: () => getReportFileName(reportName),
-                    exportOptions: {
-                        columns: ":not(.no-export)",
-                        orthogonal: "export",
-                        format: {
-                            body: exportFormatBody
+                    {
+                        extend: "csv",
+                        text: '<i class="fas fa-file-csv me-2 text-info"></i> CSV',
+                        title: () => getReportFileName(reportName),
+                        exportOptions: {
+                            columns: ":not(.no-export)",
+                            orthogonal: "export",
+                            format: {
+                                body: exportFormatBody
+                            }
+                        }
+                    },
+                    {
+                        extend: "pdf",
+                        text: '<i class="fas fa-file-pdf me-2 text-danger"></i> PDF',
+                        orientation: "landscape",
+                        pageSize: "A4",
+                        title: () => getReportFileName(reportName),
+                        exportOptions: {
+                            columns: ":not(.no-export)",
+                            orthogonal: "export",
+                            format: {
+                                body: exportFormatBody
+                            }
+                        },
+                        customize: function(doc) {
+                            pdfWithBorders(doc);
+                        }
+                    },
+                    {
+                        extend: "print",
+                        text: '<i class="fas fa-print me-2 text-warning"></i> Print',
+                        title: () => getReportFileName(reportName),
+                        exportOptions: {
+                            columns: ":not(.no-export)",
+                            orthogonal: "export",
+                            format: {
+                                body: exportFormatBody
+                            }
                         }
                     }
-                }
-            ]
-
+                ]
+            }];
         }
+
+        // function getReportButtons(reportName) {
+        //     return [{
+        //             extend: "excel",
+        //             className: "btn btn-success btn-sm mx-1",
+        //             text: '<i class="fas fa-file-excel me-1"></i> Excel',
+        //             title: () => getReportFileName(reportName),
+        //             exportOptions: {
+        //                 columns: ":not(.no-export)",
+        //                 orthogonal: "export",
+        //                 format: {
+        //                     body: exportFormatBody
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             extend: "csv",
+        //             className: "btn btn-info btn-sm mx-1",
+        //             text: '<i class="fas fa-file-csv me-1"></i> CSV',
+        //             title: () => getReportFileName(reportName),
+        //             exportOptions: {
+        //                 columns: ":not(.no-export)",
+        //                 orthogonal: "export",
+        //                 format: {
+        //                     body: exportFormatBody
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             extend: "pdf",
+        //             className: "btn btn-danger btn-sm mx-1",
+        //             text: '<i class="fas fa-file-pdf me-1"></i> PDF',
+        //             orientation: "landscape",
+        //             pageSize: "A4",
+        //             title: () => getReportFileName(reportName),
+        //             exportOptions: {
+        //                 columns: ":not(.no-export)",
+        //                 orthogonal: "export",
+        //                 format: {
+        //                     body: exportFormatBody
+        //                 }
+        //             },
+        //             customize: function(doc) {
+        //                 pdfWithBorders(doc);
+        //             }
+        //         },
+        //         {
+        //             extend: "print",
+        //             className: "btn btn-warning btn-sm mx-1",
+        //             text: '<i class="fas fa-print me-1"></i> Print',
+        //             title: () => getReportFileName(reportName),
+        //             exportOptions: {
+        //                 columns: ":not(.no-export)",
+        //                 orthogonal: "export",
+        //                 format: {
+        //                     body: exportFormatBody
+        //                 }
+        //             }
+        //         }
+        //     ]
+
+        // }
     </script>

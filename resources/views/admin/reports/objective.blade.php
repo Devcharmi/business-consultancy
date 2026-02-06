@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
 @section('content')
-
     <div class="row mt-4">
         <div class="col-xl-12">
             <div class="card custom-card">
@@ -16,19 +15,21 @@
                     {{-- 🔹 Common Filters --}}
                     @include('admin.filters.common-filters')
 
-                    <table class="table table-bordered table-striped w-100" id="objectiveReportTable"
-                        data-url="{{ route('reports.objectives') }}">
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Objective</th>
-                                <th>No. of Consulting</th>
-                                <th>No. of Meetings</th>
-                                <th>Created By</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap w-100" id="objectiveReportTable"
+                            data-url="{{ route('reports.objectives') }}">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Objective</th>
+                                    <th>No. of Consulting</th>
+                                    <th>No. of Meetings</th>
+                                    <th>Created By</th>
+                                </tr>
+                            </thead>
+                        </table>
 
+                    </div>
                 </div>
             </div>
         </div>

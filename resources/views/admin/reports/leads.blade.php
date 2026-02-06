@@ -12,22 +12,24 @@
 
                     @include('admin.filters.common-filters')
 
-                    <table class="table table-bordered table-striped w-100" id="leadReportTable"
-                        data-url="{{ route('reports.leads') }}">
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th>Created by</th>
-                                <th>Total Follow-ups</th>
-                                <th>Pending Follow-ups</th>
-                                <th>Next Follow-up</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap w-100" id="leadReportTable"
+                            data-url="{{ route('reports.leads') }}">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Created by</th>
+                                    <th>Total Follow-ups</th>
+                                    <th>Pending Follow-ups</th>
+                                    <th>Next Follow-up</th>
+                                </tr>
+                            </thead>
+                        </table>
 
+                    </div>
                 </div>
             </div>
         </div>

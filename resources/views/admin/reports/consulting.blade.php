@@ -14,22 +14,21 @@
 
                     @include('admin.filters.common-filters')
 
-                    <table
-                        class="table table-bordered table-striped w-100"
-                        id="consultingReportTable"
-                        data-url="{{ route('reports.consultings') }}"
-                    >
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Objective</th>
-                                <th>Expertise</th>
-                                <th>Total Consultings</th>
-                                <th>Last Consulting Date</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap w-100" id="consultingReportTable"
+                            data-url="{{ route('reports.consultings') }}">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Objective</th>
+                                    <th>Expertise</th>
+                                    <th>Total Consultings</th>
+                                    <th>Last Consulting Date</th>
+                                </tr>
+                            </thead>
+                        </table>
 
+                    </div>
                 </div>
             </div>
         </div>
