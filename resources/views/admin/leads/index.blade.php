@@ -3,10 +3,7 @@
 @section('title', 'Leads')
 
 @section('content')
-    <!-- Page Header -->
-    <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2">
-    </div>
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-xl-12">
             <div class="card custom-card">
 

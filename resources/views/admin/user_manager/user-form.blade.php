@@ -1,27 +1,28 @@
 @extends('admin.layouts.app')
 @section('content')
-    <!-- Page Header -->
-    <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2">
-        {{-- <div>
-            <nav>
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="javascript:void(0);">User</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">User</li>
-                </ol>
-            </nav>
-            <h1 class="page-title fw-medium fs-18 mb-0">User Manager</h1>
-        </div> --}}
+    <div class="row mt-4">
+        <div class="col-xl-12">
+            <div class="card custom-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        {{ isset($userData) ? 'Edit User' : 'Create User' }}
+                    </div>
+                    <a href="{{ route('user-task.index') }}" class="btn btn-primary mt-10 d-block text-center">Back</a>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="user_form" class="mt-6 space-y-6" enctype="multipart/form-data">
+                        @if (!empty($userData))
+                            @method('PUT')
+                        @endif
+                        @csrf
+                        <!-- Start::row-1 -->
+                        @include('admin.user_manager.partials.user-information-form')
+                        @include('admin.user_manager.partials.user-password-form')
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- Page Header Close -->
-    <form method="POST" id="user_form" class="mt-6 space-y-6" enctype="multipart/form-data">
-        @if (!empty($userData))
-            @method('PUT')
-        @endif
-        @csrf
-        <!-- Start::row-1 -->
-        @include('admin.user_manager.partials.user-information-form')
-        @include('admin.user_manager.partials.user-password-form')
-    </form>
 @endsection
 @section('script')
     <script>

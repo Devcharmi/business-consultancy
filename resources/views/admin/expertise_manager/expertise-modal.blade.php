@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitleId">
-                    Expertise Manager
+                    {{ isset($expertiseData) ? 'Edit Expertise' : 'Create Expertise' }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -58,7 +58,8 @@
                     @else
                         <button type="submit"
                             class="btn btn-primary float-end {{ canAccess('expertise.create') ? '' : 'disabled' }}"
-                            id="expertise_form_button" data-url="{{ route('expertise-manager.store') }}">Submit</button>
+                            id="expertise_form_button"
+                            data-url="{{ route('expertise-manager.store') }}">Submit</button>
                     @endif
                 </div>
             </form>

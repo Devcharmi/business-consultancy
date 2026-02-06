@@ -1,13 +1,8 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <!-- Page Header -->
-    <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2">
-        {{-- Breadcrumb intentionally hidden --}}
-    </div>
-    <!-- Page Header Close -->
 
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-xl-12">
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">

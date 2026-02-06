@@ -1,11 +1,24 @@
 @extends('admin.layouts.app')
 @section('content')
-    <div class="row mt-4">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between page-header-breadcrumb flex-wrap gap-2">
+        {{-- <div>
+            <nav>
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);">Task</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Task</li>
+                </ol>
+            </nav>
+            <h1 class="page-title fw-medium fs-18 mb-0">Task Manager</h1>
+        </div> --}}
+    </div>
+    <!-- Page Header Close -->
+    <div class="row">
         <div class="col-xl-12">
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">
-                        {{ isset($taskData) ? 'Edit Task' : 'Create Task' }}
+                        Task Manager
                     </div>
                     <a href="{{ route('user-task.index') }}" class="btn btn-primary mt-10 d-block text-center">Back</a>
                 </div>
@@ -27,7 +40,7 @@
                         </div>
                         <div class="row mb-1">
                             <label for="client_id" class="col-md-2 col-form-label">Related to</label>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-8">
                                 <select name="client_id" id="client_id" class="form-select select2">
                                     <option value="">Select Client</option>
                                     @foreach ($clients as $client)
@@ -39,11 +52,11 @@
                                 <span id="client_id_error"
                                     class="help-inline text-danger mt-2">{{ $errors->first('client_id') }}</span>
                             </div>
-                            {{-- </div> --}}
-                            @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
-                                {{-- <div class="row mb-1"> --}}
-                                <label for="staff_manager_id" class="required col-form-label col-md-2 text-end">Assign to</label>
-                                <div class="form-group col-md-4">
+                        </div>
+                        @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
+                            <div class="row mb-1">
+                                <label for="staff_manager_id" class="required col-form-label col-md-2">Assign to</label>
+                                <div class="form-group col-md-8">
                                     <select name="staff_manager_id" id="staff_manager_id" class="form-control select2">
                                         <option value="">Select</option>
                                         @foreach ($staffs as $staff)
@@ -55,33 +68,36 @@
                                     <span id="staff_manager_id_error"
                                         class="help-inline text-danger mt-2">{{ $errors->first('staff_manager_id') }}</span>
                                 </div>
-                            @else
-                                <input type="hidden" name="staff_manager_id" id="staff_manager_id"
-                                    value="{{ isset($taskData) ? $taskData->staff_manager_id : auth()->id() }}">
-                            @endif
-                        </div>
-
+                            </div>
+                        @else
+                            <input type="hidden" name="staff_manager_id" id="staff_manager_id"
+                                value="{{ isset($taskData) ? $taskData->staff_manager_id : auth()->id() }}">
+                        @endif
                         <div class="row mb-1">
                             <label for="task_start_date" class="col-md-2 col-form-label">Start Date</label>
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-3">
                                 <input type="date" name="task_start_date" id="task_start_date" class="form-control"
                                     value="{{ isset($taskData->task_start_date) ? \Carbon\Carbon::parse($taskData->task_start_date)->format('Y-m-d') : date('Y-m-d') }}">
                                 <span id="task_start_date_error"
                                     class="help-inline text-danger mt-2">{{ $errors->first('task_start_date') }}</span>
                             </div>
-                            <label for="task_due_date" class="col-md-2 col-form-label text-end">Due Date</label>
-                            <div class="form-group col-md-2">
-                                <input type="date" name="task_due_date" id="task_due_date" class="form-control"
-                                    value="{{ isset($taskData->task_due_date) ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : date('Y-m-d') }}">
-                                <span id="task_due_date_error"
-                                    class="help-inline text-danger mt-2">{{ $errors->first('task_due_date') }}</span>
-                            </div>
-                            <label for="task_end_date" class="col-md-2 col-form-label text-end">End Date</label>
-                            <div class="form-group col-md-2">
+                        </div>
+                        <div class="row mb-1">
+                            <label for="task_end_date" class="col-md-2 col-form-label">End Date</label>
+                            <div class="form-group col-md-3">
                                 <input type="date" name="task_end_date" id="task_end_date" class="form-control"
                                     value="{{ isset($taskData->task_end_date) ? \Carbon\Carbon::parse($taskData->task_end_date)->format('Y-m-d') : '' }}">
                                 <span id="task_end_date_error"
                                     class="help-inline text-danger mt-2">{{ $errors->first('task_end_date') }}</span>
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <label for="task_due_date" class="col-md-2 col-form-label">Due Date</label>
+                            <div class="form-group col-md-3">
+                                <input type="date" name="task_due_date" id="task_due_date" class="form-control"
+                                    value="{{ isset($taskData->task_due_date) ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : date('Y-m-d') }}">
+                                <span id="task_due_date_error"
+                                    class="help-inline text-danger mt-2">{{ $errors->first('task_due_date') }}</span>
                             </div>
                         </div>
                         <div class="row mb-1">
@@ -97,7 +113,9 @@
                                 <span id="priority_manager_id_error"
                                     class="help-inline text-danger mt-2">{{ $errors->first('priority_manager_id') }}</span>
                             </div>
-                            <label class="col-md-1 col-form-label required">Status</label>
+                        </div>
+                        <div class="row mb-1">
+                            <label class="col-md-2 col-form-label required">Status</label>
                             <div class="form-group col-md-3">
                                 <select name="status_manager_id" class="form-select">
                                     @foreach ($statuses as $status)
