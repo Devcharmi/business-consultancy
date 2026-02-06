@@ -118,10 +118,6 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         ->name('reports.')
         ->group(function () {
 
-            // Existing
-            Route::get('reports/marketplace-demand', [ReportController::class, 'marketplaceDemand'])
-                ->name('marketplace-demand');
-
             // ================= NEW REPORTS =================
 
             // Client Report

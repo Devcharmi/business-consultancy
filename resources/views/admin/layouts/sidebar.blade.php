@@ -234,13 +234,10 @@
 
                 @php
                     $reportRoutes = [
-                        'reports.marketplace-demand',
-                        'reports.service-demand',
-                        'reports.vendor-performance',
-                        'reports.client-engagement',
-                        'reports.service-click-detail',
-                        'reports.consulting',
-                        'reports.client',
+                        'reports.clients',
+                        'reports.objectives',
+                        'reports.consultings',
+                        'reports.leads',
                     ];
 
                     $isReportActive = request()->routeIs($reportRoutes);
@@ -260,21 +257,6 @@
                             <li class="slide side-menu__label1">
                                 <a href="javascript:void(0)">Reports</a>
                             </li>
-
-                            {{-- Marketplace --}}
-                            {{-- <li
-                                class="slide {{ request()->routeIs('reports.marketplace-demand') ? 'active' : '' }}">
-                                <a href="{{ route('reports.marketplace-demand') }}" class="side-menu__item">
-                                    Marketplace Demand Overview
-                                </a>
-                            </li> --}}
-
-                            {{-- Consulting Report --}}
-                            {{-- <li class="slide {{ request()->routeIs('reports.consulting') ? 'active' : '' }}">
-                                <a href="{{ route('reports.consulting') }}" class="side-menu__item">
-                                    Consulting Report
-                                </a>
-                            </li> --}}
 
                             {{-- Client Report --}}
                             <li class="slide {{ request()->routeIs('reports.clients') ? 'active' : '' }}">
