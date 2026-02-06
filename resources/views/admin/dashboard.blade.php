@@ -22,7 +22,7 @@
                 {{-- Tabs --}}
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <ul class="nav nav-tabs card-header-tabs">
-                        @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
+                        @if (canAccess('consulting.allow'))
                             <li class="nav-item">
                                 <button class="nav-link active" id="tab-task-statistics" data-bs-toggle="tab"
                                     data-bs-target="#task-statistics">

@@ -1,72 +1,74 @@
 <div class="row g-3 mb-4">
-    <div class="col-xl-4 col-lg-6">
-        <div class="card shadow-sm border-0 h-100 dashboard-card followup-card">
-            <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
-                <h6 class="mb-0 fw-semibold text-primary">
-                    <i class="fas fa-calendar-check me-2"></i> Follow-ups
-                </h6>
-                <span class="badge bg-primary-subtle text-primary">
-                    {{ $todayFollowUps->count() }}
-                </span>
-            </div>
+    @if (canAccess('lead.allow'))
+        <div class="col-xl-4 col-lg-6">
+            <div class="card shadow-sm border-0 h-100 dashboard-card followup-card">
+                <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
+                    <h6 class="mb-0 fw-semibold text-primary">
+                        <i class="fas fa-calendar-check me-2"></i> Follow-ups
+                    </h6>
+                    <span class="badge bg-primary-subtle text-primary">
+                        {{ $todayFollowUps->count() }}
+                    </span>
+                </div>
 
-            <div class="card-body p-2">
-                @forelse ($todayFollowUps as $followup)
-                    <div class="dashboard-item d-flex justify-content-between align-items-start">
+                <div class="card-body p-2">
+                    @forelse ($todayFollowUps as $followup)
+                        <div class="dashboard-item d-flex justify-content-between align-items-start">
 
-                        {{-- LEFT : REMARK + TIME --}}
-                        <div class="pe-2">
-                            <a href="{{ route('lead.show', $followup->lead_id) }}"
-                                class="text-decoration-none text-dark">
+                            {{-- LEFT : REMARK + TIME --}}
+                            <div class="pe-2">
+                                <a href="{{ route('lead.show', $followup->lead_id) }}"
+                                    class="text-decoration-none text-dark">
 
-                                <div class="fw-semibold">
-                                    {{ Str::limit($followup->remark, 45) }}
-                                </div>
+                                    <div class="fw-semibold">
+                                        {{ Str::limit($followup->remark, 45) }}
+                                    </div>
 
-                                <small class="text-muted">
-                                    {{ $followup->next_follow_up_at->format('d M Y h:i A') }}
-                                </small>
-                            </a>
-                        </div>
+                                    <small class="text-muted">
+                                        {{ $followup->next_follow_up_at->format('d M Y h:i A') }}
+                                    </small>
+                                </a>
+                            </div>
 
-                        {{-- RIGHT : STATUS + ACTION --}}
-                        <div class="d-flex align-items-center gap-1">
+                            {{-- RIGHT : STATUS + ACTION --}}
+                            <div class="d-flex align-items-center gap-1">
 
-                            {{-- STATUS BADGE --}}
-                            <span
-                                class="badge rounded-pill
+                                {{-- STATUS BADGE --}}
+                                <span
+                                    class="badge rounded-pill
                         bg-{{ $followup->status === 'completed' ? 'success' : 'warning' }}">
-                                <i
-                                    class="fas {{ $followup->status === 'completed' ? 'fa-check-circle' : 'fa-hourglass-half' }} me-1"></i>
-                                {{ ucfirst($followup->status) }}
-                            </span>
+                                    <i
+                                        class="fas {{ $followup->status === 'completed' ? 'fa-check-circle' : 'fa-hourglass-half' }} me-1"></i>
+                                    {{ ucfirst($followup->status) }}
+                                </span>
 
-                            {{-- MARK COMPLETED --}}
-                            @if ($followup->status === 'pending')
-                                <button class="btn btn-xs btn-outline-success mark-completed" data-type="followup"
-                                    data-id="{{ $followup->id }}">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            @endif
+                                {{-- MARK COMPLETED --}}
+                                @if ($followup->status === 'pending')
+                                    <button class="btn btn-xs btn-outline-success mark-completed" data-type="followup"
+                                        data-id="{{ $followup->id }}">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                @endif
+
+                            </div>
 
                         </div>
+                    @empty
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No follow-ups today</p>
+                        </div>
+                    @endforelse
+                </div>
 
-                    </div>
-                @empty
-                    <div class="empty-state">
-                        <i class="fas fa-check-circle"></i>
-                        <p>No follow-ups today</p>
-                    </div>
-                @endforelse
-            </div>
-
-            <div class="card-footer bg-transparent border-0 text-end">
-                <a href="{{ route('lead.index') }}" class="small fw-semibold">
-                    View all →
-                </a>
+                <div class="card-footer bg-transparent border-0 text-end">
+                    <a href="{{ route('lead.index') }}" class="small fw-semibold">
+                        View all →
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
     <div class="col-xl-4 col-lg-6">
         <div class="card shadow-sm border-0 h-100 dashboard-card task-card">
             <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
