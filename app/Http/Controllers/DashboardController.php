@@ -133,7 +133,16 @@ class DashboardController extends Controller
         }
 
         /* ================= TASK BASE QUERY ================= */
-        $taskBase = UserTask::with('status_manager');
+        // $taskBase = UserTask::with('status_manager');
+        $isAdmin = $user->hasRole(['Super Admin', 'Admin']);
+        $taskBase = UserTask::with('status_manager')
+            ->when(!$isAdmin, function ($q) use ($user) {
+                $q->where(function ($sub) use ($user) {
+                    $sub->where('created_by', $user->id)
+                        ->orWhere('staff_manager_id', $user->id);
+                });
+            });
+
 
         /* ================= TODAY / RANGE TASKS ================= */
         $todayTasks = clone $taskBase;

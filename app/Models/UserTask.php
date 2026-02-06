@@ -78,6 +78,18 @@ class UserTask extends Model
         return $this->belongsTo(StatusManager::class, 'status_manager_id');
     }
 
+    public function scopeVisibleTo($query, $user)
+    {
+        if ($user->hasRole(['Super Admin', 'Admin'])) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($user) {
+            $q->where('staff_manager_id', $user->id)
+                ->orWhere('created_by', $user->id);
+        });
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         if (!empty($filters['date_range'])) {
@@ -124,10 +136,8 @@ class UserTask extends Model
         }
 
         // 🔹 Restrict staff view for non-admin users
-        if (!auth()->user()->hasRole(['Super Admin', 'Admin'])) {
-            $query->where('staff_manager_id', auth()->id());
-            $query->where('created_by', auth()->id());
-        }
+        $query->visibleTo(auth()->user());
+
 
         // ====================================
 

@@ -14,7 +14,7 @@
     </div>
 
     @include('admin.filters.daterangefilter')
-    
+
     <div class="row">
         <div class="col-12">
             <div class="card custom-card">
@@ -29,13 +29,21 @@
                                     Task Statistics
                                 </button>
                             </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="tab-today-tasks" data-bs-toggle="tab"
+                                    data-bs-target="#today-tasks-tab">
+                                    Task & Followups
+                                </button>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <button class="nav-link" id="tab-today-tasks active" data-bs-toggle="tab"
+                                    data-bs-target="#today-tasks-tab">
+                                    Task & Followups
+                                </button>
+                            </li>
                         @endif
-                        <li class="nav-item">
-                            <button class="nav-link" id="tab-today-tasks" data-bs-toggle="tab"
-                                data-bs-target="#today-tasks-tab">
-                                Task & Followups
-                            </button>
-                        </li>
+
                     </ul>
                 </div>
 
