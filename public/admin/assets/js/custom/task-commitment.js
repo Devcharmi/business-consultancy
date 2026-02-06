@@ -1,3 +1,13 @@
+function initSelect2() {
+    $(".select2").select2({
+        placeholder: "Select...",
+        width: "100%",
+        dropdownParent: $("#commitmentModal"),
+        // allowClear: true,
+        // closeOnSelect: false, // keep dropdown open for multiple selections
+    });
+}
+
 $(document).on("click", ".open-commitment-modal", function () {
     let date = $(this).data("date");
 
@@ -8,14 +18,14 @@ $(document).on("click", ".open-commitment-modal", function () {
     $("#commitment_due_date").val(date);
 
     $("#commitmentModal").modal("show");
-
-    $(".select2").select2({
-        placeholder: "Select...",
-        width: "100%",
-        dropdownParent: $("#commitmentModal"),
-        // allowClear: true,
-        // closeOnSelect: false, // keep dropdown open for multiple selections
-    });
+    initSelect2();
+    // $(".select2").select2({
+    //     placeholder: "Select...",
+    //     width: "100%",
+    //     dropdownParent: $("#commitmentModal"),
+    //     // allowClear: true,
+    //     // closeOnSelect: false, // keep dropdown open for multiple selections
+    // });
 });
 
 // $("#commitment_form").on("submit", function (e) {
@@ -190,26 +200,28 @@ function renderCommitments(date) {
 }
 
 $(document).on("click", ".edit-commitment", function () {
-    $("#commitment_id").val($(this).data("id") || "");
-    $("#commitment_tmp_id").val($(this).data("tmp-id") || "");
+    let id = $(this).data("id");
+    let text = $(this).data("text");
+    let staffId = $(this).data("staff-manager-id");
+    let dueDate = $(this).data("due");
+    let date = $(this).data("date");
 
-    $("#commitment").val($(this).data("text"));
-    $("#commitment_due_date").val($(this).data("due"));
-    $("#commitment_date").val($(this).data("date"));
+    $("#commitment_id").val(id);
+    $("#commitment_text").val(text);
+    $("#commitment_due_date").val(dueDate);
 
-    // ✅ SET STAFF MANAGER
-    const staffId = $(this).data("staff-manager-id");
-    $("#staff_manager_id").val(staffId).trigger("change");
+    let staffSelect = $("#commitment_staff_manager_id");
 
     $("#commitmentModal").modal("show");
+    initSelect2();
 
-    $(".select2").select2({
-        placeholder: "Select...",
-        width: "100%",
-        dropdownParent: $("#commitmentModal"),
-        // allowClear: true,
-        // closeOnSelect: false, // keep dropdown open for multiple selections
-    });
+    // 🔥 RESET first (important)
+    staffSelect.val(null).trigger("change");
+
+    // 🔥 FORCE string match for Select2
+    if (staffId) {
+        staffSelect.val(String(staffId)).trigger("change.select2");
+    }
 });
 
 $(document).on("click", ".delete-commitment", function () {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +35,14 @@ class Lead extends Model
 
     public function scopeFilters($query, $filters = [], $columns = [])
     {
+        if (!empty($filters['date_range'])) {
+            $explode = explode(' - ', $filters['date_range']);
+            $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
+            $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
+            $query->whereDate('created_at', '>=', $from);
+            $query->whereDate('created_at', '<=', $to);
+        }
+
         // SEARCH
         if (!empty($filters['search']) || !empty($filters['search']['value'])) {
 
@@ -47,7 +56,28 @@ class Lead extends Model
                 $q->orWhere('phone', 'LIKE', '%' . $term . '%');
             });
         }
+        // 🔹 Created by filter
+        if (!empty($filters['filterCreatedBy'])) {
+            $query->where('created_by', $filters['filterCreatedBy']);
+        }
 
+        // 🔹 Client filter
+        if (!empty($filters['filterClient'])) {
+            $query->where('client_id', $filters['filterClient']);
+        }
+
+        // 🔹 STATUS FILTER (YOUR REQUIREMENT ✅)
+        if (!empty($filters['filterStatus'])) {
+            $query->where('status', $filters['filterStatus']);
+        }
+
+        if (!empty($filters['sort'])) {
+            $sort = $filters['sort'];
+
+            if ($sort == 'latest') {
+                $query->orderBy('id', 'desc');
+            }
+        }
         // ORDER
         if (!empty($filters['order']) && !empty(head($filters['order']))) {
 

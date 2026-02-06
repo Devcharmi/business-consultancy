@@ -19,7 +19,7 @@
 
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="required">Date</label>
+                        <label class="required">Due Date</label>
                         <input type="date" name="expected_date" id="expected_date" class="form-control">
                         <small class="text-danger" id="expected_date_error"></small>
                     </div>

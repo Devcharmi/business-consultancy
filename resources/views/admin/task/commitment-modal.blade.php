@@ -20,7 +20,7 @@
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label class="required">Date</label><span class="text-danger">*</span>
+                        <label class="required">Due Date</label><span class="text-danger">*</span>
                         <input type="date" name="commitment_due_date" id="commitment_due_date" class="form-control">
                         <small class="text-danger" id="commitment_due_date_error"></small>
                     </div>

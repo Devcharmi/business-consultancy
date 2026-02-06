@@ -137,24 +137,48 @@ class TaskController extends Controller
             ])->findOrFail($id);
 
             /* ----------------------------
-            Collect ALL dates
-            ---------------------------- */
+Collect ALL dates (normalized)
+---------------------------- */
             $dates = collect()
-                ->merge($taskData->content->pluck('content_date'))
-                ->merge($taskData->commitments->pluck('commitment_date'))
-                ->merge($taskData->deliverables->pluck('deliverable_date'))
-                ->push($today) // ensure today exists
-                ->filter()
+                ->merge($taskData->content->pluck('content_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
+                ->merge($taskData->commitments->pluck('commitment_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
+                ->merge($taskData->deliverables->pluck('deliverable_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
+                ->push($today)
                 ->unique()
                 ->sortDesc()
                 ->values();
 
             /* ----------------------------
-            Group data by DATE
-            ---------------------------- */
-            $commitmentsByDate = $taskData->commitments->groupBy('commitment_date');
-            $deliverablesByDate = $taskData->deliverables->groupBy('deliverable_date');
-            $contentByDate = $taskData->content->keyBy('content_date');
+Group data by DATE STRING
+---------------------------- */
+            $commitmentsByDate = $taskData->commitments
+                ->groupBy(fn($c) => Carbon::parse($c->commitment_date)->toDateString());
+
+            $deliverablesByDate = $taskData->deliverables
+                ->groupBy(fn($d) => Carbon::parse($d->deliverable_date)->toDateString());
+
+            $contentByDate = $taskData->content
+                ->keyBy(fn($c) => Carbon::parse($c->content_date)->toDateString());
+
+            // /* ----------------------------
+            // Collect ALL dates
+            // ---------------------------- */
+            // $dates = collect()
+            //     ->merge($taskData->content->pluck('content_date'))
+            //     ->merge($taskData->commitments->pluck('commitment_date'))
+            //     ->merge($taskData->deliverables->pluck('deliverable_date'))
+            //     ->push($today) // ensure today exists
+            //     ->filter()
+            //     ->unique()
+            //     ->sortDesc()
+            //     ->values();
+
+            // /* ----------------------------
+            // Group data by DATE
+            // ---------------------------- */
+            // $commitmentsByDate = $taskData->commitments->groupBy('commitment_date');
+            // $deliverablesByDate = $taskData->deliverables->groupBy('deliverable_date');
+            // $contentByDate = $taskData->content->keyBy('content_date');
         }
 
         /* ============================

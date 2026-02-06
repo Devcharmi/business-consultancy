@@ -16,23 +16,15 @@
 <div class="accordion" id="taskAccordion">
 
     @foreach ($dates as $date)
-        {{-- @php
+        @php
             $isToday = $date === now()->toDateString();
             $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y, l');
-        @endphp --}}
-        @php
-            $dateKey = is_string($date) ? \Carbon\Carbon::parse($date)->toDateString() : $date->toDateString();
-
-            $safeId = \Illuminate\Support\Str::slug($dateKey);
-
-            $isToday = $dateKey === now()->toDateString();
-            $formattedDate = \Carbon\Carbon::createFromFormat('Y-m-d', $dateKey)->format('d M Y, l');
         @endphp
 
         <div class="accordion-item mb-2 shadow-sm rounded">
-            <h2 class="accordion-header" id="heading-{{ $safeId }}">
+            <h2 class="accordion-header" id="heading-{{ $date }}">
                 <button class="accordion-button {{ $isToday ? '' : 'collapsed' }}" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#collapse-{{ $safeId }}"
+                    data-bs-toggle="collapse" data-bs-target="#collapse-{{ $date }}"
                     style="
                         color: white;
                         {{ $isToday
@@ -54,17 +46,20 @@
                 </button>
             </h2>
 
-            <div id="collapse-{{ $safeId }}" class="accordion-collapse collapse {{ $isToday ? 'show' : '' }}">
+            <div id="collapse-{{ $date }}" class="accordion-collapse collapse {{ $isToday ? 'show' : '' }}">
                 <div class="accordion-body">
 
                     {{-- ================= Content (1 per day) ================= --}}
                     <h6 class="mt-3 mb-2 text-success fw-bold">📝 Meeting Details</h6>
-                    <textarea class="form-control mb-3" name="content[{{ $dateKey }}]" id="content_{{ $safeId }}">{{ optional($contentByDate->get($dateKey))->task_content }}</textarea>
+                    <textarea class="form-control mb-3" name="content[{{ $date }}]"
+                        id="content_{{ \Illuminate\Support\Str::slug($date) }}">
+                        {{ optional($contentByDate->get($date))->task_content }}
+                    </textarea>
 
                     {{-- ================= Commitments ================= --}}
                     <h6 class="mt-4 mb-2 text-warning d-inline-block fw-bold">📌 Commitments</h6>
                     <button type="button" class="btn btn-sm btn-outline-primary ms-2 open-commitment-modal"
-                        data-date="{{ $dateKey }}">
+                        data-date="{{ $date }}">
                         + Add Commitment
                     </button>
 
@@ -78,8 +73,8 @@
                                     <th style="width:80px;">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="commitments_{{ $safeId }}">
-                                @forelse ($commitmentsByDate->get($dateKey, []) as $commitment)
+                            <tbody id="commitments_{{ $date }}">
+                                @forelse ($commitmentsByDate->get($date, []) as $commitment)
                                     <tr data-id="{{ $commitment->id }}">
                                         {{-- <td>{{ $commitmnt->created_at->format('d M Y') }}</td> --}}
                                         <td>{{ \Carbon\Carbon::parse($commitment->commitment_date)->format('d M Y') }}
@@ -105,10 +100,10 @@
                                                 data-text="{{ $commitment->commitment }}"
                                                 data-staff-manager-id="{{ $commitment->staff_manager_id ?? auth()->id() }}"
                                                 data-due="{{ $commitment->due_date->toDateString() }}"
-                                                data-date="{{ $dateKey }}">✎</button>
+                                                data-date="{{ $date }}">✎</button>
                                             <button type="button" class="btn btn-sm btn-danger delete-commitment"
                                                 data-id="{{ $commitment->id }}"
-                                                data-date="{{ $dateKey }}">✕</button>
+                                                data-date="{{ $date }}">✕</button>
                                         </td>
                                     </tr>
                                 @empty
@@ -124,7 +119,7 @@
                     {{-- ================= Deliverables ================= --}}
                     <h6 class="mt-4 mb-2 text-info d-inline-block fw-bold">🎯 Deliverables</h6>
                     <button type="button" class="btn btn-sm btn-outline-success ms-2 open-deliverable-modal"
-                        data-date="{{ $dateKey }}">
+                        data-date="{{ $date }}">
                         + Add Deliverable
                     </button>
 
@@ -138,8 +133,8 @@
                                     <th style="width:80px;">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="deliverables_{{ $safeId }}">
-                                @forelse ($deliverablesByDate->get($dateKey, []) as $deliverable)
+                            <tbody id="deliverables_{{ $date }}">
+                                @forelse ($deliverablesByDate->get($date, []) as $deliverable)
                                     <tr data-id="{{ $deliverable->id }}">
                                         {{-- <td>{{ $deliverable->created_at->format('d M Y') }}</td> --}}
                                         <td>{{ \Carbon\Carbon::parse($deliverable->deliverable_date)->format('d M Y') }}
@@ -161,10 +156,10 @@
                                                 data-id="{{ $deliverable->id }}"
                                                 data-text="{{ $deliverable->deliverable }}"
                                                 data-expected="{{ $deliverable->expected_date->toDateString() }}"
-                                                data-date="{{ $dateKey }}">✎</button>
+                                                data-date="{{ $date }}">✎</button>
                                             <button type="button" class="btn btn-sm btn-danger delete-deliverable"
                                                 data-id="{{ $deliverable->id }}"
-                                                data-date="{{ $dateKey }}">✕</button>
+                                                data-date="{{ $date }}">✕</button>
                                         </td>
                                     </tr>
                                 @empty
