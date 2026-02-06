@@ -56,6 +56,13 @@ return [
             'objective',
             'expertise',
         ],
+
+        'reports.leads' => [
+            'daterange',
+            'client',
+            'created_by',
+            'status',
+        ],
     ],
 
 ];

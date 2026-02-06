@@ -296,6 +296,13 @@
                                     Consultings Report
                                 </a>
                             </li>
+
+                            {{-- Lead Report --}}
+                            <li class="slide {{ request()->routeIs('reports.leads') ? 'active' : '' }}">
+                                <a href="{{ route('reports.leads') }}" class="side-menu__item">
+                                    Leads Report
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 @endif

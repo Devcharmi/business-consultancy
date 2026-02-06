@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
+use App\Models\Lead;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -200,6 +201,89 @@ class ReportController extends Controller
         $filters = filterDropdowns(array_keys($filterRouteConfig));
 
         return view('admin.reports.consulting', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
+    }
+
+    public function leadIndex(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $data = $request->all();
+            $data['date_range'] = $request->get('dateRange');
+            $data['filterClient'] = $request->get('filterClient');
+            $data['filterCreatedBy']   = $request->get('filterCreatedBy');
+            $data['filterStatus'] = $request->get('filterStatus');
+
+            $columns = [
+                4 => 'client_id',
+                1 => 'email',
+                2 => 'phone',
+                3 => 'status',
+                5 => 'user_id',
+                6 => 'followups_count',
+                7 => 'pending_followups_count',
+                8 => 'last_followup_date',
+            ];
+
+            $query = Lead::with([
+                'client:id,client_name',
+                'user:id,name',
+            ])
+                ->withCount([
+                    'followUps',
+                    'followUps as pending_followups_count' => function ($q) {
+                        $q->where('status', 'pending');
+                    },
+                ])
+                ->withMax('followUps', 'next_follow_up_at');
+
+            // 🔹 Apply existing scopeFilters
+            $query->filters($data, $columns);
+
+            // 🔹 Extra filters
+            if (!empty($data['filterClient'])) {
+                $query->where('client_id', $data['filterClient']);
+            }
+
+            if (!empty($data['filterUser'])) {
+                $query->where('user_id', $data['filterUser']);
+            }
+
+            if (!empty($data['filterStatus'])) {
+                $query->where('status', $data['filterStatus']);
+            }
+
+            $totalRecords    = Lead::count();
+            $filteredRecords = $query->count();
+            $leads           = $query->get();
+
+            return response()->json([
+                'draw'            => intval($request->draw),
+                'recordsTotal'    => $totalRecords,
+                'recordsFiltered' => $filteredRecords,
+                'data'            => $leads->map(function ($lead) {
+                    return [
+                        'client'     => optional($lead->client)->client_name ?? $lead->name,
+                        'email'      => $lead->email,
+                        'phone'      => $lead->phone,
+                        'status'     => ucfirst($lead->status),
+                        'assigned_to' => optional($lead->user)->name,
+                        'followups'  => $lead->follow_ups_count,
+                        'pending'    => $lead->pending_followups_count,
+                        'next_followup' => $lead->follow_ups_max_next_follow_up_at
+                            ? \Carbon\Carbon::parse($lead->follow_ups_max_next_follow_up_at)->format('d-m-Y')
+                            : '-',
+                    ];
+                }),
+            ]);
+        }
+
+        $filterRouteConfig = config('filter.route_filters');
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+
+        return view('admin.reports.leads', array_merge(
             $filters,
             compact('filterRouteConfig')
         ));

@@ -135,5 +135,9 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
             // Consulting Report
             Route::get('reports/consultings', [ReportController::class, 'consultingIndex'])
                 ->name('consultings');
+
+            // Lead Report
+            Route::get('reports/leads', [ReportController::class, 'leadIndex'])
+                ->name('leads');
         });
 });
