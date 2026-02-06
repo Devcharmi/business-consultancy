@@ -61,7 +61,6 @@ return [
             'daterange',
             'client',
             'created_by',
-            'status',
         ],
     ],
 

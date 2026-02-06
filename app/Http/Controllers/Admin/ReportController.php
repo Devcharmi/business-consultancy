@@ -214,7 +214,6 @@ class ReportController extends Controller
             $data['date_range'] = $request->get('dateRange');
             $data['filterClient'] = $request->get('filterClient');
             $data['filterCreatedBy']   = $request->get('filterCreatedBy');
-            $data['filterStatus'] = $request->get('filterStatus');
 
             $columns = [
                 4 => 'client_id',

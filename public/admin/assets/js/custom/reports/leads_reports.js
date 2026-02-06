@@ -16,7 +16,6 @@ var lead_report_table = $("#leadReportTable").DataTable({
             d.dateRange = $("#dateRange").val();
             d.filterClient = $("#filterClient").val();
             d.filterCreatedBy = $("#filterCreatedBy").val();
-            d.filterStatus = $("#filterStatus").val();
         },
     },
     columns: [

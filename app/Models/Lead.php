@@ -54,21 +54,17 @@ class Lead extends Model
                 $q->orWhere('name', 'LIKE', '%' . $term . '%');
                 $q->orWhere('email', 'LIKE', '%' . $term . '%');
                 $q->orWhere('phone', 'LIKE', '%' . $term . '%');
+                $q->orWhere('status', 'LIKE', '%' . $term . '%');
             });
         }
         // 🔹 Created by filter
         if (!empty($filters['filterCreatedBy'])) {
-            $query->where('created_by', $filters['filterCreatedBy']);
+            $query->where('user_id', $filters['filterCreatedBy']);
         }
 
         // 🔹 Client filter
         if (!empty($filters['filterClient'])) {
             $query->where('client_id', $filters['filterClient']);
-        }
-
-        // 🔹 STATUS FILTER (YOUR REQUIREMENT ✅)
-        if (!empty($filters['filterStatus'])) {
-            $query->where('status', $filters['filterStatus']);
         }
 
         if (!empty($filters['sort'])) {
