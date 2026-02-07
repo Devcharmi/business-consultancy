@@ -3,7 +3,8 @@
 
 :root {
   --body-bg-rgb: 246, 246, 251;
-  --primary-rgb: 121, 97, 245;
+  --primary-rgb: 252, 113, 5;
+  /*121, 97, 245;*/
   --secondary-rgb: 244, 110, 244;
   --warning-rgb: 250, 182, 50;
   --info-rgb: 40, 200, 235;

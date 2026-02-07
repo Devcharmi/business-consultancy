@@ -11,9 +11,9 @@
                     <a href="{{ route('dashboard') }}" class="header-logo">
                         <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo"
                             class="desktop-logo">
-                        <img src="{{ asset('admin/assets/images/brand-logos/toggle-dark.png') }}" alt="logo"
+                        <img src="{{ asset('admin/assets/images/brand-logos/logo-icon.png') }}" alt="logo"
                             class="toggle-dark">
-                        <img src="{{ asset('admin/assets/images/brand-logos/desktop-dark.png') }}" alt="logo"
+                        <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo"
                             class="desktop-dark">
                         <img src="{{ asset('admin/assets/images/brand-logos/logo-icon.png') }}" alt="logo"
                             class="toggle-logo">

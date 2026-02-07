@@ -18,7 +18,7 @@
                         <div class="mb-4 d-flex justify-content-center">
                             <a href="{{ route('login') }}">
                                 <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo"
-                                    class="desktop-logo">
+                                    class="desktop-logo" style="height: 4rem;">
                                 <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo"
                                     class="desktop-white">
                             </a>
