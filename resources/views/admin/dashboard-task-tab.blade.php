@@ -157,7 +157,6 @@
                                     Due: {{ \Carbon\Carbon::parse($task->task_due_date)->format('d M Y') }}
                                 </small>
                             </a>
-
                         </div>
 
                         {{-- RIGHT --}}

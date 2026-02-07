@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\TaskPdf;
 use App\Http\Controllers\Controller;
 use App\Models\ClientObjective;
 use App\Models\ExpertiseManager;
@@ -560,6 +561,39 @@ Group data by DATE STRING
         ]);
     }
 
+    public function exportTaskPdf($id)
+    {
+        $task = Task::with([
+            'client_objective.client',
+            'content',
+            'commitments.userTask.status_manager',
+            'deliverables.userTask.status_manager'
+        ])->findOrFail($id);
+
+        $pdf = new TaskPdf('P', 'mm', 'A4');
+        $pdf->setTask($task);
+
+        $pdf->SetCreator('Laravel');
+        $pdf->SetAuthor(config('app.name'));
+        $pdf->SetTitle('Task Report - ' . $task->title);
+
+        // 🔥 Margins INSIDE letterhead
+        $pdf->SetMargins(15, 55, 5);
+        $pdf->SetHeaderMargin(0);
+        $pdf->SetFooterMargin(20);
+        $pdf->SetAutoPageBreak(true, 25);
+
+        $pdf->AddPage();
+        $pdf->SetFont('dejavusans', '', 10);
+
+        // Blade = CONTENT ONLY
+        $html = view('admin.pdf.task-content', compact('task'))->render();
+
+        $pdf->writeHTML($html, true, false, false, false, '');
+
+        return $pdf->Output('task-report.pdf', 'I');
+    }
+
     public function taskPdf($id)
     {
         $task = Task::with([
@@ -612,10 +646,11 @@ Group data by DATE STRING
         )
             ->setPaper('A4', 'portrait')
             ->setOptions([
-                'defaultFont' => 'dejavusans',   // 🔥 MATCH BLADE
+                'defaultFont' => 'dejavusans',
                 'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => false,
-                'dpi' => 96,                     // 🔥 SPEED BOOST
+                'isRemoteEnabled' => true,
+                'chroot' => public_path(),
+                'dpi' => 150,
             ]);
 
         return $pdf->stream("task-{$task->id}.pdf");

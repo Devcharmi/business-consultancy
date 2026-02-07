@@ -3,11 +3,13 @@
     <!-- Start::main-sidebar-header -->
     <div class="main-sidebar-header">
         <a href="{{ route('dashboard') }}" class="header-logo">
-            <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo" class="desktop-logo">
-            <img src="{{ asset('admin/assets/images/brand-logos/toggle-dark.png') }}" alt="logo" class="toggle-dark">
-            <img src="{{ asset('admin/assets/images/brand-logos/desktop-dark.png') }}" alt="logo"
-                class="desktop-dark">
+            <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo" class="desktop-logo"
+                style="height: 4rem;">
+
+            <img src="{{ asset('admin/assets/images/brand-logos/logo-icon.png') }}" alt="logo" class="toggle-dark">
+            <img src="{{ asset('admin/assets/images/brand-logos/logo.png') }}" alt="logo" class="desktop-dark">
             <img src="{{ asset('admin/assets/images/brand-logos/logo-icon.png') }}" alt="logo" class="toggle-logo">
+
             <img src="{{ asset('admin/assets/images/brand-logos/toggle-white.png') }}" alt="logo"
                 class="toggle-white">
             <img src="{{ asset('admin/assets/images/brand-logos/desktop-white.png') }}" alt="logo"
@@ -233,12 +235,7 @@
                 <!-- End::slide -->
 
                 @php
-                    $reportRoutes = [
-                        'reports.clients',
-                        'reports.objectives',
-                        'reports.consultings',
-                        'reports.leads',
-                    ];
+                    $reportRoutes = ['reports.clients', 'reports.objectives', 'reports.consultings', 'reports.leads'];
 
                     $isReportActive = request()->routeIs($reportRoutes);
                 @endphp
