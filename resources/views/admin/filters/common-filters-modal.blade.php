@@ -141,12 +141,7 @@
                 </div>
 
                 {{-- Modal Footer --}}
-                <div class="modal-footer d-flex justify-content-between">
-
-                    <!-- Reset Filters -->
-                    <button type="button" class="btn btn-outline-danger" id="resetFilters">
-                        <i class="ri-refresh-line me-1"></i> Reset Filters
-                    </button>
+                <div class="modal-footer d-flex justify-content-end">
 
                     <div>
                         <!-- Close -->
@@ -154,10 +149,16 @@
                             <i class="ri-close-line me-1"></i> Close
                         </button>
 
+                        <!-- Reset Filters -->
+                        <button type="button" class="btn btn-outline-danger" id="resetFilters">
+                            <i class="ri-refresh-line me-1"></i> Reset Filters
+                        </button>
+
                         <!-- Apply Filters -->
                         <button type="button" class="btn btn-primary" id="applyFiltersBtn">
-                            <i class="ri-check-line me-1"></i> Apply Filters
+                            <i class="ri-check-line me-1"></i> Apply
                         </button>
+
                     </div>
 
                 </div>
