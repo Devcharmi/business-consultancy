@@ -151,7 +151,7 @@
 
                         <!-- Reset Filters -->
                         <button type="button" class="btn btn-outline-danger" id="resetFilters">
-                            <i class="ri-refresh-line me-1"></i> Reset Filters
+                            <i class="ri-refresh-line me-1"></i> Reset
                         </button>
 
                         <!-- Apply Filters -->
