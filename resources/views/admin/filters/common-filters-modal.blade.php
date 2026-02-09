@@ -145,9 +145,9 @@
 
                     <div>
                         <!-- Close -->
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        {{-- <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                             <i class="ri-close-line me-1"></i> Close
-                        </button>
+                        </button> --}}
 
                         <!-- Reset Filters -->
                         <button type="button" class="btn btn-outline-danger" id="resetFilters">
