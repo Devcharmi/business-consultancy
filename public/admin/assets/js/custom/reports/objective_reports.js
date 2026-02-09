@@ -33,11 +33,31 @@ var objective_report_table = $("#objectiveReportTable").DataTable({
     },
 });
 
-$(document).on("change", ".applyFilters", function () {
-    objective_report_table.draw();
+// APPLY FILTERS (Modal Apply Button)
+$(document).on("click", "#applyFiltersBtn", function () {
+    if (typeof objective_report_table !== "undefined") {
+        objective_report_table.draw();
+    }
+
+    // Close modal
+    $("#filterModal").modal("hide");
 });
 
+// RESET FILTERS
 $(document).on("click", "#resetFilters", function () {
+    // Clear all dropdowns
     $(".applyFilters").val("").trigger("change");
-    objective_report_table.draw();
+
+    if (typeof objective_report_table !== "undefined") {
+        objective_report_table.draw();
+    }
 });
+
+// $(document).on("change", ".applyFilters", function () {
+//     objective_report_table.draw();
+// });
+
+// $(document).on("click", "#resetFilters", function () {
+//     $(".applyFilters").val("").trigger("change");
+//     objective_report_table.draw();
+// });

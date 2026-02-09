@@ -113,14 +113,27 @@
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">Task Manager</div>
-                    <a href="{{ route('user-task.show', ['user_task' => 'new']) }}"
-                        class="btn btn-success {{ canAccess('user-task.create') ? '' : 'disabled' }}">+ Add
-                        Task</a>
+                    <div class="d-flex gap-2">
+                        <!-- Open Filter Modal -->
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
+                            title="Filters">
+                            <i class="ri-filter-3-line"></i>
+                        </button>
+
+                        <!-- Reset Filters -->
+                        <button class="btn btn-outline-danger btn-sm" id="resetFilters" title="Reset">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                        <a href="{{ route('user-task.show', ['user_task' => 'new']) }}"
+                            class="btn btn-success {{ canAccess('user-task.create') ? '' : 'disabled' }}">+ Add
+                            Task</a>
+                    </div>
                 </div>
 
                 <div class="card-body">
-                    
-                    @include('admin.filters.common-filters')
+
+                    @include('admin.filters.common-filters-modal')
+                    {{-- @include('admin.filters.common-filters') --}}
 
                     <ul class="nav nav-tabs mb-3" id="taskTabs">
                         <li class="nav-item">

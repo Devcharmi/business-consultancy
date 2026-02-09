@@ -43,14 +43,19 @@
     <script src="{{ asset('admin/assets/libs/flatpickr/flatpickr.min.js') }}"></script>
     <!-- End::main-scripts -->
 
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <!-- DataTables CORE -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <!-- Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <!-- Export deps -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
 
     <!-- Apex Charts JS -->
     {{-- <script src="{{ asset('admin/assets/libs/apexcharts/apexcharts.min.js') }}"></script> --}}
@@ -102,8 +107,7 @@
                 toastr.error(message);
             }
         }
-    </script>
-    <script>
+
         @if (session('status'))
             showToastr("success", "{{ session('status') }}");
         @endif
@@ -122,6 +126,81 @@
             @endforeach
         @endif
 
+
+        //  🔥 Global stacked modal handler (SweetAlert-like behavior) 
+        $(document).on("show.bs.modal", ".modal", function() {
+            const zIndex = 1050 + 10 * $(".modal.show").length;
+            $(this).css("z-index", zIndex);
+            setTimeout(() => {
+                    $(".modal-backdrop").not(".modal-stack").first().css("z-index", zIndex - 1).addClass(
+                        "modal-stack");
+                },
+                0);
+        });
+
+        $(document).on("hide.bs.modal", ".modal",
+            function() {
+                const $modal = $(this);
+
+                if ($modal.find(":focus").length) {
+                    $(document.activeElement).blur();
+                }
+
+                $modal.find(".select2-hidden-accessible").each(function() {
+                    $(this).select2("destroy");
+                });
+            });
+    </script>
+
+    {{-- daterange setting common --}}
+    <script>
+        // Initialize date range picker (FUTURE ORIENTED)
+        $('.date-range').daterangepicker({
+            autoUpdateInput: false,
+            opens: 'left',
+            autoApply: false,
+            minDate: moment(), // 🔥 prevent past dates
+            ranges: {
+                'Today': [moment(), moment()],
+                'Tomorrow': [moment().add(1, 'days'), moment().add(1, 'days')],
+                'Next 7 Days': [moment(), moment().add(6, 'days')],
+                'Next 30 Days': [moment(), moment().add(29, 'days')],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Next Month': [
+                    moment().add(1, 'month').startOf('month'),
+                    moment().add(1, 'month').endOf('month')
+                ]
+            }
+        });
+
+        // Apply date range
+        $('.date-range').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(
+                picker.startDate.format('DD-MM-YYYY') +
+                ' - ' +
+                picker.endDate.format('DD-MM-YYYY')
+            );
+            $(this).trigger('change'); // for filters
+        });
+
+        // Cancel date range
+        $('.date-range').on('cancel.daterangepicker', function() {
+            $(this).val('');
+            $(this).trigger('change');
+        });
+
+        // Set Today programmatically
+        function setDateRangeToday() {
+            const today = moment();
+            const picker = $('.date-range').data('daterangepicker');
+            picker.setStartDate(today);
+            picker.setEndDate(today);
+            $('.date-range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
+        }
+    </script>
+
+    {{-- select2 initialization common --}}
+    <script>
         $(".select2").select2({
             placeholder: "Select...",
             width: "100%",
@@ -136,61 +215,16 @@
             }, 10);
         });
 
-        // // Initialize date range picker
-        $('.date-range').daterangepicker({
-            autoUpdateInput: false, // keeps input blank
-            opens: 'left',
-            autoApply: false, // user must manually apply
-            ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf(
-                    'month')]
-            }
-        }, function(start, end, label) {
-            // Don't pre-select any range unless user chooses
-        });
-
-        // When user applies a date range
-        $('.date-range').on('apply.daterangepicker', function(ev, picker) {
-            // Match backend format: "YYYY-MM-DD - YYYY-MM-DD"
-            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
-            $(this).trigger('change'); // trigger filter
-        });
-
-        // When user cancels
-        $('.date-range').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-            $(this).trigger('change');
-        });
-
-        // Function to set daterangepicker to today
-        function setDateRangeToday() {
-            let today = moment();
-            let picker = $('.date-range').data('daterangepicker');
-            picker.setStartDate(today);
-            picker.setEndDate(today);
-            $('.date-range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
-        }
-    </script>
-    <script>
-        // 🔥 Global stacked modal handler (SweetAlert-like behavior)
-        $(document).on("show.bs.modal", ".modal", function() {
-            const zIndex = 1050 + 10 * $(".modal.show").length;
-            $(this).css("z-index", zIndex);
-
-            setTimeout(() => {
-                $(".modal-backdrop")
-                    .not(".modal-stack")
-                    .first()
-                    .css("z-index", zIndex - 1)
-                    .addClass("modal-stack");
-            }, 0);
+        $(".select2").select2({
+            placeholder: "Select...",
+            width: "100%",
+            dropdownParent: $("#filterModal"),
+            // allowClear: true,
+            // closeOnSelect: false, // keep dropdown open for multiple selections
         });
     </script>
+
+    {{-- datatable buttons common --}}
     <script>
         // const REPORT_TABLE_DOM =
         //     "<'row align-items-center mb-2'" +

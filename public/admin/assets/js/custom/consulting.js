@@ -123,20 +123,40 @@ var consulting_table = $(".table-list").DataTable({
     },
 });
 
-$(document).on("change", ".applyFilters", function () {
-    consulting_table.draw();
+// APPLY FILTERS (Modal Apply Button)
+$(document).on("click", "#applyFiltersBtn", function () {
+    if (typeof consulting_table !== "undefined") {
+        consulting_table.draw();
+    }
+
+    // Close modal
+    $("#filterModal").modal("hide");
 });
 
-// Reset Filters Button
+// RESET FILTERS
 $(document).on("click", "#resetFilters", function () {
-    // Clear all filter dropdowns
+    // Clear all dropdowns
     $(".applyFilters").val("").trigger("change");
 
-    // ✅ If you're using DataTables with AJAX filtering:
     if (typeof consulting_table !== "undefined") {
         consulting_table.draw();
     }
 });
+
+// $(document).on("change", ".applyFilters", function () {
+//     consulting_table.draw();
+// });
+
+// // Reset Filters Button
+// $(document).on("click", "#resetFilters", function () {
+//     // Clear all filter dropdowns
+//     $(".applyFilters").val("").trigger("change");
+
+//     // ✅ If you're using DataTables with AJAX filtering:
+//     if (typeof consulting_table !== "undefined") {
+//         consulting_table.draw();
+//     }
+// });
 
 $(document).on("click", ".open-modal", function () {
     $.ajax({

@@ -8,12 +8,23 @@
                     <div class="card-title">
                         Objective Report
                     </div>
-                </div>
+                    <div class="d-flex gap-2">
+                        <!-- Open Filter Modal -->
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
+                            title="Filters">
+                            <i class="ri-filter-3-line"></i>
+                        </button>
 
+                        <!-- Reset Filters -->
+                        <button class="btn btn-outline-danger btn-sm" id="resetFilters" title="Reset">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body">
 
-                    {{-- 🔹 Common Filters --}}
-                    @include('admin.filters.common-filters')
+                    @include('admin.filters.common-filters-modal')
+                    {{-- @include('admin.filters.common-filters') --}}
 
                     <div class="table-responsive">
                         <table class="table table-bordered text-nowrap w-100" id="objectiveReportTable"

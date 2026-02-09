@@ -1,6 +1,5 @@
 @extends('admin.layouts.app')
 @section('content')
-  
     <div class="row mt-4">
         <div class="col-xl-12">
             <div class="card custom-card">
@@ -8,16 +7,30 @@
                     <div class="card-title">
                         Consulting Manager
                     </div>
-                    {{-- @if (canAccess('status manager.create')) --}}
-                    <a href="#" data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
-                        class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('consulting.create') ? '' : 'disabled' }}">+
-                        Add Consulting</a>
-                    {{-- @endif --}}
+
+                    <div class="d-flex gap-2">
+                        <!-- Open Filter Modal -->
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
+                            title="Filters">
+                            <i class="ri-filter-3-line"></i>
+                        </button>
+
+                        <!-- Reset Filters -->
+                        <button class="btn btn-outline-danger btn-sm" id="resetFilters" title="Reset">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+
+                        <a href="#" data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
+                            class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('consulting.create') ? '' : 'disabled' }}">+
+                            Add Consulting</a>
+                    </div>
+
                 </div>
                 <div class="card-body">
 
-                    @include('admin.filters.common-filters')
-                    
+                    @include('admin.filters.common-filters-modal')
+                    {{-- @include('admin.filters.common-filters') --}}
+
                     <div class="table-responsive">
                         <table id="consulting_table" data-url="{{ route('consulting.index') }}"
                             class="table table-bordered text-nowrap w-100 table-list">

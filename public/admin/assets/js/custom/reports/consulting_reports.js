@@ -51,11 +51,31 @@ var consulting_report_table = $("#consultingReportTable").DataTable({
     },
 });
 
-$(document).on("change", ".applyFilters", function () {
-    consulting_report_table.draw();
+// APPLY FILTERS (Modal Apply Button)
+$(document).on("click", "#applyFiltersBtn", function () {
+    if (typeof consulting_report_table !== "undefined") {
+        consulting_report_table.draw();
+    }
+
+    // Close modal
+    $("#filterModal").modal("hide");
 });
 
+// RESET FILTERS
 $(document).on("click", "#resetFilters", function () {
+    // Clear all dropdowns
     $(".applyFilters").val("").trigger("change");
-    consulting_report_table.draw();
+
+    if (typeof consulting_report_table !== "undefined") {
+        consulting_report_table.draw();
+    }
 });
+
+// $(document).on("change", ".applyFilters", function () {
+//     consulting_report_table.draw();
+// });
+
+// $(document).on("click", "#resetFilters", function () {
+//     $(".applyFilters").val("").trigger("change");
+//     consulting_report_table.draw();
+// });

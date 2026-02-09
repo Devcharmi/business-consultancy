@@ -147,20 +147,40 @@ var task_table = $(".table-list").DataTable({
     },
 });
 
-$(document).on("change", ".applyFilters", function () {
-    task_table.draw();
+// APPLY FILTERS (Modal Apply Button)
+$(document).on("click", "#applyFiltersBtn", function () {
+    if (typeof task_table !== "undefined") {
+        task_table.draw();
+    }
+
+    // Close modal
+    $("#filterModal").modal("hide");
 });
 
-// Reset Filters Button
+// RESET FILTERS
 $(document).on("click", "#resetFilters", function () {
-    // Clear all filter dropdowns
+    // Clear all dropdowns
     $(".applyFilters").val("").trigger("change");
 
-    // ✅ If you're using DataTables with AJAX filtering:
     if (typeof task_table !== "undefined") {
         task_table.draw();
     }
 });
+
+// $(document).on("change", ".applyFilters", function () {
+//     task_table.draw();
+// });
+
+// // Reset Filters Button
+// $(document).on("click", "#resetFilters", function () {
+//     // Clear all filter dropdowns
+//     $(".applyFilters").val("").trigger("change");
+
+//     // ✅ If you're using DataTables with AJAX filtering:
+//     if (typeof task_table !== "undefined") {
+//         task_table.draw();
+//     }
+// });
 
 $("#task_form").on("submit", function (e) {
     e.preventDefault();

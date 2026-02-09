@@ -7,15 +7,28 @@
                     <div class="card-title">
                         Meeting Manager
                     </div>
-                    {{-- @if (canAccess('status manager.create')) --}}
-                    <a href="{{ route('task.show', ['task' => 'new']) }}"
-                        class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('task.create') ? '' : 'disabled' }}">+
-                        Add Meeting</a>
-                    {{-- @endif --}}
+                    <div class="d-flex gap-2">
+                        <!-- Open Filter Modal -->
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
+                            title="Filters">
+                            <i class="ri-filter-3-line"></i>
+                        </button>
+
+                        <!-- Reset Filters -->
+                        <button class="btn btn-outline-danger btn-sm" id="resetFilters" title="Reset">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                        {{-- @if (canAccess('status manager.create')) --}}
+                        <a href="{{ route('task.show', ['task' => 'new']) }}"
+                            class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('task.create') ? '' : 'disabled' }}">+
+                            Add Meeting</a>
+                        {{-- @endif --}}
+                    </div>
                 </div>
                 <div class="card-body">
 
-                    @include('admin.filters.common-filters')
+                    @include('admin.filters.common-filters-modal')
+                    {{-- @include('admin.filters.common-filters') --}}
 
                     <div class="table-responsive">
                         <table id="task_table" data-url="{{ route('task.index') }}"

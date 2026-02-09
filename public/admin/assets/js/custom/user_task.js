@@ -207,9 +207,29 @@ var task_table = $(".table-list").DataTable({
     },
 });
 
-$(document).on("change", ".applyFilters", function () {
-    task_table.draw();
+// APPLY FILTERS (Modal Apply Button)
+$(document).on("click", "#applyFiltersBtn", function () {
+    if (typeof task_table !== "undefined") {
+        task_table.draw();
+    }
+
+    // Close modal
+    $("#filterModal").modal("hide");
 });
+
+// RESET FILTERS
+$(document).on("click", "#resetFilters", function () {
+    // Clear all dropdowns
+    $(".applyFilters").val("").trigger("change");
+
+    if (typeof task_table !== "undefined") {
+        task_table.draw();
+    }
+});
+
+// $(document).on("change", ".applyFilters", function () {
+//     task_table.draw();
+// });
 
 // Trigger on page load
 toggleTodayTab();
@@ -244,16 +264,16 @@ function toggleTodayTab() {
     }
 }
 
-// Reset Filters Button
-$(document).on("click", "#resetFilters", function () {
-    // Clear all filter dropdowns
-    $(".applyFilters").val("").trigger("change");
+// // Reset Filters Button
+// $(document).on("click", "#resetFilters", function () {
+//     // Clear all filter dropdowns
+//     $(".applyFilters").val("").trigger("change");
 
-    // ✅ If you're using DataTables with AJAX filtering:
-    if (typeof task_table !== "undefined") {
-        task_table.draw();
-    }
-});
+//     // ✅ If you're using DataTables with AJAX filtering:
+//     if (typeof task_table !== "undefined") {
+//         task_table.draw();
+//     }
+// });
 
 let isProjectSetFromWork = false;
 

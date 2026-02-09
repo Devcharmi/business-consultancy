@@ -80,26 +80,6 @@
                 <!-- End::slide -->
 
                 <!-- Start::slide Leads Manager -->
-                @if (canAccess('consulting.allow'))
-                    <li class="slide">
-                        <a href="{{ route('consulting.index') }}"
-                            class="side-menu__item {{ request()->routeIs('consulting.*') ? 'active' : '' }}">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                                <path d="M8 9h8" />
-                                <path d="M8 13h6" />
-                            </svg>
-
-                            <span class="side-menu__label">Consulting</span>
-                        </a>
-                    </li>
-                @endif
-                <!-- End::slide -->
-
-                <!-- Start::slide Leads Manager -->
                 @if (canAccess('client-objective.allow'))
                     <li class="slide">
                         <a href="{{ route('client-objective-manager.index') }}"
@@ -114,6 +94,26 @@
                             </svg>
 
                             <span class="side-menu__label">Client Objective</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- End::slide -->
+
+                <!-- Start::slide Leads Manager -->
+                @if (canAccess('consulting.allow'))
+                    <li class="slide">
+                        <a href="{{ route('consulting.index') }}"
+                            class="side-menu__item {{ request()->routeIs('consulting.*') ? 'active' : '' }}">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 side-menu__icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+                                <path d="M8 9h8" />
+                                <path d="M8 13h6" />
+                            </svg>
+
+                            <span class="side-menu__label">Consulting</span>
                         </a>
                     </li>
                 @endif
@@ -256,29 +256,33 @@
                             </li>
 
                             {{-- Client Report --}}
-                            <li class="slide {{ request()->routeIs('reports.clients') ? 'active' : '' }}">
-                                <a href="{{ route('reports.clients') }}" class="side-menu__item">
+                            <li class="slide">
+                                <a href="{{ route('reports.clients') }}"
+                                    class="side-menu__item {{ request()->routeIs('reports.clients') ? 'active' : '' }}">
                                     Clients Report
                                 </a>
                             </li>
 
                             {{-- Objective Report --}}
-                            <li class="slide {{ request()->routeIs('reports.objectives') ? 'active' : '' }}">
-                                <a href="{{ route('reports.objectives') }}" class="side-menu__item">
+                            <li class="slide">
+                                <a href="{{ route('reports.objectives') }}"
+                                    class="side-menu__item {{ request()->routeIs('reports.objectives') ? 'active' : '' }}">
                                     Objectives Report
                                 </a>
                             </li>
 
                             {{-- Consulting Report --}}
-                            <li class="slide {{ request()->routeIs('reports.consultings') ? 'active' : '' }}">
-                                <a href="{{ route('reports.consultings') }}" class="side-menu__item">
+                            <li class="slide">
+                                <a href="{{ route('reports.consultings') }}"
+                                    class="side-menu__item {{ request()->routeIs('reports.consultings') ? 'active' : '' }}">
                                     Consultings Report
                                 </a>
                             </li>
 
                             {{-- Lead Report --}}
-                            <li class="slide {{ request()->routeIs('reports.leads') ? 'active' : '' }}">
-                                <a href="{{ route('reports.leads') }}" class="side-menu__item">
+                            <li class="slide">
+                                <a href="{{ route('reports.leads') }}"
+                                    class="side-menu__item {{ request()->routeIs('reports.leads') ? 'active' : '' }}">
                                     Leads Report
                                 </a>
                             </li>
