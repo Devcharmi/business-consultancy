@@ -79,7 +79,7 @@
                 @endif
                 <!-- End::slide -->
 
-                <!-- Start::slide Leads Manager -->
+                {{-- <!-- Start::slide Leads Manager -->
                 @if (canAccess('client-objective.allow'))
                     <li class="slide">
                         <a href="{{ route('client-objective-manager.index') }}"
@@ -97,7 +97,7 @@
                         </a>
                     </li>
                 @endif
-                <!-- End::slide -->
+                <!-- End::slide --> --}}
 
                 <!-- Start::slide Leads Manager -->
                 @if (canAccess('consulting.allow'))
@@ -113,7 +113,7 @@
                                 <path d="M8 13h6" />
                             </svg>
 
-                            <span class="side-menu__label">Consulting</span>
+                            <span class="side-menu__label">Consulting Meet</span>
                         </a>
                     </li>
                 @endif

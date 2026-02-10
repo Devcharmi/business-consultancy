@@ -18,6 +18,8 @@ return [
             'client',
             'status',
             'priority',
+            'entities',
+            'types',
         ],
 
         'task.index' => [

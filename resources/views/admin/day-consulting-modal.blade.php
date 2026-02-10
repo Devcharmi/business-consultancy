@@ -44,7 +44,7 @@
                             </div>
 
                             <div class="d-flex align-items-center gap-1 flex-shrink-0">
-                                <button class="btn btn-light btn-xs open-meeting-modal"
+                                <button class="btn btn-xs btn-outline-success open-meeting-modal"
                                     data-client-objective-id="{{ $consulting->client_objective_id }}"
                                     data-client-name="{{ $consulting->client_objective->client->client_name ?? '' }}"
                                     data-objective-name="{{ $consulting->client_objective->objective_manager->name ?? '' }}"
@@ -52,14 +52,14 @@
                                     <i class="bi bi-list-task"></i>
                                 </button>
 
-                                <button class="btn btn-light btn-xs calendar-edit-btn"
+                                <button class="btn btn-xs btn-outline-primary calendar-edit-btn"
                                     data-url="{{ route('consulting.show', $consulting->id) }}" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
 
-                                <button class="btn btn-light btn-xs calendar-delete-btn"
+                                <button class="btn btn-xs btn-outline-danger calendar-delete-btn"
                                     data-url="{{ route('consulting.destroy', $consulting->id) }}" title="Delete">
-                                    <i class="bi bi-trash text-danger"></i>
+                                    <i class="bi bi-trash"></i>
                                 </button>
                             </div>
                         </div>

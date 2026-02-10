@@ -18,6 +18,8 @@ if (!function_exists('filterDropdowns')) {
                 'expertiseManagers' => collect(),
                 'focusAreas' => collect(),
                 'priorities' => collect(),
+                'entities' => collect(),
+                'types' => collect(),
             ];
         }
 

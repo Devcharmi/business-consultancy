@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Lead;
 use App\Models\PriorityManager;
 use App\Models\StatusManager;
 use App\Models\User;
@@ -38,11 +39,13 @@ class UserTaskController extends Controller
             'status_manager_id',
             'created_by',
             'source_type',
+            'entity_type',
+            'task_type',
         ];
 
         if ($request->ajax()) {
 
-             $data = $request->all();
+            $data = $request->all();
             // dd($data);
             // Apply external filters
             $data['date_range']     = $request->get('dateRange');
@@ -51,7 +54,10 @@ class UserTaskController extends Controller
             $data['filterCreatedBy'] = $request->get('filterCreatedBy');
             $data['filterStatus'] = $request->get('filterStatus');
             $data['filterPriority'] = $request->get('filterPriority');
-
+            $data['filterEntity'] = $request->get('filterEntity');
+            $data['filterTaskType'] = $request->get('filterTaskType');
+            // 🔥 Lead from URL
+            $data['filterLead']      = $request->get('filterLead');
 
             $status = $request->get('status', 'all');
 
@@ -63,6 +69,7 @@ class UserTaskController extends Controller
                     'priority_manager',
                     'created_by',
                     'status_manager',
+                    'clients',
                 ]);
 
             // Apply selected TAB status
@@ -184,10 +191,12 @@ class UserTaskController extends Controller
         $request->validate(
             [
                 'staff_manager_id' => 'required',
+                'entity_type' => 'required|in:lead,client',
                 // 'work_manager_id' => 'required|exists:work_managers,id',
             ],
             [
                 'staff_manager_id.required' => 'Please select a staff member.',
+                'entity_type.required' => 'Please select a entity type.',
                 // 'work_manager_id.required' => 'Please select a work.',
             ]
         );
@@ -221,6 +230,12 @@ class UserTaskController extends Controller
         $statuses = StatusManager::where('status', '1')->get();
         $priorities = PriorityManager::where('status', '1')->get();
 
+        $leads = Lead::activeUnconverted()
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+
         if ($id != 'new') {
             $taskData = UserTask::find($id);
 
@@ -230,6 +245,7 @@ class UserTaskController extends Controller
                 'staffs' => $staffs,
                 'statuses' => $statuses,
                 'priorities' => $priorities,
+                'leads' => $leads,
             ]);
         } else {
             return view('admin.user_task.user-task-form', compact([
@@ -237,6 +253,7 @@ class UserTaskController extends Controller
                 'staffs',
                 'statuses',
                 'priorities',
+                'leads',
             ]));
         }
     }
@@ -251,10 +268,12 @@ class UserTaskController extends Controller
         $request->validate(
             [
                 'staff_manager_id' => 'required',
+                'entity_type' => 'required|in:lead,client',
                 // 'work_manager_id' => 'required',
             ],
             [
                 'staff_manager_id.required' => 'Please select a staff member.',
+                'entity_type.required' => 'Please select a entity type.',
                 // 'work_manager_id.required' => 'Please select a work.',
             ]
         );

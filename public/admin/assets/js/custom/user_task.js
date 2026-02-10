@@ -1,3 +1,17 @@
+const params = new URLSearchParams(window.location.search);
+const urlEntity = params.get("entity");
+const urlLeadId = params.get("lead_id");
+
+$(document).ready(function () {
+    if (urlEntity) {
+        $("#filterEntity").val(urlEntity);
+    }
+
+    setTimeout(() => {
+        task_table.ajax.reload();
+    }, 200);
+});
+
 var columns = [
     {
         data: "id",
@@ -167,6 +181,11 @@ var task_table = $(".table-list").DataTable({
             d.filterCreatedBy = $("#filterCreatedBy").val();
             d.filterStatus = $("#filterStatus").val();
             d.filterPriority = $("#filterPriority").val();
+            d.filterEntity = $("#filterEntity").val();
+            d.filterTaskType = $("#filterTaskType").val();
+
+            // 🔥 FROM URL
+            d.filterLead = urlLeadId;
         },
         dataSrc: function (json) {
             // console.log(json);
@@ -359,3 +378,18 @@ $(document).on("click", ".delete-data", function (e) {
         }
     });
 });
+
+function toggleRelatedDropdown() {
+    let entityType = $("#entity_type").val();
+
+    if (entityType === "lead") {
+        $("#client_wrapper").addClass("d-none");
+        $("#lead_wrapper").removeClass("d-none");
+    } else {
+        $("#lead_wrapper").addClass("d-none");
+        $("#client_wrapper").removeClass("d-none");
+    }
+}
+
+$("#entity_type").on("change", toggleRelatedDropdown);
+toggleRelatedDropdown();

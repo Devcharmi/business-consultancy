@@ -51,6 +51,8 @@
         var follow_up_list_url = "{{ route('admin.leads.followups.list', ':lead') }}";
         var edit_path = "{{ route('lead.show', ['lead' => ':id']) }}";
         var delete_path = "{{ route('lead.destroy', ['lead' => ':id']) }}";
+        var leadTasksBaseUrl = "{{ route('user-task.index') }}";
+        var ENTITY_LEAD = "{{ \App\Models\UserTask::ENTITY_LEAD }}";
 
         window.canEditTask = @json(canAccess('leads.edit'));
         window.canDeleteTask = @json(canAccess('leads.delete'));

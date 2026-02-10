@@ -26,7 +26,38 @@
                             </div>
                         </div>
                         <div class="row mb-1">
-                            <label for="client_id" class="col-md-2 col-form-label">Related to</label>
+                            <label class="required col-md-2 col-form-label">For</label>
+                            <div class="form-group col-md-4">
+                                <select name="entity_type" id="entity_type" class="form-select">
+                                    <option value="client"
+                                        {{ isset($taskData) && $taskData->entity_type == 'client' ? 'selected' : '' }}>
+                                        Client
+                                    </option>
+                                    <option value="lead"
+                                        {{ isset($taskData) && $taskData->entity_type == 'lead' ? 'selected' : '' }}>
+                                        Lead
+                                    </option>
+                                </select>
+                                <span class="text-danger">{{ $errors->first('entity_type') }}</span>
+                            </div>
+                            <label class="required col-md-2 col-form-label text-end">Type</label>
+                            <div class="form-group col-md-4">
+                                <select name="task_type" id="task_type" class="form-select">
+                                    <option value="task"
+                                        {{ isset($taskData) && $taskData->task_type == 'task' ? 'selected' : '' }}>
+                                        Task
+                                    </option>
+                                    <option value="meeting"
+                                        {{ isset($taskData) && $taskData->task_type == 'meeting' ? 'selected' : '' }}>
+                                        Meeting
+                                    </option>
+                                </select>
+                                <span class="text-danger">{{ $errors->first('task_type') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-1">
+                            {{-- <label for="client_id" class="col-md-2 col-form-label">Related to</label>
                             <div class="form-group col-md-4">
                                 <select name="client_id" id="client_id" class="form-select select2">
                                     <option value="">Select Client</option>
@@ -38,11 +69,41 @@
                                 </select>
                                 <span id="client_id_error"
                                     class="help-inline text-danger mt-2">{{ $errors->first('client_id') }}</span>
+                            </div> --}}
+                            <label class="col-md-2 col-form-label">Related to</label>
+
+                            {{-- CLIENT DROPDOWN --}}
+                            <div class="form-group col-md-4" id="client_wrapper">
+                                <select name="client_id" id="client_id" class="form-select select2">
+                                    <option value="">Select Client</option>
+                                    @foreach ($clients as $client)
+                                        <option value="{{ $client->id }}"
+                                            {{ isset($taskData) && $taskData->client_id == $client->id ? 'selected' : '' }}>
+                                            {{ $client->client_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger">{{ $errors->first('client_id') }}</span>
                             </div>
-                            {{-- </div> --}}
+
+                            {{-- LEAD DROPDOWN --}}
+                            <div class="form-group col-md-4 d-none" id="lead_wrapper">
+                                <select name="lead_id" id="lead_id" class="form-select select2">
+                                    <option value="">Select Lead</option>
+                                    @foreach ($leads as $lead)
+                                        <option value="{{ $lead->id }}"
+                                            {{ isset($taskData) && $taskData->lead_id == $lead->id ? 'selected' : '' }}>
+                                            {{ $lead->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger">{{ $errors->first('lead_id') }}</span>
+                            </div>
+
                             @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
                                 {{-- <div class="row mb-1"> --}}
-                                <label for="staff_manager_id" class="required col-form-label col-md-2 text-end">Assign to</label>
+                                <label for="staff_manager_id" class="required col-form-label col-md-2 text-end">Assign
+                                    to</label>
                                 <div class="form-group col-md-4">
                                     <select name="staff_manager_id" id="staff_manager_id" class="form-control select2">
                                         <option value="">Select</option>

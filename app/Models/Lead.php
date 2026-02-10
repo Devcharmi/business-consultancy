@@ -33,6 +33,17 @@ class Lead extends Model
         return $this->hasMany(LeadFollowUp::class);
     }
 
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class);
+    }
+
+    public function scopeActiveUnconverted($query)
+    {
+        return $query->whereNull('client_id')
+            ->whereNotIn('status', ['converted', 'lost']);
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         if (!empty($filters['date_range'])) {

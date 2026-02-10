@@ -15,6 +15,7 @@
 //     return $(node).text().trim();
 // }
 
+
 var leads_table = $("#leads_table").DataTable({
     order: [[0, "desc"]],
     autoWidth: false,
@@ -41,6 +42,12 @@ var leads_table = $("#leads_table").DataTable({
                 let viewFollowUpUrl = follow_up_list_url.replace(":lead", id);
                 let editUrl = edit_path.replace(":id", id);
                 let deleteUrl = delete_path.replace(":id", id);
+                let leadTasksUrl =
+                    leadTasksBaseUrl +
+                    "?entity=" +
+                    ENTITY_LEAD +
+                    "&lead_id=" +
+                    id;
 
                 // Permission handling
                 let editDisabled = window.canEditTask
@@ -59,6 +66,12 @@ var leads_table = $("#leads_table").DataTable({
                 <i class="fas fa-comments"></i>
             </button>
         `;
+
+                html += `  <a href="${leadTasksUrl}" class="btn btn-sm btn-outline-success viewLeadTasks"
+        title="View Lead Tasks">
+        <i class="bi bi-list-task"></i>
+    </a>
+`;
 
                 const isConverted = o.status === "converted";
 

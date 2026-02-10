@@ -9,9 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 class UserTask extends Model
 {
     use HasFactory;
+
+    const ENTITY_LEAD   = 'lead';
+    const ENTITY_CLIENT = 'client';
+
+    const TYPE_TASK    = 'task';
+    const TYPE_MEETING = 'meeting';
+
     protected $fillable = [
         'staff_manager_id',
         'client_id',
+        'lead_id',
         'task_name',
         'priority_manager_id',
         'task_start_date',
@@ -22,8 +30,11 @@ class UserTask extends Model
         'description',
         'last_reminder_sent_at',
         'completed_at',
+        'entity_type',   // lead | client
+        'task_type',     // task | meeting
         'source_type', //commitment,deliverable
         'source_id',
+
     ];
 
     protected $casts = [
@@ -90,6 +101,26 @@ class UserTask extends Model
         });
     }
 
+    public function scopeForLead($query)
+    {
+        return $query->where('entity_type', self::ENTITY_LEAD);
+    }
+
+    public function scopeForClient($query)
+    {
+        return $query->where('entity_type', self::ENTITY_CLIENT);
+    }
+
+    public function scopeTasks($query)
+    {
+        return $query->where('task_type', self::TYPE_TASK);
+    }
+
+    public function scopeMeetings($query)
+    {
+        return $query->where('task_type', self::TYPE_MEETING);
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         if (!empty($filters['date_range'])) {
@@ -135,6 +166,24 @@ class UserTask extends Model
             $query->where('priority_manager_id', $filters['filterPriority']);
         }
 
+        // 🔹 Lead / Client filter
+        if (!empty($filters['filterEntity'])) {
+            $query->where('entity_type', $filters['filterEntity']);
+        }
+
+        // 🔹 Task / Meeting filter
+        if (!empty($filters['filterTaskType'])) {
+            $query->where('task_type', $filters['filterTaskType']);
+        }
+
+        // 🔹 Lead ID filter
+        if (
+            $filters['filterEntity'] === self::ENTITY_LEAD &&
+            !empty($filters['filterLead'])
+        ) {
+            // dd($filters['filterLead']);
+            $query->where('lead_id', $filters['filterLead']);
+        }
         // 🔹 Restrict staff view for non-admin users
         $query->visibleTo(auth()->user());
 

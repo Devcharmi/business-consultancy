@@ -11,6 +11,7 @@ use App\Models\FocusArea;
 use App\Models\FocusAreaManager;
 use App\Models\ObjectiveManager;
 use App\Models\PriorityManager;
+use App\Models\UserTask;
 
 class FilterDropdownService
 {
@@ -26,6 +27,29 @@ class FilterDropdownService
             'expertiseManagers' => ExpertiseManager::activeExpertise()->select('id', 'name')->get(),
             'focusAreas' => FocusAreaManager::activeFocusArea()->select('id', 'name')->get(),
             'priorities' => PriorityManager::activePriorities()->select('id', 'name')->get(),
+            // ✅ FIXED ENUM FILTERS
+            'entities' => collect([
+                [
+                    'id' => UserTask::ENTITY_LEAD,
+                    'name' => 'Lead',
+                ],
+                [
+                    'id' => UserTask::ENTITY_CLIENT,
+                    'name' => 'Client',
+                ],
+            ]),
+
+            'types' => collect([
+                [
+                    'id' => UserTask::TYPE_TASK,
+                    'name' => 'Task',
+                ],
+                [
+                    'id' => UserTask::TYPE_MEETING,
+                    'name' => 'Meeting',
+                ],
+            ]),
+
         ];
     }
 }

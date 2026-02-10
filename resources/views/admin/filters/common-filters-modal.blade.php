@@ -29,114 +29,185 @@
                         {{-- Date Range --}}
                         @if (showFilter('daterange', $enabledFilters))
                             <div class="col-md-6">
-                                <label for="dateRange" class="form-label">Date Range </label>
-                                <input type="text" id="dateRange" class="form-control date-range applyFilters">
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Date Range</label>
+                                    <div class="col-8">
+                                        <input type="text" id="dateRange"
+                                            class="form-control date-range applyFilters">
+                                    </div>
+                                </div>
                             </div>
                         @endif
+
                         {{-- Client --}}
                         @if (showFilter('client', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Client</label>
-                                <select id="filterClient" class="form-control select2 applyFilters">
-                                    <option value="">All Clients</option>
-                                    @foreach ($clients as $client)
-                                        <option value="{{ $client->id }}">{{ $client->client_name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Client</label>
+                                    <div class="col-8">
+                                        <select id="filterClient" class="form-control select2 applyFilters">
+                                            <option value="">All Clients</option>
+                                            @foreach ($clients as $client)
+                                                <option value="{{ $client->id }}">{{ $client->client_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Objective --}}
                         @if (showFilter('objective', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Objective</label>
-                                <select id="filterObjective" class="form-control select2 applyFilters">
-                                    <option value="">All Objectives</option>
-                                    @foreach ($objectives as $objective)
-                                        <option value="{{ $objective->id }}">{{ $objective->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Objective</label>
+                                    <div class="col-8">
+                                        <select id="filterObjective" class="form-control select2 applyFilters">
+                                            <option value="">All Objectives</option>
+                                            @foreach ($objectives as $objective)
+                                                <option value="{{ $objective->id }}">{{ $objective->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Expertise --}}
                         @if (showFilter('expertise', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Expertise</label>
-                                <select id="filterExpertise" class="form-control select2 applyFilters">
-                                    <option value="">All Expertise</option>
-                                    @foreach ($expertiseManagers as $expertise)
-                                        <option value="{{ $expertise->id }}">{{ $expertise->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Expertise</label>
+                                    <div class="col-8">
+                                        <select id="filterExpertise" class="form-control select2 applyFilters">
+                                            <option value="">All Expertise</option>
+                                            @foreach ($expertiseManagers as $expertise)
+                                                <option value="{{ $expertise->id }}">{{ $expertise->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Focus Area --}}
                         @if (showFilter('focus_area', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Focus Area</label>
-                                <select id="filterFocusArea" class="form-control select2 applyFilters">
-                                    <option value="">All Focus Areas</option>
-                                    @foreach ($focusAreas as $focus)
-                                        <option value="{{ $focus->id }}">{{ $focus->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Focus Area</label>
+                                    <div class="col-8">
+                                        <select id="filterFocusArea" class="form-control select2 applyFilters">
+                                            <option value="">All Focus Areas</option>
+                                            @foreach ($focusAreas as $focus)
+                                                <option value="{{ $focus->id }}">{{ $focus->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Priority --}}
                         @if (showFilter('priority', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Priority</label>
-                                <select id="filterPriority" class="form-control select2 applyFilters">
-                                    <option value="">All Priority</option>
-                                    @foreach ($priorities as $priority)
-                                        <option value="{{ $priority->id }}">{{ $priority->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Priority</label>
+                                    <div class="col-8">
+                                        <select id="filterPriority" class="form-control select2 applyFilters">
+                                            <option value="">All Priority</option>
+                                            @foreach ($priorities as $priority)
+                                                <option value="{{ $priority->id }}">{{ $priority->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Status --}}
                         @if (showFilter('status', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Status</label>
-                                <select id="filterStatus" class="form-control select2 applyFilters">
-                                    <option value="">All Status</option>
-                                    @foreach ($statuses as $status)
-                                        <option value="{{ $status->id }}">{{ $status->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Status</label>
+                                    <div class="col-8">
+                                        <select id="filterStatus" class="form-control select2 applyFilters">
+                                            <option value="">All Status</option>
+                                            @foreach ($statuses as $status)
+                                                <option value="{{ $status->id }}">{{ $status->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Created By --}}
                         @if (auth()->user()->hasRole(['Super Admin', 'Admin']) && showFilter('created_by', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Created By</label>
-                                <select id="filterCreatedBy" class="form-control select2 applyFilters">
-                                    <option value="">All Users</option>
-                                    @foreach ($createdByUsers as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Created By</label>
+                                    <div class="col-8">
+                                        <select id="filterCreatedBy" class="form-control select2 applyFilters">
+                                            <option value="">All Users</option>
+                                            @foreach ($createdByUsers as $user)
+                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
                         {{-- Staff --}}
                         @if (auth()->user()->hasRole(['Super Admin', 'Admin']) && showFilter('staff', $enabledFilters))
                             <div class="col-md-6">
-                                <label class="form-label">Assign To</label>
-                                <select id="filterStaff" class="form-control select2 applyFilters">
-                                    <option value="">All Staff</option>
-                                    @foreach ($staffList as $staff)
-                                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Assign To</label>
+                                    <div class="col-8">
+                                        <select id="filterStaff" class="form-control select2 applyFilters">
+                                            <option value="">All Staff</option>
+                                            @foreach ($staffList as $staff)
+                                                <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
+                        @if (showFilter('entities', $enabledFilters))
+                            <div class="col-md-6">
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Entity</label>
+                                    <div class="col-8">
+                                        <select id="filterEntity" class="form-select applyFilters">
+                                            <option value="">All Entities</option>
+                                            @foreach ($entities as $entity)
+                                                <option value="{{ $entity['id'] }}">{{ $entity['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+
+
+                        @if (showFilter('types', $enabledFilters))
+                            <div class="col-md-6">
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Task Type</label>
+                                    <div class="col-8">
+                                        <select id="filterTaskType" class="form-select applyFilters">
+                                            <option value="">All Types</option>
+                                            @foreach ($types as $type)
+                                                <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
