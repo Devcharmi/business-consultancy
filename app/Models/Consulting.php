@@ -11,6 +11,8 @@ class Consulting extends Model
     use FiltersByExpertiseManager;
 
     protected $fillable = [
+        // 'client_id',
+        // 'objective_manager_id',
         'client_objective_id',
         'expertise_manager_id',
         'focus_area_manager_id',
@@ -18,6 +20,16 @@ class Consulting extends Model
         'created_by',
         'updated_by'
     ];
+
+    // public function client()
+    // {
+    //     return $this->belongsTo(Client::class);
+    // }
+
+    // public function objective_manager()
+    // {
+    //     return $this->belongsTo(ObjectiveManager::class);
+    // }
 
     public function client_objective()
     {
@@ -65,6 +77,14 @@ class Consulting extends Model
                     ->orWhereHas('focus_area_manager', function ($qo) use ($term) {
                         $qo->where('name', 'LIKE', "%{$term}%");
                     });
+                // // OR client name
+                // ->orWhereHas('client', function ($qo) use ($term) {
+                //     $qo->where('client_name', 'LIKE', "%{$term}%");
+                // })
+                // // OR objective name
+                // ->orWhereHas('objective_manager', function ($qo) use ($term) {
+                //     $qo->where('name', 'LIKE', "%{$term}%");
+                // });
             });
         }
 

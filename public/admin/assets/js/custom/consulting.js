@@ -38,6 +38,12 @@ var consulting_table = $(".table-list").DataTable({
         },
 
         // 2️⃣ Client Name
+        // {
+        //     data: "clinet",
+        //     render: function (data, type, row) {
+        //         return data && data.client ? data.client.client_name : "-";
+        //     },
+        // },
         {
             data: "client_objective",
             render: function (data, type, row) {
@@ -46,6 +52,14 @@ var consulting_table = $(".table-list").DataTable({
         },
 
         // 3️⃣ Objective
+        // {
+        //     data: "objective_manager",
+        //     render: function (data, type, row) {
+        //         return data && data.objective_manager
+        //             ? data.objective_manager.name
+        //             : "-";
+        //     },
+        // },
         {
             data: "client_objective",
             render: function (data, type, row) {

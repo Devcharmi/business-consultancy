@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
 use App\Models\ExpertiseManager;
 use App\Models\FocusAreaManager;
+use App\Models\ObjectiveManager;
 use App\Models\StatusManager;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ConsultingController extends Controller
@@ -38,6 +41,8 @@ class ConsultingController extends Controller
 
             $columns = [
                 'id',
+                // 'client_id',
+                // 'objective_manager_id',
                 'client_objective_id',
                 'expertise_manager_id',
                 'focus_area_manager_id',
@@ -52,7 +57,15 @@ class ConsultingController extends Controller
 
             $tableDataCount = Consulting::Filters($data, $columns)->count();
 
-            $tableData = $tableData->with(['client_objective.client', 'client_objective.objective_manager', 'expertise_manager', 'focus_area_manager'])->get();
+            $tableData = $tableData->with([
+                // 'client',
+                // 'objective_manager',
+                'client_objective.client',
+                'client_objective.objective_manager',
+                'expertise_manager',
+                'focus_area_manager'
+            ])->get();
+
             // dd($tableData->toArray());
             $response['iTotalDisplayRecords'] = $tableDataCount;
             $response['iTotalRecords'] = $tableDataCount;
@@ -78,17 +91,37 @@ class ConsultingController extends Controller
         //
     }
 
+    protected function getOrCreateClientObjective(int $clientId, int $objectiveManagerId): ClientObjective
+    {
+        return ClientObjective::firstOrCreate(
+            [
+                'client_id' => $clientId,
+                'objective_manager_id' => $objectiveManagerId,
+            ]
+        );
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $data = $request->all();
-        $request->validate([
-            'client_objective_id' => [
+        $validated = $request->validate([
+            // 'client_objective_id' => [
+            //     'required',
+            //     'integer',
+            //     'exists:client_objectives,id',
+            // ],
+            'client_id' => [
                 'required',
                 'integer',
-                'exists:client_objectives,id',
+                'exists:clients,id',
+            ],
+            'objective_manager_id' => [
+                'required',
+                'integer',
+                'exists:objective_managers,id',
             ],
             'expertise_manager_id' => [
                 'required',
@@ -107,7 +140,9 @@ class ConsultingController extends Controller
             ],
         ], [
             // Optional custom messages
-            'client_objective_id.required' => 'Please select a client objective.',
+            // 'client_objective_id.required' => 'Please select a client objective.',
+            'client_id.required' => 'Please select a client.',
+            'objective_manager_id.required' => 'Please select a objective.',
             'expertise_manager_id.required' => 'Please select an expertise.',
             'focus_area_manager_id.required' => 'Please select a focus area.',
             'consulting_datetime.required' => 'Please select consulting date & time.',
@@ -116,10 +151,16 @@ class ConsultingController extends Controller
 
         try {
             // Start transaction
-
+            DB::beginTransaction();
+            // ✅ Get or create client objective
+            $clientObjective = $this->getOrCreateClientObjective(
+                $validated['client_id'],
+                $validated['objective_manager_id']
+            );
             // Create consulting
             $consulting = new Consulting();
             $consulting->fill($data);
+            $consulting->client_objective_id = $clientObjective->id;
             $consulting->created_by = auth()->id();
             $consulting->save();
 
@@ -133,12 +174,17 @@ class ConsultingController extends Controller
                 'consulting_id' => $consulting->id,
                 'task_id' => $task->id
             ];
-
+            DB::commit();
 
             return response()->json($responseData, 200);
         } catch (\Throwable $th) {
-            Log::info($th->getMessage());
-            return response()->json(['success' => false, 'message' => 'Something went wrong!'], 500);
+            DB::rollBack();
+            Log::error($th);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong!',
+            ], 500);
         }
     }
 
@@ -160,14 +206,17 @@ class ConsultingController extends Controller
         }
 
         $focusAreas  = FocusAreaManager::activeFocusArea()->get();
-        $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
+        // $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
+        $clients = Client::select('id', 'client_name')->activeClients()->orderBy('client_name')->get();
+        $objectives = ObjectiveManager::activeObjectives()->select('id', 'name')->orderBy('name')->get();
 
         $consultingData = null;
         $taskId = null;
 
         if ($id !== 'new') {
             $consultingData = Consulting::with([
-                'client_objective',
+                'client_objective.client',
+                'client_objective.objective_manager',
                 'expertise_manager',
                 'focus_area_manager'
             ])->findOrFail($id);
@@ -175,15 +224,25 @@ class ConsultingController extends Controller
             $task = Task::where('client_objective_id', $consultingData->client_objective_id)
                 ->first();
 
-            if ($task) {
-                $taskId = $task->id;
-            }
-
-            $html =  view('admin.consulting.consulting-modal', compact('consultingData', 'clientObjectives', 'expertises', 'focusAreas', 'taskId'))->render();
-        } else {
-            $html =  view('admin.consulting.consulting-modal', compact('clientObjectives', 'expertises', 'focusAreas', 'taskId'))->render();
+            $taskId = $task?->id;
         }
-        return response()->json(['success' => true, 'html' => $html], 200);
+
+        $html = view(
+            'admin.consulting.consulting-modal',
+            compact(
+                'consultingData',
+                'clients',
+                'objectives',
+                'expertises',
+                'focusAreas',
+                'taskId'
+            )
+        )->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ], 200);
     }
 
     /**
@@ -200,11 +259,21 @@ class ConsultingController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $request->validate([
-            'client_objective_id' => [
+        $validated = $request->validate([
+            // 'client_objective_id' => [
+            //     'required',
+            //     'integer',
+            //     'exists:client_objectives,id',
+            // ],
+            'client_id' => [
                 'required',
                 'integer',
-                'exists:client_objectives,id',
+                'exists:clients,id',
+            ],
+            'objective_manager_id' => [
+                'required',
+                'integer',
+                'exists:objective_managers,id',
             ],
             'expertise_manager_id' => [
                 'required',
@@ -222,7 +291,9 @@ class ConsultingController extends Controller
                 // 'after_or_equal:today',
             ],
         ], [
-            'client_objective_id.required' => 'Please select a client objective.',
+            // 'client_objective_id.required' => 'Please select a client objective.',
+            'client_id.required' => 'Please select a client.',
+            'objective_manager_id.required' => 'Please select a objective.',
             'expertise_manager_id.required' => 'Please select an expertise.',
             'focus_area_manager_id.required' => 'Please select a focus area.',
             'consulting_datetime.required' => 'Please select consulting date & time.',
@@ -231,9 +302,16 @@ class ConsultingController extends Controller
 
         try {
             // Start transaction
+            DB::beginTransaction();
+            // ✅ Get or create client objective
+            $clientObjective = $this->getOrCreateClientObjective(
+                $validated['client_id'],
+                $validated['objective_manager_id']
+            );
 
             $consulting = Consulting::findOrFail($id);
             $consulting->fill($data);
+            $consulting->client_objective_id = $clientObjective->id;
             $consulting->updated_by = auth()->id();
             $consulting->save();
 
@@ -255,11 +333,18 @@ class ConsultingController extends Controller
                 'task_id' => $task->id
             ];
 
+            DB::commit();
+
 
             return response()->json($responseData, 200);
         } catch (\Throwable $th) {
-            Log::info($th->getMessage());
-            return response()->json(['success' => false, 'message' => 'Something went wrong!'], 500);
+            DB::rollBack();
+            Log::error($th);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong!',
+            ], 500);
         }
     }
 
