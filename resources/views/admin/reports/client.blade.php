@@ -53,6 +53,14 @@
 @section('script')
     <script>
         const csrfToken = "{{ csrf_token() }}";
+
+        $(".select2").select2({
+            placeholder: "Select...",
+            width: "100%",
+            dropdownParent: $("#filterModal"),
+            // allowClear: true,
+            // closeOnSelect: false, // keep dropdown open for multiple selections
+        });
     </script>
 
     <script src="{{ asset('admin/assets/js/custom/reports/client_reports.js') }}"></script>

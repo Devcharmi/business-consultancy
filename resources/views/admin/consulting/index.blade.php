@@ -61,6 +61,14 @@
         var delete_path = "{{ route('consulting.destroy', ['consulting' => ':consulting']) }}";
         window.canEditTask = @json(canAccess('consulting.edit'));
         window.canDeleteTask = @json(canAccess('consulting.delete'));
+
+        $(".select2").select2({
+            placeholder: "Select...",
+            width: "100%",
+            dropdownParent: $("#filterModal"),
+            // allowClear: true,
+            // closeOnSelect: false, // keep dropdown open for multiple selections
+        });
     </script>
     <script src="{{ asset('admin/assets/js/custom/consulting.js') }}"></script>
 @endsection

@@ -63,6 +63,13 @@
         var pdf_path = "{{ route('task.pdf', ['task' => ':task']) }}";
         window.canEditTask = @json(canAccess('task.edit'));
         window.canDeleteTask = @json(canAccess('task.delete'));
+         $(".select2").select2({
+            placeholder: "Select...",
+            width: "100%",
+            dropdownParent: $("#filterModal"),
+            // allowClear: true,
+            // closeOnSelect: false, // keep dropdown open for multiple selections
+        });
     </script>
     <script src="{{ asset('admin/assets/js/custom/task.js') }}"></script>
 @endsection
