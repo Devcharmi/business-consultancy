@@ -27,6 +27,11 @@ class Task extends Model
         'task_due_date'   => 'date',
     ];
 
+    public function consulting()
+    {
+        return $this->belongsTo(Consulting::class);
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

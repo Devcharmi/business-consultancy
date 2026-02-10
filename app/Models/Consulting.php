@@ -46,6 +46,11 @@ class Consulting extends Model
         return $this->belongsTo(FocusAreaManager::class);
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         if (!empty($filters['date_range'])) {
