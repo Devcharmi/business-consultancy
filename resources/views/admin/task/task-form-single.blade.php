@@ -117,8 +117,7 @@
                                             <label class="fw-bold">Focus Area:</label>
                                             <span>{{ $taskData->consulting->focus_area_manager->name ?? '-' }}</span>
                                             <input type="hidden" name="focus_area_manager_id"
-                                                value="{{ optional(optional($taskData)->consulting)->focus_area_manager_id }}">
-
+                                                value="{{ $taskData->consulting->focus_area_manager_id }}">
                                         </div>
                                     @endif
                                 </div>
@@ -165,6 +164,8 @@
                                 </div>
 
                             </div>
+
+
 
                             {{-- =====================
                                 Attachments TAB
@@ -250,20 +251,60 @@
 @section('script')
     <script>
         const csrf_token = '{{ csrf_token() }}';
-        let canAssignStaff = @json(auth()->user()->hasRole(['Super Admin', 'Admin']));
-        let commitments = {}; // new or edited items
+        let commitments = []; // new or edited items
         let commitmentsToDelete = [];
-        let deliverables = {};
+        let deliverables = [];
         let deliverablesToDelete = [];
         var index_path = "{{ route('consulting.index') }}";
         window.deleteAttachment = "{{ route('task.attachments.delete', ':id') }}";
         window.taskContentEditorIds = [
-            @foreach ($dates as $date)
-                "content_{{ \Illuminate\Support\Str::slug($date) }}",
-            @endforeach
+            "content_{{ \Illuminate\Support\Str::slug($meetingDate) }}"
         ];
+
         initAllCKEditors(window.taskContentEditorIds);
     </script>
+    {{-- 
+    @if (!empty($taskData))
+        <script>
+            // Initialize commitments per date
+            commitments = {};
+            @foreach ($commitmentsByDate as $date => $items)
+                commitments['{{ $date }}'] = [];
+                @foreach ($items as $c)
+                    commitments['{{ $date }}'].push({
+                        id: {{ $c->id }},
+                        text: @json($c->commitment),
+                        created_at: @json($c->created_at->format('Y-m-d')),
+                        commitment_due_date: @json(optional($c->due_date)->format('Y-m-d') ?? $date),
+                        status: {{ $c->status ?? 1 }}
+                    });
+                @endforeach
+            @endforeach
+
+            // Initialize deliverables per date
+            deliverables = {};
+            @foreach ($deliverablesByDate as $date => $items)
+                deliverables['{{ $date }}'] = [];
+                @foreach ($items as $d)
+                    deliverables['{{ $date }}'].push({
+                        id: {{ $d->id }},
+                        _tmp_id: Date.now(), // 👈 unique temp key
+                        text: @json($d->deliverable),
+                        created_at: @json($d->created_at->format('Y-m-d')),
+                        // status: {{ $d->status ?? 1 }}
+                    });
+                @endforeach
+            @endforeach
+
+            Object.keys(commitments).forEach(date => {
+                renderCommitments(date);
+            });
+
+            Object.keys(deliverables).forEach(date => {
+                renderDeliverables(date);
+            });
+        </script>
+    @endif --}}
 
     <script src="{{ asset('admin/assets/js/custom/task.js') }}"></script>
     <script src="{{ asset('admin/assets/js/custom/task-commitment.js') }}"></script>

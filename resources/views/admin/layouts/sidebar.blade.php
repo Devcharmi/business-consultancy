@@ -73,7 +73,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 19.125a3.375 3.375 0 1 0-6 0M3 20.25a9 9 0 0 1 18 0M12 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                             </svg>
-                            <span class="side-menu__label">client</span>
+                            <span class="side-menu__label">Client</span>
                         </a>
                     </li>
                 @endif
@@ -119,7 +119,7 @@
                 @endif
                 <!-- End::slide -->
 
-                <!-- Start::slide task Manager -->
+                {{-- <!-- Start::slide task Manager -->
                 @if (canAccess('task.allow'))
                     <li class="slide">
                         <a href="{{ route('task.index') }}"
@@ -142,7 +142,7 @@
                         </a>
                     </li>
                 @endif
-                <!-- End::slide -->
+                <!-- End::slide --> --}}
 
                 <!-- Start::slide task Manager -->
                 @if (canAccess('user-task.allow'))

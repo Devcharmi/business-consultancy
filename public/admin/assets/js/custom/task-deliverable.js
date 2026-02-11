@@ -24,7 +24,7 @@ $("#deliverable_form").on("submit", function (e) {
     // ===============================
     // 🟢 EXISTING DB RECORD
     // ===============================
-    if (id) {
+    if (id && !tmpId) {
         let row = $(`#deliverables_${date}`).find(`tr[data-id="${id}"]`);
 
         // Update table

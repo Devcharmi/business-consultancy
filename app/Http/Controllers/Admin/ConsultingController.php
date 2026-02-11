@@ -49,22 +49,26 @@ class ConsultingController extends Controller
                 'consulting_datetime',
             ];
 
-            $tableData = Consulting::Filters($data, $columns)
+            $tableData = Consulting::query()
+                ->accessibleBy(auth()->user())   // 👈 ADD HERE
+                ->filters($data, $columns)
                 ->select($columns);
 
             unset($data['start']);
             unset($data['length']);
 
-            $tableDataCount = Consulting::Filters($data, $columns)->count();
+            $tableDataCount = Consulting::query()
+                ->accessibleBy(auth()->user())   // 👈 ADD HERE ALSO
+                ->filters($data, $columns)
+                ->count();
 
             $tableData = $tableData->with([
-                // 'client',
-                // 'objective_manager',
                 'client_objective.client',
                 'client_objective.objective_manager',
                 'expertise_manager',
                 'focus_area_manager'
             ])->get();
+
 
             // dd($tableData->toArray());
             $response['iTotalDisplayRecords'] = $tableDataCount;
@@ -164,15 +168,15 @@ class ConsultingController extends Controller
             $consulting->created_by = auth()->id();
             $consulting->save();
 
-            $focusArea = FocusAreaManager::find($data['focus_area_manager_id']);
+            // $focusArea = FocusAreaManager::find($data['focus_area_manager_id']);
 
-            $task = $this->createTaskFromConsulting($consulting, $focusArea);
+            // $task = $this->createTaskFromConsulting($consulting, $focusArea);
 
             $responseData = [
                 'success' => true,
                 'message' => 'Consulting created successfully',
                 'consulting_id' => $consulting->id,
-                'task_id' => $task->id
+                // 'task_id' => $task->id
             ];
             DB::commit();
 
@@ -315,22 +319,20 @@ class ConsultingController extends Controller
             $consulting->updated_by = auth()->id();
             $consulting->save();
 
-            $focusArea = FocusAreaManager::find($data['focus_area_manager_id']);
+            // $focusArea = FocusAreaManager::find($data['focus_area_manager_id']);
 
-            $taskId = $request->input('task_id');
+            // $taskId = $request->input('task_id');
 
-            if ($taskId) {
-                $task = $this->updateTaskFromConsulting($taskId, $consulting, $focusArea);
-            } else {
-                $task = $this->findOrCreateTaskFromConsulting($consulting, $focusArea);
-            }
+            // if ($taskId) {
+            //     $task = $this->updateTaskFromConsulting($taskId, $consulting, $focusArea);
+            // } else {
+            //     $task = $this->findOrCreateTaskFromConsulting($consulting, $focusArea);
+            // }
 
             // Add task_id to response
             $responseData = [
                 'success' => true,
                 'message' => 'Consulting updated successfully',
-                'consulting_id' => $consulting->id,
-                'task_id' => $task->id
             ];
 
             DB::commit();

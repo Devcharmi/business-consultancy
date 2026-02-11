@@ -37,8 +37,6 @@ $("#commitment_form").on("submit", function (e) {
     let text = $("#commitment").val().trim();
     let due = $("#commitment_due_date").val();
     let staffManagerId = $("#staff_manager_id").val();
-    let staffName =
-        $("#staff_manager_id option:selected").data("staff-name") || "-";
 
     if (!text) return;
 
@@ -46,12 +44,12 @@ $("#commitment_form").on("submit", function (e) {
     // 🟢 EXISTING DB RECORD
     // ===============================
     if (id && !tmpId) {
+
         let row = $(`#commitments_${date}`).find(`tr[data-id="${id}"]`);
 
         // Update table
         row.find("td:eq(1)").text(moment(due).format("DD MMM YYYY"));
         row.find("td:eq(2)").contents().first()[0].textContent = text;
-        row.find(".staff-column").text(staffName);
 
         // ✅ update hidden inputs (MOST IMPORTANT)
         row.find(`input[name="commitments_existing[${id}][text]"]`).val(text);
@@ -64,9 +62,9 @@ $("#commitment_form").on("submit", function (e) {
 
         // update edit button dataset
         row.find(".edit-commitment")
-            .attr("data-text", text)
-            .attr("data-due", due)
-            .attr("data-staff-manager-id", staffManagerId);
+            .data("text", text)
+            .data("due", due)
+            .data("staff_manager_id", staffManagerId);
 
         $("#commitmentModal").modal("hide");
         return;
@@ -83,8 +81,6 @@ $("#commitment_form").on("submit", function (e) {
         if (item) {
             item.text = text;
             item.commitment_due_date = due;
-            item.staff_manager_id = staffManagerId;
-            item.staff_name = staffName;
 
             let row = $(`#commitments_${date}`).find(
                 `tr[data-tmp-id="${tmpId}"]`,
@@ -92,12 +88,8 @@ $("#commitment_form").on("submit", function (e) {
 
             row.find("td:eq(1)").text(moment(due).format("DD MMM YYYY"));
             row.find("td:eq(2)").text(text);
-            row.find(".staff-column").text(staffName);
 
-            row.find(".edit-commitment")
-                .attr("data-text", text)
-                .attr("data-due", due)
-                .attr("data-staff-manager-id", staffManagerId);
+            row.find(".edit-commitment").data("text", text).data("due", due);
 
             $("#commitmentModal").modal("hide");
             return;
@@ -114,7 +106,7 @@ $("#commitment_form").on("submit", function (e) {
         commitment_due_date: due,
         created_at: date,
         staff_manager_id: staffManagerId,
-        staff_name: staffName, // 🔥 add this
+        // created_at: moment().format("YYYY-MM-DD"),
     });
 
     renderCommitments(date);
@@ -136,14 +128,12 @@ function renderCommitments(date) {
 
         let createdDate = moment(item.created_at).format("DD MMM YYYY");
         let dueDate = moment(item.commitment_due_date).format("DD MMM YYYY");
-        let staffName = item.staff_name || "-";
 
         wrapper.append(`
             <tr data-tmp-id="${item._tmp_id}">
                 <td>${createdDate}</td>
                 <td>${dueDate}</td>
                 <td>${item.text}</td>
-              ${canAssignStaff ? `<td>${staffName}</td>` : ``}
                 <td class="text-center">
                     <button
                         type="button"
@@ -152,7 +142,6 @@ function renderCommitments(date) {
                         data-text="${item.text}"
                         data-due="${item.commitment_due_date}"
                         data-date="${date}"
-                        data-staff-manager-id="${item.staff_manager_id}"
                     >✎</button>
 
                     <button
@@ -168,21 +157,22 @@ function renderCommitments(date) {
 }
 
 $(document).on("click", ".edit-commitment", function () {
-    let id = $(this).attr("data-id");
-    let tmpId = $(this).attr("data-tmp-id");
-    let text = $(this).attr("data-text");
-    let staffId = $(this).attr("data-staff-manager-id");
-    let dueDate = $(this).attr("data-due");
-    let date = $(this).attr("data-date");
+    let id = $(this).data("id");
+    let tmpId = $(this).data("tmp-id"); // 🔥 ADD THIS
+    let text = $(this).data("text");
+    let staffId = $(this).data("staff-manager-id");
+    let dueDate = $(this).data("due");
+    let date = $(this).data("date");
 
+    // 🔥 SET BOTH IDS CORRECTLY
     $("#commitment_id").val(id || "");
-    $("#commitment_tmp_id").val(tmpId || "");
+    $("#commitment_tmp_id").val(tmpId || ""); // 🔥 VERY IMPORTANT
 
-    $("#commitment").val(text);
+    $("#commitment_text").val(text);
     $("#commitment_due_date").val(dueDate);
     $("#commitment_date").val(date);
 
-    let staffSelect = $("#staff_manager_id");
+    let staffSelect = $("#commitment_staff_manager_id");
 
     $("#commitmentModal").modal("show");
     initSelect2();
@@ -190,7 +180,7 @@ $(document).on("click", ".edit-commitment", function () {
     staffSelect.val(null).trigger("change");
 
     if (staffId) {
-        staffSelect.val(String(staffId)).trigger("change");
+        staffSelect.val(String(staffId)).trigger("change.select2");
     }
 });
 

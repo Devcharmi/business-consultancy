@@ -54,7 +54,7 @@
 
                         {{-- Expertise --}}
                         <div class="col-md-12 mb-3">
-                            <label>Expertises</label><span class="text-danger">*</span>
+                            <label class="required">Expertises</label>
                             <select name="expertise_manager_id" class="form-select">
                                 @foreach ($expertises as $expertise)
                                     <option value="{{ $expertise->id }}" @selected(old('expertise_manager_id', $consultingData->expertise_manager_id ?? null) == $expertise->id)>
@@ -67,7 +67,7 @@
 
                         {{-- focusArea --}}
                         <div class="col-md-12 mb-3">
-                            <label>Focus Area</label><span class="text-danger">*</span>
+                            <label class="required">Focus Area</label>
                             <select name="focus_area_manager_id" class="form-control select2">
                                 <option value="">Select focus Area</option>
                                 @foreach ($focusAreas as $focusArea)

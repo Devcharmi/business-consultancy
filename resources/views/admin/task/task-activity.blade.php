@@ -12,7 +12,6 @@
     @endif
 </div>
 
-
 <div class="accordion" id="taskAccordion">
 
     @foreach ($dates as $date)
@@ -31,13 +30,11 @@
 
         <div class="accordion-item mb-2 shadow-sm rounded">
             <h2 class="accordion-header" id="heading-{{ $safeId }}">
-                <button class="accordion-button {{ $isToday ? '' : 'collapsed' }}" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#collapse-{{ $safeId }}"
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-{{ $safeId }}"
                     style="
                         color: white;
-                        {{ $isToday
-                            ? 'background: linear-gradient(90deg, #1e90ff, #00bfff); font-weight: 700;'
-                            : 'background: linear-gradient(90deg, #f0f0f0, #d9d9d9); color: #333;' }};
+                        background: linear-gradient(90deg, #1e90ff, #00bfff); font-weight: 700;
                         transition: all 0.3s;
                     ">
                     @if ($isToday)
@@ -54,7 +51,7 @@
                 </button>
             </h2>
 
-            <div id="collapse-{{ $safeId }}" class="accordion-collapse collapse {{ $isToday ? 'show' : '' }}">
+            <div id="collapse-{{ $safeId }}" class="accordion-collapse collapse show">
                 <div class="accordion-body">
 
                     {{-- ================= Content (1 per day) ================= --}}
@@ -75,6 +72,9 @@
                                     <th style="width:150px;">Created Date</th>
                                     <th style="width:150px;">Due Date</th>
                                     <th>Commitment</th>
+                                    @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
+                                        <th>Assign to</th>
+                                    @endif
                                     <th style="width:80px;">Action</th>
                                 </tr>
                             </thead>
@@ -86,7 +86,6 @@
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($commitment->due_date)->format('d M Y') }}</td>
                                         <td>{{ $commitment->commitment }}
-
                                             <input type="hidden"
                                                 name="commitments_existing[{{ $commitment->id }}][text]"
                                                 value="{{ $commitment->commitment }}">
@@ -99,6 +98,9 @@
                                                 name="commitments_existing[{{ $commitment->id }}][staff_manager_id]"
                                                 value="{{ $commitment->staff_manager_id }}">
                                         </td>
+                                        @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
+                                            <td class="staff-column">{{ $commitment->staff->name }}</td>
+                                        @endif
                                         <td class="text-center">
                                             <button type="button" class="btn btn-sm btn-primary edit-commitment"
                                                 data-id="{{ $commitment->id }}"

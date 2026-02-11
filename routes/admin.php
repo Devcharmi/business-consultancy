@@ -79,6 +79,11 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         ->name('location.cities');
 
     Route::resource('clients', ClientController::class);
+    Route::get(
+        '/client/consultings',
+        [ClientController::class, 'clientConsultings']
+    )->name('client.consultings');
+    
     Route::resource('status-manager', StatusManagerController::class);
     Route::resource('objective-manager', ObjectiveManagerController::class);
     Route::resource('expertise-manager', ExpertiseManagerController::class);

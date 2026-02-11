@@ -19,6 +19,28 @@ var client_table = $(".table-list").DataTable({
         //         return meta.row + meta.settings._iDisplayStart + 1;
         //     },
         // },
+
+        {
+            data: "id",
+            sClass: "text-center",
+            mRender: function (v, t, o) {
+                let edit_url = edit_path.replace(":id", v);
+                let delete_url = delete_path.replace(":id", v);
+                let editDisabled = window.canEditTask
+                    ? ""
+                    : "style='pointer-events:none;opacity:0.4;' disabled";
+                let deleteDisabled = window.canDeleteTask
+                    ? ""
+                    : "style='pointer-events:none;opacity:0.4;' disabled";
+                return `<a href="${edit_url}" class="text-primary me-2" ${editDisabled}><i class="fas fa-pen"></i></a>
+                        <a href="javascript:void(0);" class="text-danger delete-data" ${deleteDisabled} data-url="${delete_url}"><i class="fas fa-trash"></i></a>
+                         <button class="btn btn-xs btn-outline-success open-consulting-modal"
+                                    data-client-id="${v}"
+                                    data-client-name="${o.client_name}"
+                                    title="Consultings">Consultings
+                                </button>`;
+            },
+        },
         { data: "client_name" },
         { data: "email" },
         { data: "phone" },
@@ -34,28 +56,34 @@ var client_table = $(".table-list").DataTable({
                 }
             },
         },
-        {
-            data: "id",
-            sClass: "text-center",
-            mRender: function (v, t, o) {
-                let edit_url = edit_path.replace(":id", v);
-                let delete_url = delete_path.replace(":id", v);
-                let editDisabled = window.canEditTask
-                    ? ""
-                    : "style='pointer-events:none;opacity:0.4;' disabled";
-                let deleteDisabled = window.canDeleteTask
-                    ? ""
-                    : "style='pointer-events:none;opacity:0.4;' disabled";
-                return `<a href="${edit_url}" class="text-primary me-2" ${editDisabled}><i class="fas fa-pen"></i></a>
-                        <a href="javascript:void(0);" class="text-danger delete-data" ${deleteDisabled} data-url="${delete_url}"><i class="fas fa-trash"></i></a>`;
-            },
-        },
     ],
     language: {
         searchPlaceholder: "Search...",
         sSearch: "",
         lengthMenu: "_MENU_&nbsp; items/page",
     },
+});
+
+$(document).on("click", ".open-consulting-modal", function () {
+    const clientId = $(this).data("client-id");
+    if (!clientId) return;
+
+    $.ajax({
+        url: routeClientConsultings,
+        type: "GET",
+        data: {
+            client_id: clientId, // 🔥 REQUIRED
+        },
+        success: function (html) {
+            $("#modal_show_html").html(html);
+            $("#dayConsultingModal").modal("show");
+        },
+        error: function () {
+            $("#dayConsultingBody").html(
+                '<div class="text-danger text-center py-4">Failed to load consultings</div>',
+            );
+        },
+    });
 });
 
 $(document).on("click", "#client_form_button", function () {

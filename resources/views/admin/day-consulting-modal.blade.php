@@ -4,12 +4,20 @@
 
             <div class="modal-header d-flex align-items-center">
                 <h6 class="modal-title mb-0">
-                    Consultings – {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
+                    Consultings –
+                    @if (!empty($date))
+                        {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
+                    @endif
+                    @if (!empty($clientName))
+                        {{ $clientName }}
+                    @endif
+
                 </h6>
 
                 <div class="ms-auto d-flex align-items-center gap-2">
                     <a href="#" data-url="{{ route('consulting.show', ['consulting' => 'new']) }}"
-                        data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" title="Add Consulting"
+                        data-date="{{ !empty($date) ? \Carbon\Carbon::parse($date)->format('Y-m-d') : '' }}"
+                        title="Add Consulting"
                         class="btn btn-success btn-sm calendar-add-btn {{ canAccess('consulting.create') ? '' : 'disabled' }}">
                         + Add Consulting
                     </a>
@@ -45,11 +53,12 @@
 
                             <div class="d-flex align-items-center gap-1 flex-shrink-0">
                                 <button class="btn btn-xs btn-outline-success open-meeting-modal"
+                                    data-consulting-id="{{ $consulting->id }}"
                                     data-client-objective-id="{{ $consulting->client_objective_id }}"
                                     data-client-name="{{ $consulting->client_objective->client->client_name ?? '' }}"
                                     data-objective-name="{{ $consulting->client_objective->objective_manager->name ?? '' }}"
-                                    title="Meetings">
-                                    <i class="bi bi-list-task"></i>
+                                    title="Meetings">Meetings
+                                    {{-- <i class="bi bi-list-task"></i> --}}
                                 </button>
 
                                 <button class="btn btn-xs btn-outline-primary calendar-edit-btn"

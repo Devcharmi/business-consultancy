@@ -56,18 +56,13 @@ class TaskController extends Controller
                 'status_manager_id'
             ];
 
-            $tableData = Task::query()
-                ->accessibleBy(auth()->user())   // 👈 ADD HERE
-                ->filters($data, $columns)
+            $tableData = Task::Filters($data, $columns)
                 ->select($columns);
 
             unset($data['start']);
             unset($data['length']);
 
-            $tableDataCount = Task::query()
-                ->accessibleBy(auth()->user())   // 👈 ADD HERE ALSO
-                ->filters($data, $columns)
-                ->count();
+            $tableDataCount = Task::Filters($data, $columns)->count();
 
             $tableData = $tableData->with(['client_objective.client', 'client_objective.objective_manager', 'expertise_manager', 'status_manager'])->get();
             // dd($tableData->toArray());
@@ -99,16 +94,12 @@ class TaskController extends Controller
      * Display the specified resource.
      */
 
-
     public function show(Request $request, $id)
     {
         $user = auth()->user();
         $consultingId = $request->query('consulting_id');
-
         $staffs = User::get();
-        /* ============================
-       Expertise & Status
-        ============================ */
+
         $statuses = StatusManager::activeStatus()->get();
 
         $userExpertises = $user->expertiseManagers()->activeExpertise()->get();
@@ -118,9 +109,6 @@ class TaskController extends Controller
 
         $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
 
-        /* ============================
-       Defaults (NEW TASK)
-        ============================ */
         $taskData = null;
         $consultingData = null;
 
@@ -142,9 +130,11 @@ class TaskController extends Controller
             ])->findOrFail($consultingId);
         }
 
-        /* ============================
-       EDIT TASK
-        ============================ */
+        /*
+    |----------------------------------------
+    | EDIT
+    |----------------------------------------
+    */
         if ($id !== 'new') {
 
             $taskData = Task::with([
@@ -158,25 +148,8 @@ class TaskController extends Controller
                 'consulting'
             ])->findOrFail($id);
 
-            // ✅ SET consultingData FROM taskData
-            if ($taskData->consulting_id) {
-                $consultingData = $taskData->consulting;
-            }
-            /* ----------------------------
-                Collect ALL dates (normalized)
-                ---------------------------- */
-            // $dates = collect()
-            //     ->merge($taskData->content->pluck('content_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
-            //     ->merge($taskData->commitments->pluck('commitment_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
-            //     ->merge($taskData->deliverables->pluck('deliverable_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
-            //     ->push($today)
-            //     ->unique()
-            //     ->sortDesc()
-            //     ->values();
+            $consultingData = $taskData->consulting;
 
-            /* ----------------------------
-                Group data by DATE STRING
-                ---------------------------- */
             $commitmentsByDate = $taskData->commitments
                 ->groupBy(fn($c) => Carbon::parse($c->commitment_date)->toDateString());
 
@@ -187,48 +160,135 @@ class TaskController extends Controller
                 ->keyBy(fn($c) => Carbon::parse($c->content_date)->toDateString());
         }
 
-        $clientObjectiveId = null;
-        $expertiseManagerId = null;
+        /*
+    |----------------------------------------
+    | SINGLE MEETING DATE LOGIC
+    |----------------------------------------
+    */
+        $meetingDate = $consultingData
+            ? Carbon::parse($consultingData->consulting_datetime)->toDateString()
+            : Carbon::today()->toDateString();
 
-        if ($consultingData) {
-            $clientObjectiveId = $consultingData->client_objective_id ?? null;
-            $expertiseManagerId = $consultingData->expertise_manager_id ?? null;
-        }
-
-        $today = Carbon::today()->toDateString();
-
-        if ($taskData) {
-            // EDIT MODE
-            $date = Carbon::parse($taskData->task_start_date)->toDateString();
-        } elseif ($consultingData && $consultingData->consulting_datetime) {
-            // CREATE FROM CONSULTING
-            $date = Carbon::parse($consultingData->consulting_datetime)->toDateString();
-        } else {
-            // NORMAL NEW
-            $date = $today;
-        }
-
-        $dates = collect([$date]);
-        // dd($commitmentsByDate);
-
-        /* ============================
-        Render View
-        ============================ */
         return view('admin.task.task-form', compact(
             'taskData',
             'consultingData',
             'clientObjectives',
             'expertises',
             'statuses',
-            'dates',
+            'meetingDate', // ✅ pass this instead of $dates
             'commitmentsByDate',
             'deliverablesByDate',
             'contentByDate',
-            'clientObjectiveId',
-            'expertiseManagerId',
             'staffs'
         ));
     }
+
+
+    // public function show(Request $request, $id)
+    // {
+    //     $user = auth()->user();
+    //     $clientObjectiveId   = $request->query('client_objective_id');
+    //     $expertiseManagerId  = $request->query('expertise_manager_id');
+    //     $staffs = User::get();
+    //     /* ============================
+    //    Expertise & Status
+    //     ============================ */
+    //     $statuses = StatusManager::activeStatus()->get();
+
+    //     $userExpertises = $user->expertiseManagers()->activeExpertise()->get();
+    //     $expertises = $userExpertises->isNotEmpty()
+    //         ? $userExpertises
+    //         : ExpertiseManager::activeExpertise()->get();
+
+    //     $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
+
+    //     /* ============================
+    //    Defaults (NEW TASK)
+    //     ============================ */
+    //     $taskData = null;
+    //     $today = Carbon::today()->toDateString();
+
+    //     $dates = collect([$today]);
+    //     $commitmentsByDate = collect();
+    //     $deliverablesByDate = collect();
+    //     $contentByDate = collect();
+
+    //     /* ============================
+    //          EDIT TASK
+    //     ============================ */
+    //     if ($id !== 'new') {
+
+    //         $taskData = Task::with([
+    //             'client_objective',
+    //             'expertise_manager',
+    //             'status_manager',
+    //             'content',
+    //             'commitments',
+    //             'deliverables',
+    //         ])->findOrFail($id);
+
+    //             /* ----------------------------
+    //             Collect ALL dates (normalized)
+    //             ---------------------------- */
+    //         $dates = collect()
+    //             ->merge($taskData->content->pluck('content_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
+    //             ->merge($taskData->commitments->pluck('commitment_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
+    //             ->merge($taskData->deliverables->pluck('deliverable_date')->map(fn($d) => Carbon::parse($d)->toDateString()))
+    //             ->push($today)
+    //             ->unique()
+    //             ->sortDesc()
+    //             ->values();
+
+    //             /* ----------------------------
+    //             Group data by DATE STRING
+    //             ---------------------------- */
+    //         $commitmentsByDate = $taskData->commitments
+    //             ->groupBy(fn($c) => Carbon::parse($c->commitment_date)->toDateString());
+
+    //         $deliverablesByDate = $taskData->deliverables
+    //             ->groupBy(fn($d) => Carbon::parse($d->deliverable_date)->toDateString());
+
+    //         $contentByDate = $taskData->content
+    //             ->keyBy(fn($c) => Carbon::parse($c->content_date)->toDateString());
+
+    //         // /* ----------------------------
+    //         // Collect ALL dates
+    //         // ---------------------------- */
+    //         // $dates = collect()
+    //         //     ->merge($taskData->content->pluck('content_date'))
+    //         //     ->merge($taskData->commitments->pluck('commitment_date'))
+    //         //     ->merge($taskData->deliverables->pluck('deliverable_date'))
+    //         //     ->push($today) // ensure today exists
+    //         //     ->filter()
+    //         //     ->unique()
+    //         //     ->sortDesc()
+    //         //     ->values();
+
+    //         // /* ----------------------------
+    //         // Group data by DATE
+    //         // ---------------------------- */
+    //         // $commitmentsByDate = $taskData->commitments->groupBy('commitment_date');
+    //         // $deliverablesByDate = $taskData->deliverables->groupBy('deliverable_date');
+    //         // $contentByDate = $taskData->content->keyBy('content_date');
+    //     }
+
+    //     /* ============================
+    //     Render View
+    //     ============================ */
+    //     return view('admin.task.task-form', compact(
+    //         'taskData',
+    //         'clientObjectives',
+    //         'expertises',
+    //         'statuses',
+    //         'dates',
+    //         'commitmentsByDate',
+    //         'deliverablesByDate',
+    //         'contentByDate',
+    //         'clientObjectiveId',
+    //         'expertiseManagerId',
+    //         'staffs'
+    //     ));
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -436,9 +496,12 @@ class TaskController extends Controller
         array $commitmentsToDelete = [],
         array $commitmentsExisting = []
     ) {
+
         // ---------------- DELETE ----------------
         if (!empty($commitmentsToDelete)) {
-            TaskCommitment::whereIn('id', $commitmentsToDelete)->delete();
+            TaskCommitment::whereIn('id', $commitmentsToDelete)
+                ->where('task_id', $task->id)
+                ->delete();
         }
 
         // ---------------- UPDATE EXISTING ----------------
@@ -453,52 +516,38 @@ class TaskController extends Controller
                 ->first();
 
             if ($commitment) {
-                // TaskCommitment::where('id', $id)
-                //     ->where('task_id', $task->id)
-                //     ->update([
-                //         'commitment' => $item['text'],
-                //         'due_date' => $item['due_date']
-                //     ]);
                 $commitment->update([
-                    'commitment' => $item['text'],
-                    'due_date'   => $item['due_date'],
-                    'status'        => $item['status'] ?? 1,
+                    'commitment'       => $item['text'],
+                    'due_date'         => $item['commitment_due_date'],
+                    'status'           => $item['status'] ?? 1,
                     'staff_manager_id' => $item['staff_manager_id'] ?? 1,
                 ]);
             }
         }
 
         // ---------------- CREATE NEW ----------------
-        foreach ($commitments as $date => $items) {
+        foreach ($commitments as $item) {
 
-            if (empty($items) || !is_array($items)) {
+            if (blank($item['text']) || empty($item['commitment_due_date'])) {
                 continue;
             }
 
-            $date = Carbon::parse($date)->toDateString();
-
-            foreach ($items as $item) {
-
-                if (blank($item['text']) || empty($item['commitment_due_date'])) {
-                    continue;
-                }
-
-                // ⛔ skip existing DB rows
-                if (!empty($item['id'])) {
-                    continue;
-                }
-
-                TaskCommitment::create([
-                    'task_id'         => $task->id,
-                    'commitment_date' => $date,
-                    'commitment'      => $item['text'],
-                    'due_date'        => $item['commitment_due_date'],
-                    'status'          => $item['status'] ?? 1,
-                    'staff_manager_id' => $item['staff_manager_id'] ?? 1,
-                ]);
+            // Skip if already exists
+            if (!empty($item['id'])) {
+                continue;
             }
+
+            TaskCommitment::create([
+                'task_id'           => $task->id,
+                'commitment_date'   => Carbon::parse($item['commitment_due_date'])->toDateString(),
+                'commitment'        => $item['text'],
+                'due_date'          => $item['commitment_due_date'],
+                'status'            => $item['status'] ?? 1,
+                'staff_manager_id'  => $item['staff_manager_id'] ?? 1,
+            ]);
         }
     }
+
 
     public function syncDeliverableActivities(
         Task $task,

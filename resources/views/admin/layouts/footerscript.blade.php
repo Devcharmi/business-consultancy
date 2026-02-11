@@ -214,7 +214,6 @@
                 if (searchInput) searchInput.focus();
             }, 10);
         });
-
     </script>
 
     {{-- datatable buttons common --}}
@@ -421,4 +420,391 @@
         //     ]
 
         // }
+    </script>
+
+    <script>
+        var task_edit_path = "{{ route('task.show', ['task' => ':task']) }}";
+        var task_delete_path = "{{ route('task.destroy', ['task' => ':task']) }}";
+        var task_pdf_path = "{{ route('task.pdf', ['task' => ':task']) }}";
+
+        window.canEditMeeting = @json(canAccess('task.edit'));
+        window.canDeleteMeeting = @json(canAccess('task.delete'));
+
+        $(document).on("click", ".open-meeting-modal", function(e) {
+            e.preventDefault();
+
+            const consultingId = $(this).data("consulting-id") || null;
+            const clientObjectiveId = $(this).data("client-objective-id") || null;
+
+            const clientName = $(this).data("client-name");
+            const objectiveName = $(this).data("objective-name");
+
+            $("#taskModalTitle").html(`
+        Meetings
+        <span class="text-muted fw-normal">
+            — ${clientName}${objectiveName ? " / " + objectiveName : ""}
+        </span>
+    `);
+
+            const $addBtn = $("#addMeetingBtn");
+
+            if (!$addBtn.data("base-url")) {
+                $addBtn.data("base-url", $addBtn.attr("href"));
+            }
+
+            let url = $addBtn.data("base-url");
+
+            if (consultingId) {
+                url += "?consulting_id=" + consultingId;
+            } else if (clientObjectiveId) {
+                url += "?client_objective_id=" + clientObjectiveId;
+            }
+
+            $addBtn.attr("href", url);
+
+            const modal = new bootstrap.Modal("#taskModal", {
+                backdrop: "static",
+                keyboard: false,
+            });
+
+            modal.show();
+
+            loadTaskModalTable(consultingId, clientObjectiveId);
+        });
+
+
+        let taskModalTable = null;
+        let currentConsultingId = null;
+        let currentClientObjectiveId = null;
+
+        function loadTaskModalTable(consultingId = null, clientObjectiveId = null) {
+
+            currentConsultingId = consultingId;
+            currentClientObjectiveId = clientObjectiveId;
+
+            // ✅ If already initialized → just reload with new params
+            if ($.fn.DataTable.isDataTable('#task_modal_table')) {
+                taskModalTable.ajax.reload(null, true);
+                return;
+            }
+
+            taskModalTable = $("#task_modal_table").DataTable({
+                order: [
+                    [0, "desc"]
+                ],
+                autoWidth: false,
+                processing: true,
+                serverSide: true,
+                serverMethod: "GET",
+                pageLength: 25,
+                lengthMenu: [
+                    [25, 100, 200, 250],
+                    [25, 100, 200, 250],
+                ],
+
+                ajax: {
+                    url: $("#task_modal_table").attr("data-url"),
+                    data: function(d) {
+                        d.consulting_id = currentConsultingId;
+                        d.client_objective_id = currentClientObjectiveId;
+                    }
+                },
+
+                columns: [
+
+                    // 1️⃣ Sr No
+                    {
+                        data: "id",
+                        orderable: true,
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+
+                    // 2️⃣ Title
+                    {
+                        data: "title",
+                        defaultContent: "-"
+                    },
+
+                    // 3️⃣ Expertise
+                    {
+                        data: "expertise_manager",
+                        orderable: false,
+                        render: function(data) {
+                            if (!data) return "-";
+
+                            return `
+                        <span class="badge"
+                            style="
+                                background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+                                color:#fff;
+                                font-size:11px;
+                                padding:4px 8px;
+                                border-radius:4px;">
+                            ${data.name}
+                        </span>
+                    `;
+                        }
+                    },
+
+                    // 4️⃣ Due Date
+                    {
+                        data: "task_due_date",
+                        render: function(data) {
+                            return data ? moment(data).format("DD-MM-YYYY HH:mm") : "-";
+                        }
+                    },
+
+                    // 5️⃣ Status
+                    {
+                        data: "status_manager",
+                        orderable: false,
+                        render: function(data) {
+                            if (!data) return "N/A";
+
+                            return `
+                        <span style="
+                            background:${data.color_name || "gray"};
+                            color:#fff;
+                            padding:2px 6px;
+                            border-radius:4px;
+                            font-size:11px;">
+                            ${data.name}
+                        </span>
+                    `;
+                        }
+                    },
+
+                    // 6️⃣ Action
+                    {
+                        data: "id",
+                        orderable: false,
+                        searchable: false,
+                        className: "text-center",
+                        render: function(id) {
+
+                            let pdf_path_set = task_pdf_path.replace(":task", id);
+                            let edit_path_set = task_edit_path.replace(":task", id);
+                            let delete_path_set = task_delete_path.replace(":task", id);
+
+                            let editDisabled = window.canEditMeeting ? "" :
+                                "style='pointer-events:none;opacity:0.4;'";
+
+                            let deleteDisabled = window.canDeleteMeeting ? "" :
+                                "style='pointer-events:none;opacity:0.4;'";
+
+                            return `
+                        <a href="${pdf_path_set}" target="_blank" title="PDF">
+                            <i class="fas fa-file-pdf p-1 text-secondary"></i>
+                        </a>
+
+                        <a href="${edit_path_set}"
+                           title="Edit"
+                           ${editDisabled}>
+                            <i class="fas fa-pen p-1 text-primary"></i>
+                        </a>
+
+                        <a href="javascript:void(0);"
+                           class="task-delete-data"
+                           data-url="${delete_path_set}"
+                           title="Delete"
+                           ${deleteDisabled}>
+                            <i class="fas fa-trash p-1 text-danger"></i>
+                        </a>
+                    `;
+                        }
+                    }
+                ],
+
+                language: {
+                    searchPlaceholder: "Search...",
+                    sSearch: "",
+                    lengthMenu: "_MENU_ items/page",
+                }
+            });
+        }
+
+
+        // function loadTaskModalTable(consultingId) {
+        //     consultingId = consultingId;
+
+        //     if (taskModalTable) {
+        //         taskModalTable.ajax.reload(null, true);
+        //         return;
+        //     }
+
+        //     taskModalTable = $("#task_modal_table").DataTable({
+        //         order: [
+        //             [0, "desc"]
+        //         ],
+        //         autoWidth: false,
+        //         processing: true,
+        //         serverSide: true,
+        //         serverMethod: "GET",
+        //         pageLength: 25,
+        //         lengthMenu: [
+        //             [25, 100, 200, 250],
+        //             [25, 100, 200, 250],
+        //         ],
+
+        //         ajax: {
+        //             url: $("#task_modal_table").attr("data-url"),
+        //             data: function(d) {
+        //                 d.consulting_id = consultingId;
+        //             },
+        //         },
+
+        //         columns: [
+        //             // 1️⃣ Sr No
+        //             {
+        //                 data: "id",
+        //                 render: function(data, type, row, meta) {
+        //                     return meta.row + meta.settings._iDisplayStart + 1;
+        //                 },
+        //             },
+
+        //             // 2️⃣ title
+        //             {
+        //                 data: "title",
+        //                 render: function(data) {
+        //                     return data ? data : "-";
+        //                 },
+        //             },
+
+        //             // 4️⃣ Expertise
+        //             {
+        //                 data: "expertise_manager",
+        //                 render: function(data) {
+        //                     if (!data) return "-";
+
+        //                     return `
+    //                         <span
+    //                             class="badge"
+    //                             style="
+    //                                 background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+    //                                 color: #fff;
+    //                                 font-size: 11px;
+    //                                 padding: 4px 8px;
+    //                                 border-radius: 4px;
+    //                             "
+    //                         >
+    //                             ${data.name}
+    //                         </span>
+    //                     `;
+        //                 },
+        //             },
+
+        //             // 3️⃣ Due Date
+        //             {
+        //                 data: "task_due_date",
+        //                 render: function(data) {
+        //                     return data ? moment(data).format("DD-MM-YYYY HH:mm") : "-";
+        //                 },
+        //             },
+
+        //             // 4️⃣ Status
+        //             {
+        //                 data: "status_manager",
+        //                 render: function(v, t, o) {
+        //                     if (o.status_manager) {
+        //                         let name = o.status_manager.name;
+        //                         let color = o.status_manager.color_name || "gray";
+
+        //                         return `
+    //                     <span style="
+    //                         background:${color};
+    //                         color:#fff;
+    //                         padding:2px 6px;
+    //                         border-radius:4px;
+    //                         font-size:11px;
+    //                     ">
+    //                         ${name}
+    //                     </span>`;
+        //                     }
+        //                     return "N/A";
+        //                 },
+        //             },
+
+        //             // 5️⃣ Action
+        //             {
+        //                 data: "id",
+        //                 orderable: false,
+        //                 searchable: false,
+        //                 className: "text-center",
+        //                 render: function(id) {
+        //                     let pdf_path_set = task_pdf_path.replace(":task", id);
+        //                     let edit_path_set = task_edit_path.replace(":task", id);
+        //                     let delete_path_set = task_delete_path.replace(":task", id);
+
+        //                     let editDisabled = window.canEditMeeting ?
+        //                         "" :
+        //                         "style='pointer-events:none;opacity:0.4;'";
+
+        //                     let deleteDisabled = window.canDeleteMeeting ?
+        //                         "" :
+        //                         "style='pointer-events:none;opacity:0.4;'";
+
+        //                     return `
+    //                 <a href="${pdf_path_set}" target="_blank" title="PDF">
+    //                     <i class="fas fa-file-pdf p-1 text-secondary"></i>
+    //                 </a>
+
+    //                 <a href="${edit_path_set}"
+    //                    title="Edit"
+    //                    ${editDisabled}>
+    //                     <i class="fas fa-pen p-1 text-primary"></i>
+    //                 </a>
+
+    //                 <a href="javascript:void(0);"
+    //                    class="task-delete-data"
+    //                    data-url="${delete_path_set}"
+    //                    title="Delete"
+    //                    ${deleteDisabled}>
+    //                     <i class="fas fa-trash p-1 text-danger"></i>
+    //                 </a>
+    //             `;
+        //                 },
+        //             },
+        //         ],
+
+        //         language: {
+        //             searchPlaceholder: "Search...",
+        //             sSearch: "",
+        //             lengthMenu: "_MENU_&nbsp; items/page",
+        //         },
+        //     });
+        // }
+
+
+        $(document).on("click", ".task-delete-data", function() {
+            event.preventDefault();
+            swal.fire({
+                title: "Are you sure to delete this record?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var delete_url = $(this).attr("data-url");
+                    $.ajax({
+                        url: delete_url,
+                        type: "DELETE",
+                        data: {
+                            _token: csrf_token,
+                        },
+                        success: function(result) {
+                            $("[id$='_error']").empty();
+                            taskModalTable.draw();
+                            showToastr("success", result.message);
+                        },
+                        error: function(result) {
+                            showToastr("error", result.responseJSON.message);
+                        },
+                    });
+                }
+            });
+        });
     </script>

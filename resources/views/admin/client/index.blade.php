@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
 @section('content')
-  
     <div class="row mt-4">
         <div class="col-xl-12">
             <div class="card custom-card">
@@ -16,11 +15,11 @@
                             data-url="{{ route('clients.index') }}">
                             <thead>
                                 <tr>
+                                    <th class="text-center no-export">Action</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Status</th>
-                                    <th class="text-center no-export">Action</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -30,6 +29,7 @@
             </div>
         </div>
     </div>
+    @include('admin.dashboard-task-modal')
 @endsection
 
 @section('script')
@@ -38,6 +38,7 @@
         var index_path = "{{ route('clients.index') }}";
         var edit_path = "{{ route('clients.show', ':id') }}";
         var delete_path = "{{ route('clients.destroy', ':id') }}";
+        var routeClientConsultings = "{{ route('client.consultings') }}";
         window.canEditTask = @json(canAccess('client.edit'));
         window.canDeleteTask = @json(canAccess('client.delete'));
     </script>

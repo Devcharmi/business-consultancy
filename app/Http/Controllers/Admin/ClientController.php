@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Consulting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -44,6 +45,38 @@ class ClientController extends Controller
         }
         return view('admin.client.index');
     }
+
+    public function clientConsultings(Request $request)
+    {
+        $request->validate([
+            'client_id' => 'required',
+        ]);
+
+        $user = auth()->user();
+        $clientId = $request->client_id;
+
+        $clientData = Client::findOrFail($clientId);
+        $clientName = $clientData->client_name;
+
+        $consultings = Consulting::with([
+            'expertise_manager',
+            'client_objective.client',
+            'client_objective.objective_manager',
+        ])
+            ->whereHas('client_objective', function ($q) use ($clientId) {
+                $q->where('client_id', $clientId);
+            })
+            ->accessibleBy($user)
+            ->orderBy('consulting_datetime')
+            ->get();
+
+        return view('admin.day-consulting-modal', compact(
+            'consultings',
+            'clientId',
+            'clientName'
+        ))->render();
+    }
+
 
     /**
      * Display the specified resource.

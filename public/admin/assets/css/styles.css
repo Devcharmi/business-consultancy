@@ -31138,6 +31138,12 @@ a.link-underline-dark {
 /**
 Form label
  */
+.required::after {
+  content: " *";
+  color: red;
+  font-weight: bold;
+}
+
 .col-form-label,
 .form-label {
   display: block;

@@ -39,7 +39,7 @@
 
                             {{-- Objective --}}
                             {{-- <div class="col-md-6 mb-3">
-                                <label>Objective</label><span class="text-danger">*</span>
+                                <label class="required">Objective</label>
                                 <select name="objective_manager_id" class="form-control select2">
                                     <option value="">Select Objective</option>
 

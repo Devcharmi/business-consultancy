@@ -11,6 +11,7 @@ class Task extends Model
     use FiltersByExpertiseManager;
 
     protected $fillable = [
+        'consulting_id',
         'client_objective_id',
         'expertise_manager_id',
         'title',
@@ -77,6 +78,19 @@ class Task extends Model
         return $this->hasMany(TaskAttachment::class);
     }
 
+    public function scopeAccessibleBy($query, $user)
+    {
+        if (!$user || $user->hasRole('Super Admin')) {
+            return $query;
+        }
+
+        return $query->whereIn('expertise_manager_id', function ($q) use ($user) {
+            $q->select('expertise_manager_id')
+                ->from('users_expertise_manager')
+                ->where('user_id', $user->id);
+        });
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         if (!empty($filters['date_range'])) {
@@ -85,6 +99,12 @@ class Task extends Model
             $to   = Carbon::parse($explode[1])->endOfDay();
             $query->whereDate('task_start_date', '>=', $from);
             $query->whereDate('task_due_date', '<=', $to);
+        }
+
+        /* ================= CONSULTING FILTER ================= */
+
+        if (!empty($filters['consulting_id'])) {
+            $query->where('consulting_id', $filters['consulting_id']);
         }
 
         /* ================= CLIENT OBJECTIVE FILTER ================= */

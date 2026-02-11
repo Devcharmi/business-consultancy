@@ -22,13 +22,48 @@ var consulting_table = $(".table-list").DataTable({
     },
     columns: [
         // 1️⃣ Sr No
+        // {
+        //     data: "id",
+        //     render: function (data, type, row, meta) {
+        //         return meta.row + meta.settings._iDisplayStart + 1;
+        //     },
+        // },
+        // 7️⃣ Action
         {
             data: "id",
-            render: function (data, type, row, meta) {
-                return meta.row + meta.settings._iDisplayStart + 1;
+            orderable: false,
+            searchable: false,
+            className: "text-center",
+            render: function (id, type, row) {
+                let edit_path_set = edit_path.replace(":consulting", id);
+                let delete_path_set = delete_path.replace(":consulting", id);
+
+                let editDisabled = window.canEditTask
+                    ? ""
+                    : "style='pointer-events:none;opacity:0.4;' disabled";
+                let deleteDisabled = window.canDeleteTask
+                    ? ""
+                    : "style='pointer-events:none;opacity:0.4;' disabled";
+
+                return `
+                    <a href="javascript:void(0);" data-url="${edit_path_set}"
+                       class="open-modal" title="Edit" ${editDisabled}>
+                        <i class="fas fa-pen p-1 text-primary"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-url="${delete_path_set}"
+                       class="delete-data" title="Delete" ${deleteDisabled}>
+                        <i class="fas fa-trash p-1 text-danger"></i>
+                    </a>
+                <button class="btn btn-xs btn-outline-success open-meeting-modal"
+                                    data-consulting-id="${id}"
+                                    data-client-objective-id="${row.client_objective_id}"
+                                    data-client-name="${row.client_objective.client.client_name}"
+                                    data-objective-name="${row.client_objective.objective_manager.name}"
+                                    title="Meetings">Meetings
+                                </button>
+                `;
             },
         },
-
         // 6️⃣ Date
         {
             data: "consulting_datetime",
@@ -97,36 +132,6 @@ var consulting_table = $(".table-list").DataTable({
             data: "focus_area_manager",
             render: function (data) {
                 return data ? data.name : "-";
-            },
-        },
-
-        // 7️⃣ Action
-        {
-            data: "id",
-            orderable: false,
-            searchable: false,
-            className: "text-center",
-            render: function (id, type, row) {
-                let edit_path_set = edit_path.replace(":consulting", id);
-                let delete_path_set = delete_path.replace(":consulting", id);
-
-                let editDisabled = window.canEditTask
-                    ? ""
-                    : "style='pointer-events:none;opacity:0.4;' disabled";
-                let deleteDisabled = window.canDeleteTask
-                    ? ""
-                    : "style='pointer-events:none;opacity:0.4;' disabled";
-
-                return `
-                    <a href="javascript:void(0);" data-url="${edit_path_set}"
-                       class="open-modal" title="Edit" ${editDisabled}>
-                        <i class="fas fa-pen p-1 text-primary"></i>
-                    </a>
-                    <a href="javascript:void(0);" data-url="${delete_path_set}"
-                       class="delete-data" title="Delete" ${deleteDisabled}>
-                        <i class="fas fa-trash p-1 text-danger"></i>
-                    </a>
-                `;
             },
         },
     ],

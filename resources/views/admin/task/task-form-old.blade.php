@@ -8,7 +8,7 @@
                     <div class="card-title">
                         {{ isset($taskData) ? 'Edit Meeting' : 'Create Meeting' }}
                     </div>
-                    <a href="{{ route('consulting.index') }}" class="btn btn-primary mt-10 d-block text-center">
+                    <a href="{{ route('task.index') }}" class="btn btn-primary mt-10 d-block text-center">
                         Back
                     </a>
                 </div>
@@ -41,106 +41,101 @@
                             <div class="tab-pane fade show active" id="basic" role="tabpanel">
                                 <div class="row">
 
-                                    {{-- =========================
-                                        Readonly View: 2 per row
-                                        ========================= --}}
-                                    @if (isset($consultingData) && $consultingData)
-                                        {{-- Row 1: Client & Objective --}}
-                                        <input type="hidden" name="consulting_id" value="{{ $consultingData->id }}">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="fw-bold">Client:</label>
-                                            <span>{{ $consultingData->client_objective->client->client_name }}</span>
-                                            <input type="hidden" name="client_objective_id"
-                                                value="{{ $consultingData->client_objective_id }}">
-                                        </div>
+                                    {{-- Client Objective --}}
+                                    <div class="col-md-9 mb-3">
+                                        <label class="required">Client Objective</label>
 
-                                        <div class="col-md-6 mb-3">
-                                            <label class="fw-bold">Objective:</label>
-                                            <span>{{ $consultingData->client_objective->objective_manager->name }}</span>
-                                        </div>
+                                        <select name="client_objective_id" class="form-control select2">
+                                            <option value="">Select Client Objective</option>
 
-                                        {{-- Row 2: Meeting Date & Expertise --}}
-                                        <div class="col-md-3 mb-3">
-                                            <label class="fw-bold">Meeting Date:</label>
-                                            <span>{{ \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('d-m-Y h:i') }}</span>
-                                            <input type="hidden" name="task_start_date"
-                                                value="{{ \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d') }}">
+                                            @foreach ($clientObjectives as $co)
+                                                @php
+                                                    $selectedClientObjective = old(
+                                                        'client_objective_id',
+                                                        optional($taskData)->client_objective_id ??
+                                                            request()->query('client_objective_id'),
+                                                    );
+                                                @endphp
 
-                                        </div>
+                                                <option value="{{ $co->id }}"
+                                                    {{ $selectedClientObjective == $co->id ? 'selected' : '' }}>
+                                                    {{ $co->client->client_name }} - {{ $co->objective_manager->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
-                                        <div class="col-md-3 mb-3">
-                                            <label class="fw-bold">Expertise:</label>
-                                            <span
-                                                class="badge bg-success">{{ $consultingData->expertise_manager->name ?? '-' }}</span>
-                                            <input type="hidden" name="expertise_manager_id"
-                                                value="{{ $consultingData->expertise_manager_id }}">
-                                        </div>
+                                        <small class="text-danger" id="client_objective_id_error">
+                                            {{ $errors->first('client_objective_id') }}
+                                        </small>
+                                    </div>
 
-                                        <div class="col-md-6 mb-3">
-                                            <label class="fw-bold">Focus Area:</label>
-                                            <span>{{ $consultingData->focus_area_manager->name ?? '-' }}</span>
-                                            <input type="hidden" name="focus_area_manager_id"
-                                                value="{{ $consultingData->focus_area_manager_id }}">
-                                        </div>
-                                    @else
-                                        {{-- Row 1: Client & Objective --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label class="fw-bold">Client:</label>
-                                            <span>{{ $taskData->client_objective->client->client_name }}</span>
-                                            <input type="hidden" name="client_objective_id"
-                                                value="{{ $taskData->client_objective_id }}">
-                                        </div>
+                                    {{-- Expertise --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label class="required">Expertise</label>
 
-                                        <div class="col-md-6 mb-3">
-                                            <label class="fw-bold">Objective:</label>
-                                            <span>{{ $taskData->client_objective->objective_manager->name }}</span>
-                                        </div>
+                                        <select name="expertise_manager_id" class="form-select">
+                                            {{-- <option value="">Select Expertise</option> --}}
 
-                                        {{-- Row 2: Meeting Date & Expertise --}}
-                                        <div class="col-md-3 mb-3">
-                                            <label class="fw-bold">Meeting Date:</label>
-                                            <span>{{ \Carbon\Carbon::parse($taskData->task_start_date)->format('d-m-Y h:i') }}</span>
-                                            <input type="hidden" name="task_start_date"
-                                                value="{{ \Carbon\Carbon::parse($taskData->task_start_date)->format('Y-m-d') }}">
+                                            @foreach ($expertises as $expertise)
+                                                @php
+                                                    $selectedExpertise = old(
+                                                        'expertise_manager_id',
+                                                        optional($taskData)->expertise_manager_id ??
+                                                            request()->query('expertise_manager_id'),
+                                                    );
+                                                @endphp
 
-                                        </div>
+                                                <option value="{{ $expertise->id }}"
+                                                    {{ $selectedExpertise == $expertise->id ? 'selected' : '' }}>
+                                                    {{ $expertise->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
-                                        <div class="col-md-3 mb-3">
-                                            <label class="fw-bold">Expertise:</label>
-                                            <span
-                                                class="badge bg-success">{{ $taskData->expertise_manager->name ?? '-' }}</span>
-                                            <input type="hidden" name="expertise_manager_id"
-                                                value="{{ $taskData->expertise_manager_id }}">
-                                        </div>
+                                        <small class="text-danger" id="expertise_manager_id_error">
+                                            {{ $errors->first('expertise_manager_id') }}
+                                        </small>
+                                    </div>
 
-                                        <div class="col-md-6 mb-3">
-                                            <label class="fw-bold">Focus Area:</label>
-                                            <span>{{ $taskData->consulting->focus_area_manager->name ?? '-' }}</span>
-                                            <input type="hidden" name="focus_area_manager_id"
-                                                value="{{ optional(optional($taskData)->consulting)->focus_area_manager_id }}">
-
-                                        </div>
-                                    @endif
-                                </div>
-                                <hr>
-                                {{-- =========================
-                                    Meeting Title
-                                    ========================= --}}
-                                <div class="row">
-
+                                    {{-- Title --}}
                                     <div class="col-md-5 mb-3">
                                         <label class="required">Meeting Title</label>
                                         <input type="text" name="title" id="title" class="form-control"
                                             value="{{ old('title', optional($taskData)->title) }}">
-                                        <small class="text-danger">{{ $errors->first('title') }}</small>
+                                        <small class="text-danger" id="title_error">{{ $errors->first('title') }}</small>
                                     </div>
 
                                     {{-- Due Date --}}
                                     <div class="col-md-2 mb-3">
-                                        <label class="required">Due Date</label>
+                                        <label>Meeting Date</label>
+                                        <input type="date" name="task_start_date" id="task_start_date"
+                                            class="form-control"
+                                            value="{{ old(
+                                                'task_start_date',
+                                                optional($taskData)->task_start_date
+                                                    ? \Carbon\Carbon::parse($taskData->task_start_date)->format('Y-m-d')
+                                                    : now()->format('Y-m-d'),
+                                            ) }}">
+
+                                        <small class="text-danger"
+                                            id="task_start_date_error">{{ $errors->first('task_start_date') }}</small>
+
+                                    </div>
+
+                                    {{-- Due Date --}}
+                                    <div class="col-md-2 mb-3">
+                                        <label>Due Date</label>
                                         <input type="date" name="task_due_date" id="task_due_date" class="form-control"
-                                            value="{{ old('task_due_date', optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d')) }}">
-                                        <small class="text-danger">{{ $errors->first('task_due_date') }}</small>
+                                            value="{{ old(
+                                                'task_due_date',
+                                                optional($taskData)->task_due_date
+                                                    ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d')
+                                                    : now()->format('Y-m-d'),
+                                            ) }}">
+
+                                        <small class="text-danger"
+                                            id="task_due_date_error">{{ $errors->first('task_due_date') }}</small>
+
                                     </div>
 
                                     {{-- Status --}}
@@ -153,17 +148,17 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <small class="text-danger">{{ $errors->first('status_manager_id') }}</small>
+                                        <small class="text-danger"
+                                            id="status_manager_id_error">{{ $errors->first('status_manager_id') }}</small>
                                     </div>
                                 </div>
 
                                 {{-- =========================
-                                    TASK ACTIVITY (Accordion)
-                                    ========================= --}}
+                                TASK ACTIVITY (Accordion)
+                                ========================= --}}
                                 <div class="row mt-4">
                                     @include('admin.task.task-activity')
                                 </div>
-
                             </div>
 
                             {{-- =====================
@@ -172,8 +167,8 @@
                             {{-- Attachments --}}
                             <div class="tab-pane fade" id="attachments" role="tabpanel">
 
-                                <input type="file" id="attachmentInput" name="attachments[]" multiple
-                                    accept="image/*" class="form-control mb-3">
+                                <input type="file" id="attachmentInput" name="attachments[]" multiple accept="image/*"
+                                    class="form-control mb-3">
 
                                 {{-- Selected previews --}}
                                 <div class="row" id="previewContainer"></div>
@@ -250,12 +245,11 @@
 @section('script')
     <script>
         const csrf_token = '{{ csrf_token() }}';
-        let canAssignStaff = @json(auth()->user()->hasRole(['Super Admin', 'Admin']));
         let commitments = {}; // new or edited items
         let commitmentsToDelete = [];
         let deliverables = {};
         let deliverablesToDelete = [];
-        var index_path = "{{ route('consulting.index') }}";
+        var index_path = "{{ route('task.index') }}";
         window.deleteAttachment = "{{ route('task.attachments.delete', ':id') }}";
         window.taskContentEditorIds = [
             @foreach ($dates as $date)
@@ -264,6 +258,48 @@
         ];
         initAllCKEditors(window.taskContentEditorIds);
     </script>
+    {{-- 
+    @if (!empty($taskData))
+        <script>
+            // Initialize commitments per date
+            commitments = {};
+            @foreach ($commitmentsByDate as $date => $items)
+                commitments['{{ $date }}'] = [];
+                @foreach ($items as $c)
+                    commitments['{{ $date }}'].push({
+                        id: {{ $c->id }},
+                        text: @json($c->commitment),
+                        created_at: @json($c->created_at->format('Y-m-d')),
+                        commitment_due_date: @json(optional($c->due_date)->format('Y-m-d') ?? $date),
+                        status: {{ $c->status ?? 1 }}
+                    });
+                @endforeach
+            @endforeach
+
+            // Initialize deliverables per date
+            deliverables = {};
+            @foreach ($deliverablesByDate as $date => $items)
+                deliverables['{{ $date }}'] = [];
+                @foreach ($items as $d)
+                    deliverables['{{ $date }}'].push({
+                        id: {{ $d->id }},
+                        _tmp_id: Date.now(), // 👈 unique temp key
+                        text: @json($d->deliverable),
+                        created_at: @json($d->created_at->format('Y-m-d')),
+                        // status: {{ $d->status ?? 1 }}
+                    });
+                @endforeach
+            @endforeach
+
+            Object.keys(commitments).forEach(date => {
+                renderCommitments(date);
+            });
+
+            Object.keys(deliverables).forEach(date => {
+                renderDeliverables(date);
+            });
+        </script>
+    @endif --}}
 
     <script src="{{ asset('admin/assets/js/custom/task.js') }}"></script>
     <script src="{{ asset('admin/assets/js/custom/task-commitment.js') }}"></script>

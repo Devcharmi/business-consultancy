@@ -36,13 +36,12 @@
                             class="table table-bordered text-nowrap w-100 table-list">
                             <thead>
                                 <tr>
-                                    <th>Sr No.</th>
+                                    <th class="text-center no-export">Action</th>
                                     <th>Date</th>
                                     <th>Client Name</th>
                                     <th>Objective</th>
                                     <th>Expertise</th>
                                     <th>Focus Area</th>
-                                    <th class="text-center no-export">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,15 +52,17 @@
             </div>
         </div>
     </div>
+    @include('admin.dashboard-task-modal')
 @endsection
 @section('script')
     <script>
         var csrf_token = '{{ csrf_token() }}';
         var edit_path = "{{ route('consulting.show', ['consulting' => ':consulting']) }}";
         var delete_path = "{{ route('consulting.destroy', ['consulting' => ':consulting']) }}";
+      
         window.canEditTask = @json(canAccess('consulting.edit'));
         window.canDeleteTask = @json(canAccess('consulting.delete'));
-
+     
         $(".select2").select2({
             placeholder: "Select...",
             width: "100%",

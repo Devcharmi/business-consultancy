@@ -20,13 +20,13 @@
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label class="required">Due Date</label><span class="text-danger">*</span>
+                        <label class="required">Due Date</label>
                         <input type="date" name="commitment_due_date" id="commitment_due_date" class="form-control">
                         <small class="text-danger" id="commitment_due_date_error"></small>
                     </div>
 
                     <div class="mb-3">
-                        <label>Commitment</label><span class="text-danger">*</span>
+                        <label class="required">Commitment</label>
                         <input type="text" name="commitment" id="commitment" class="form-control"
                             placeholder="Enter commitment">
                         <small class="text-danger" id="commitment_error"></small>
@@ -34,11 +34,11 @@
 
                     @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
                         <div class="mb-3">
-                            <label for="staff_manager_id">Assign to</label><span class="text-danger">*</span>
+                            <label for="staff_manager_id" class="required">Assign to</label>
                             <select name="staff_manager_id" id="staff_manager_id" class="form-control select2">
                                 <option value="">Select</option>
                                 @foreach ($staffs as $staff)
-                                    <option value="{{ $staff->id }}">
+                                    <option value="{{ $staff->id }}" data-staff-name = "{{ $staff->name }}">
                                         {{ $staff->name }}</option>
                                 @endforeach
                             </select>
