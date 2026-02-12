@@ -228,7 +228,7 @@
         //     "<'row mt-2'<'col-md-5'i><'col-md-7'p>>";
         const REPORT_TABLE_DOM =
             "<'row align-items-center mb-2'" +
-            "<'col-md-6 d-flex align-items-center'lB>" +
+            "<'col-md-6 d-flex align-items-center gap-2'lB>" +
             "<'col-md-6 text-end'f>" +
             ">" +
             "<'row'<'col-12'tr>>" +
@@ -299,7 +299,7 @@
         function getReportButtons(reportName) {
             return [{
                 extend: "collection",
-                className: "btn btn-secondary btn-sm",
+                className: "btn btn-light btn-xs ms-2",
                 text: '<i class="fas fa-ellipsis-v"></i>',
                 titleAttr: "Export Options",
                 buttons: [{
@@ -422,6 +422,7 @@
         // }
     </script>
 
+{{-- consulting task popups --}}
     <script>
         var task_edit_path = "{{ route('task.show', ['task' => ':task']) }}";
         var task_delete_path = "{{ route('task.destroy', ['task' => ':task']) }}";
@@ -440,11 +441,11 @@
             const objectiveName = $(this).data("objective-name");
 
             $("#taskModalTitle").html(`
-        Meetings
-        <span class="text-muted fw-normal">
-            — ${clientName}${objectiveName ? " / " + objectiveName : ""}
-        </span>
-    `);
+                    Meetings
+                    <span class="text-muted fw-normal">
+                        — ${clientName}${objectiveName ? " / " + objectiveName : ""}
+                    </span>
+                `);
 
             const $addBtn = $("#addMeetingBtn");
 
@@ -679,19 +680,19 @@
         //                     if (!data) return "-";
 
         //                     return `
-    //                         <span
-    //                             class="badge"
-    //                             style="
-    //                                 background-color: ${data.color ?? data.color_name ?? "#6c757d"};
-    //                                 color: #fff;
-    //                                 font-size: 11px;
-    //                                 padding: 4px 8px;
-    //                                 border-radius: 4px;
-    //                             "
-    //                         >
-    //                             ${data.name}
-    //                         </span>
-    //                     `;
+        //                         <span
+        //                             class="badge"
+        //                             style="
+        //                                 background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+        //                                 color: #fff;
+        //                                 font-size: 11px;
+        //                                 padding: 4px 8px;
+        //                                 border-radius: 4px;
+        //                             "
+        //                         >
+        //                             ${data.name}
+        //                         </span>
+        //                     `;
         //                 },
         //             },
 
@@ -712,15 +713,15 @@
         //                         let color = o.status_manager.color_name || "gray";
 
         //                         return `
-    //                     <span style="
-    //                         background:${color};
-    //                         color:#fff;
-    //                         padding:2px 6px;
-    //                         border-radius:4px;
-    //                         font-size:11px;
-    //                     ">
-    //                         ${name}
-    //                     </span>`;
+        //                     <span style="
+        //                         background:${color};
+        //                         color:#fff;
+        //                         padding:2px 6px;
+        //                         border-radius:4px;
+        //                         font-size:11px;
+        //                     ">
+        //                         ${name}
+        //                     </span>`;
         //                     }
         //                     return "N/A";
         //                 },
@@ -746,24 +747,24 @@
         //                         "style='pointer-events:none;opacity:0.4;'";
 
         //                     return `
-    //                 <a href="${pdf_path_set}" target="_blank" title="PDF">
-    //                     <i class="fas fa-file-pdf p-1 text-secondary"></i>
-    //                 </a>
+        //                 <a href="${pdf_path_set}" target="_blank" title="PDF">
+        //                     <i class="fas fa-file-pdf p-1 text-secondary"></i>
+        //                 </a>
 
-    //                 <a href="${edit_path_set}"
-    //                    title="Edit"
-    //                    ${editDisabled}>
-    //                     <i class="fas fa-pen p-1 text-primary"></i>
-    //                 </a>
+        //                 <a href="${edit_path_set}"
+        //                    title="Edit"
+        //                    ${editDisabled}>
+        //                     <i class="fas fa-pen p-1 text-primary"></i>
+        //                 </a>
 
-    //                 <a href="javascript:void(0);"
-    //                    class="task-delete-data"
-    //                    data-url="${delete_path_set}"
-    //                    title="Delete"
-    //                    ${deleteDisabled}>
-    //                     <i class="fas fa-trash p-1 text-danger"></i>
-    //                 </a>
-    //             `;
+        //                 <a href="javascript:void(0);"
+        //                    class="task-delete-data"
+        //                    data-url="${delete_path_set}"
+        //                    title="Delete"
+        //                    ${deleteDisabled}>
+        //                     <i class="fas fa-trash p-1 text-danger"></i>
+        //                 </a>
+        //             `;
         //                 },
         //             },
         //         ],
