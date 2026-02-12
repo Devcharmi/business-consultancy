@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\UserTask;
 use App\Models\UserTaskActivity;
 use App\Models\StatusManager;
+use App\Models\User;
 use Carbon\Carbon;
 
 class UserTaskObserver
@@ -65,9 +66,9 @@ class UserTaskObserver
             UserTaskActivity::create([
                 'user_task_id' => $task->id,
                 'activity_type' => 'status_changed',
-                'description'  => "Status changed from "
-                    . ($oldStatus->name ?? '-') . " to "
-                    . ($newStatus->name ?? '-'),
+                'description'  => "Status changed from <strong>"
+                    . ($oldStatus->name ?? '-') . "</strong> to <strong>"
+                    . ($newStatus->name ?? '-') . "</strong>",
                 'meta' => [
                     'old_status' => $oldStatus->name ?? null,
                     'new_status' => $newStatus->name ?? null,
@@ -92,7 +93,7 @@ class UserTaskObserver
                 UserTaskActivity::create([
                     'user_task_id' => $task->id,
                     'activity_type' => 'delayed',
-                    'description'  => "Due date extended from {$oldDate} to {$newDate}",
+                    'description'  => "Due date extended from <strong> {$oldDate} </strong> to <strong> {$newDate} </strong>",
                     'meta' => [
                         'old_due_date' => $oldDate,
                         'new_due_date' => $newDate,
@@ -104,22 +105,35 @@ class UserTaskObserver
             }
         }
 
-
         /*
         =========================
         STAFF REASSIGNED
         =========================
         */
+
         if ($task->wasChanged('staff_manager_id')) {
+
+            $oldStaff = isset($original['staff_manager_id'])
+                ? User::find($original['staff_manager_id'])
+                : null;
+
+            $newStaff = $task->staff; // already loaded relation if accessed
 
             UserTaskActivity::create([
                 'user_task_id' => $task->id,
                 'activity_type' => 'reassigned',
-                'description'  => "Task reassigned",
+                'description'  => "Task reassigned from <strong>"
+                    . ($oldStaff->name ?? 'Unassigned')
+                    . "</strong> to <strong>"
+                    . ($newStaff->name ?? 'Unassigned') . "</strong>",
+
                 'meta' => [
-                    'old_staff' => $original['staff_manager_id'],
-                    'new_staff' => $task->staff_manager_id,
+                    'old_staff_id' => $original['staff_manager_id'] ?? null,
+                    'new_staff_id' => $task->staff_manager_id,
+                    'old_staff_name' => $oldStaff->name ?? null,
+                    'new_staff_name' => $newStaff->name ?? null,
                 ],
+
                 'performed_by' => auth()->check() ? auth()->id() : null,
             ]);
         }

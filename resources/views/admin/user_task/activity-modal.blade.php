@@ -62,18 +62,24 @@
                                     </div>
 
                                     <div class="mt-1">
-                                        {{ $activity->description }}
+                                        {!! $activity->description !!}
                                     </div>
 
                                     {{-- META DETAILS --}}
                                     @if (!empty($activity->meta))
                                         <div class="mt-2 p-2 bg-light rounded small">
 
+                                            @php
+                                                $hiddenKeys = ['old_staff_id', 'new_staff_id'];
+                                            @endphp
+
                                             @foreach ($activity->meta as $key => $value)
-                                                <div>
-                                                    <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                                    {{ $value }}
-                                                </div>
+                                                @if (!in_array($key, $hiddenKeys) && !empty($value))
+                                                    <div>
+                                                        <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                        {{ $value }}
+                                                    </div>
+                                                @endif
                                             @endforeach
 
                                         </div>
