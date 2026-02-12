@@ -44,7 +44,8 @@
     <!-- End::main-scripts -->
 
     <!-- DataTables CORE -->
-    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    {{-- <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script> --}}
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 
     <!-- Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
@@ -422,7 +423,7 @@
         // }
     </script>
 
-{{-- consulting task popups --}}
+    {{-- consulting task popups --}}
     <script>
         var task_edit_path = "{{ route('task.show', ['task' => ':task']) }}";
         var task_delete_path = "{{ route('task.destroy', ['task' => ':task']) }}";
@@ -497,12 +498,12 @@
                 processing: true,
                 serverSide: true,
                 serverMethod: "GET",
-                pageLength: 25,
+                dom: REPORT_TABLE_DOM,
+                buttons: getReportButtons("Tasks_Report"),
                 lengthMenu: [
                     [25, 100, 200, 250],
                     [25, 100, 200, 250],
                 ],
-
                 ajax: {
                     url: $("#task_modal_table").attr("data-url"),
                     data: function(d) {
@@ -621,7 +622,7 @@
                 language: {
                     searchPlaceholder: "Search...",
                     sSearch: "",
-                    lengthMenu: "_MENU_ items/page",
+                    lengthMenu: "_MENU_&nbsp; items/page",
                 }
             });
         }
@@ -680,19 +681,19 @@
         //                     if (!data) return "-";
 
         //                     return `
-        //                         <span
-        //                             class="badge"
-        //                             style="
-        //                                 background-color: ${data.color ?? data.color_name ?? "#6c757d"};
-        //                                 color: #fff;
-        //                                 font-size: 11px;
-        //                                 padding: 4px 8px;
-        //                                 border-radius: 4px;
-        //                             "
-        //                         >
-        //                             ${data.name}
-        //                         </span>
-        //                     `;
+    //                         <span
+    //                             class="badge"
+    //                             style="
+    //                                 background-color: ${data.color ?? data.color_name ?? "#6c757d"};
+    //                                 color: #fff;
+    //                                 font-size: 11px;
+    //                                 padding: 4px 8px;
+    //                                 border-radius: 4px;
+    //                             "
+    //                         >
+    //                             ${data.name}
+    //                         </span>
+    //                     `;
         //                 },
         //             },
 
@@ -713,15 +714,15 @@
         //                         let color = o.status_manager.color_name || "gray";
 
         //                         return `
-        //                     <span style="
-        //                         background:${color};
-        //                         color:#fff;
-        //                         padding:2px 6px;
-        //                         border-radius:4px;
-        //                         font-size:11px;
-        //                     ">
-        //                         ${name}
-        //                     </span>`;
+    //                     <span style="
+    //                         background:${color};
+    //                         color:#fff;
+    //                         padding:2px 6px;
+    //                         border-radius:4px;
+    //                         font-size:11px;
+    //                     ">
+    //                         ${name}
+    //                     </span>`;
         //                     }
         //                     return "N/A";
         //                 },
@@ -747,24 +748,24 @@
         //                         "style='pointer-events:none;opacity:0.4;'";
 
         //                     return `
-        //                 <a href="${pdf_path_set}" target="_blank" title="PDF">
-        //                     <i class="fas fa-file-pdf p-1 text-secondary"></i>
-        //                 </a>
+    //                 <a href="${pdf_path_set}" target="_blank" title="PDF">
+    //                     <i class="fas fa-file-pdf p-1 text-secondary"></i>
+    //                 </a>
 
-        //                 <a href="${edit_path_set}"
-        //                    title="Edit"
-        //                    ${editDisabled}>
-        //                     <i class="fas fa-pen p-1 text-primary"></i>
-        //                 </a>
+    //                 <a href="${edit_path_set}"
+    //                    title="Edit"
+    //                    ${editDisabled}>
+    //                     <i class="fas fa-pen p-1 text-primary"></i>
+    //                 </a>
 
-        //                 <a href="javascript:void(0);"
-        //                    class="task-delete-data"
-        //                    data-url="${delete_path_set}"
-        //                    title="Delete"
-        //                    ${deleteDisabled}>
-        //                     <i class="fas fa-trash p-1 text-danger"></i>
-        //                 </a>
-        //             `;
+    //                 <a href="javascript:void(0);"
+    //                    class="task-delete-data"
+    //                    data-url="${delete_path_set}"
+    //                    title="Delete"
+    //                    ${deleteDisabled}>
+    //                     <i class="fas fa-trash p-1 text-danger"></i>
+    //                 </a>
+    //             `;
         //                 },
         //             },
         //         ],

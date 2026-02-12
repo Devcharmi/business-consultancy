@@ -31,7 +31,7 @@ var lead_report_table = $("#leadReportTable").DataTable({
     language: {
         searchPlaceholder: "Search...",
         sSearch: "",
-        lengthMenu: "_MENU_ items/page",
+        lengthMenu: "_MENU_&nbsp; items/page",
     },
 });
 
