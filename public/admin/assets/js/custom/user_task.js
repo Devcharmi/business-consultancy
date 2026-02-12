@@ -38,9 +38,20 @@ var columns = [
         },
     },
     {
-        data: "clients.name",
+        data: null,
+        title: "Client / Lead",
         mRender: function (v, t, o) {
-            return o.clients ? o.clients.client_name : "-";
+            // If Lead
+            if (o.entity_type === "lead" && o.lead) {
+                return o.lead.name ?? "-";
+            }
+
+            // If Client
+            if (o.entity_type === "client" && o.clients) {
+                return o.clients.client_name ?? "-";
+            }
+
+            return "-";
         },
     },
     {

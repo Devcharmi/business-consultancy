@@ -101,6 +101,11 @@ class UserTask extends Model
         });
     }
 
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class, 'lead_id');
+    }
+
     public function scopeForLead($query)
     {
         return $query->where('entity_type', self::ENTITY_LEAD);

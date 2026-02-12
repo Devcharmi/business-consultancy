@@ -41,6 +41,7 @@ class UserTaskController extends Controller
             'source_type',
             'entity_type',
             'task_type',
+            'lead_id',
         ];
 
         if ($request->ajax()) {
@@ -70,6 +71,7 @@ class UserTaskController extends Controller
                     'created_by',
                     'status_manager',
                     'clients',
+                    'lead',
                 ]);
 
             // Apply selected TAB status
@@ -90,7 +92,8 @@ class UserTaskController extends Controller
                 'clients',
                 'staff',
                 'status_manager',
-                'priority_manager'
+                'priority_manager',
+                'lead'
             ])->get();
 
             return response()->json([
