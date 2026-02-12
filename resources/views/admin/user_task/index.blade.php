@@ -174,6 +174,8 @@
                                     <th>Task</th>
                                     <th>Start Date</th>
                                     <th>Due Date</th>
+                                    <th>Entity</th>
+                                    <th>Type</th>
                                     <th>Created by</th>
                                     <th>Assign To</th>
                                     <th>Status</th>

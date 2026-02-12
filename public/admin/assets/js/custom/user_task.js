@@ -88,6 +88,24 @@ var columns = [
         },
     },
     {
+        data: "entity_type",
+        mRender: function (v, t, o) {
+            if (!o.entity_type) return "-";
+            return (
+                o.entity_type.charAt(0).toUpperCase() + o.entity_type.slice(1)
+            );
+        },
+    },
+    {
+        data: "task_type",
+        mRender: function (v, t, o) {
+            if (!o.entity_type) return "-";
+            return (
+                o.task_type.charAt(0).toUpperCase() + o.task_type.slice(1)
+            );
+        },
+    },
+    {
         data: "created_by.name",
         title: "Created By",
         render: function (data, type, row) {
