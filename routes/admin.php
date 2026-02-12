@@ -47,6 +47,11 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         [DashboardController::class, 'dayConsultings']
     )->name('dashboard.dayConsultings');
 
+    Route::post(
+        'dashboard/update-status',
+        [DashboardController::class, 'updateStatus']
+    )->name('dashboard.update-status');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('admin.profile.destroy');
@@ -83,7 +88,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         '/client/consultings',
         [ClientController::class, 'clientConsultings']
     )->name('client.consultings');
-    
+
     Route::resource('status-manager', StatusManagerController::class);
     Route::resource('objective-manager', ObjectiveManagerController::class);
     Route::resource('expertise-manager', ExpertiseManagerController::class);
@@ -113,11 +118,8 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
         ->name('task.pdf');
 
     Route::resource('user-task', UserTaskController::class);
-
-    Route::post(
-        'dashboard/update-status',
-        [DashboardController::class, 'updateStatus']
-    )->name('dashboard.update-status');
+    Route::get('user-task/{task}/activities', [UserTaskController::class, 'activities'])
+        ->name('user-task.activities');
 
     Route::prefix('reports')
         ->name('reports.')

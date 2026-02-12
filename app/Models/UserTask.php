@@ -45,24 +45,24 @@ class UserTask extends Model
         'task_end_date'   => 'date',
     ];
 
-    protected static function booted()
-    {
-        static::saving(function ($task) {
+    // protected static function booted()
+    // {
+    //     static::saving(function ($task) {
 
-            // Load related status if only ID is present
-            if ($task->status_manager_id) {
-                $status = StatusManager::find($task->status_manager_id);
+    //         // Load related status if only ID is present
+    //         if ($task->status_manager_id) {
+    //             $status = StatusManager::find($task->status_manager_id);
 
-                if ($status && $status->isCompleted()) {
-                    // Set completed_at if Done and not already set
-                    $task->completed_at = $task->completed_at ?? Carbon::now();
-                } else {
-                    // Clear completed_at if not Done
-                    $task->completed_at = null;
-                }
-            }
-        });
-    }
+    //             if ($status && $status->isCompleted()) {
+    //                 // Set completed_at if Done and not already set
+    //                 $task->completed_at = $task->completed_at ?? Carbon::now();
+    //             } else {
+    //                 // Clear completed_at if not Done
+    //                 $task->completed_at = null;
+    //             }
+    //         }
+    //     });
+    // }
 
     public function clients()
     {
@@ -87,6 +87,11 @@ class UserTask extends Model
     public function status_manager()
     {
         return $this->belongsTo(StatusManager::class, 'status_manager_id');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(UserTaskActivity::class)->latest();
     }
 
     public function scopeVisibleTo($query, $user)

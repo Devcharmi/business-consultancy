@@ -199,6 +199,7 @@
         var index_path = "{{ route('user-task.index') }}";
         var edit_path = "{{ route('user-task.show', ['user_task' => ':user_task']) }}";
         var delete_path = "{{ route('user-task.destroy', ['user_task' => ':user_task']) }}";
+        var routeUserTaskActivity = "{{ route('user-task.activities', ':id') }}";
 
         window.canEditTask = @json(canAccess('user-task.edit'));
         window.canDeleteTask = @json(canAccess('user-task.delete'));

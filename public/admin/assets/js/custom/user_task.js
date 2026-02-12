@@ -20,6 +20,7 @@ var columns = [
             // Admin / Super Admin: Edit + Delete
             var edit_path_set = edit_path.replace(":user_task", o.id);
             var delete_path_set = delete_path.replace(":user_task", o.id);
+            let activityUrl = routeUserTaskActivity.replace(":id", o.id);
             let editDisabled = window.canEditTask
                 ? ""
                 : "style='pointer-events:none;opacity:0.4;' disabled";
@@ -32,7 +33,14 @@ var columns = [
                 </a>
                 <a href="javascript:void(0);" data-url="${delete_path_set}" class="delete-data" title="Delete" ${deleteDisabled}>
                     <i class="fas fa-trash p-1 text-danger"></i>
-                </a>`;
+                </a>
+                 <button 
+                class="btn btn-sm btn-info view-activity"
+                data-url="${activityUrl}"
+                title="View Activity">
+                <i class="ri-history-line"></i>
+            </button>
+                    `;
 
             return html;
         },
@@ -100,9 +108,7 @@ var columns = [
         data: "task_type",
         mRender: function (v, t, o) {
             if (!o.entity_type) return "-";
-            return (
-                o.task_type.charAt(0).toUpperCase() + o.task_type.slice(1)
-            );
+            return o.task_type.charAt(0).toUpperCase() + o.task_type.slice(1);
         },
     },
     {
@@ -311,6 +317,22 @@ function toggleTodayTab() {
         $('a[data-status="today"]').addClass("active");
     }
 }
+
+$(document).on("click", ".view-activity", function () {
+    let url = $(this).data("url");
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (data) {
+            $("#modal_show_html").html(data.html);
+            $("#activityModal").modal("show");
+        },
+        error: function () {
+            showToastr("error", "Something went wrong.");
+        },
+    });
+});
 
 // // Reset Filters Button
 // $(document).on("click", "#resetFilters", function () {

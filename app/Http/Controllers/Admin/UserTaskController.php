@@ -308,4 +308,16 @@ class UserTaskController extends Controller
             return response()->json(['success' => false, 'message' => 'Something went wrong!'], 500);
         }
     }
+
+    public function activities(UserTask $task)
+    {
+        $task->load(['activities.user']);
+
+        $html = view('admin.user_task.activity-modal', compact('task'))->render();
+        
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ], 200);
+    }
 }
