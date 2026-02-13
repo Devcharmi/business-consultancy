@@ -166,7 +166,7 @@ class TaskControllerNew extends Controller
     |----------------------------------------
     */
         $meetingDate = $consultingData
-            ? Carbon::parse($consultingData->consulting_datetime)->toDateString()
+            ? Carbon::parse($consultingData->consulting_date)->toDateString()
             : Carbon::today()->toDateString();
 
         return view('admin.task.task-form', compact(

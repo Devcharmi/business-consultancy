@@ -200,9 +200,9 @@ class TaskController extends Controller
         if ($taskData) {
             // EDIT MODE
             $date = Carbon::parse($taskData->task_start_date)->toDateString();
-        } elseif ($consultingData && $consultingData->consulting_datetime) {
+        } elseif ($consultingData && $consultingData->consulting_date) {
             // CREATE FROM CONSULTING
-            $date = Carbon::parse($consultingData->consulting_datetime)->toDateString();
+            $date = Carbon::parse($consultingData->consulting_date)->toDateString();
         } else {
             // NORMAL NEW
             $date = $today;
@@ -623,7 +623,15 @@ class TaskController extends Controller
 
         $pdf->writeHTML($html, true, false, false, false, '');
 
-        return $pdf->Output('task-report.pdf', 'I');
+        // 🔥 Prepare safe file name
+        $clientName = $task->client_objective->client->name ?? 'Client';
+        $expertiseName = $task->expertise_manager->name ?? 'Expertise';
+
+        $fileName = "CVR-{$task->id}-" .
+            preg_replace('/[^A-Za-z0-9\-]/', '_', $clientName) . '-' .
+            preg_replace('/[^A-Za-z0-9\-]/', '_', $expertiseName) . '.pdf';
+
+        return $pdf->Output($fileName, 'I');
     }
 
     public function taskPdf($id)

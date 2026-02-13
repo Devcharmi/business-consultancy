@@ -11,15 +11,38 @@ class Consulting extends Model
     use FiltersByExpertiseManager;
 
     protected $fillable = [
-        // 'client_id',
-        // 'objective_manager_id',
         'client_objective_id',
         'expertise_manager_id',
         'focus_area_manager_id',
-        'consulting_datetime',
+        'consulting_date',
+        'start_time',
+        'end_time',
         'created_by',
         'updated_by'
     ];
+
+    protected $casts = [
+        'consulting_date' => 'date',
+    ];
+
+    public static function hasTimeOverlap(
+        $consultingDate,
+        $startTime,
+        $endTime,
+        $expertiseManagerId,
+        $ignoreId = null
+    ) {
+        return self::where('consulting_date', $consultingDate)
+            ->where('expertise_manager_id', $expertiseManagerId)
+            ->when($ignoreId, function ($query) use ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            })
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where('start_time', '<', $endTime)
+                    ->where('end_time', '>', $startTime);
+            })
+            ->exists();
+    }
 
     // public function client()
     // {
@@ -70,8 +93,8 @@ class Consulting extends Model
             $explode = explode(' - ', $filters['date_range']);
             $from = Carbon::parse($explode[0])->format('Y-m-d H:i:s');
             $to = Carbon::parse($explode[1])->format('Y-m-d H:i:s');
-            $query->whereDate('created_at', '>=', $from);
-            $query->whereDate('created_at', '<=', $to);
+            $query->whereDate('consulting_date', '>=', $from);
+            $query->whereDate('consulting_date', '<=', $to);
         }
 
         if (!empty($filters['search']) or !empty($filters['search']['value'])) {

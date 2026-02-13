@@ -67,7 +67,7 @@ class ClientController extends Controller
                 $q->where('client_id', $clientId);
             })
             ->accessibleBy($user)
-            ->orderBy('consulting_datetime')
+            ->orderBy('consulting_date')
             ->get();
 
         return view('admin.day-consulting-modal', compact(

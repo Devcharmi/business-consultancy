@@ -56,9 +56,9 @@ $(document).ready(function () {
             success: function (response) {
                 $("#sub_modal_show_html").html(response.html);
 
-                const datetimeInput = $("#consulting_datetime");
-                if (datetimeInput.length) {
-                    datetimeInput.val(date + "T09:00");
+                const dateInput = $("#consulting_date");
+                if (dateInput.length) {
+                    dateInput.val(date);
                 }
 
                 if ($.fn.select2) {

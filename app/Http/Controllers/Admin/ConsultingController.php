@@ -46,7 +46,9 @@ class ConsultingController extends Controller
                 'client_objective_id',
                 'expertise_manager_id',
                 'focus_area_manager_id',
-                'consulting_datetime',
+                'consulting_date',
+                'start_time',
+                'end_time',
             ];
 
             $tableData = Consulting::query()
@@ -137,11 +139,9 @@ class ConsultingController extends Controller
                 'integer',
                 'exists:focus_area_managers,id',
             ],
-            'consulting_datetime' => [
-                'required',
-                'date',
-                // 'after_or_equal:now',
-            ],
+            'consulting_date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
         ], [
             // Optional custom messages
             // 'client_objective_id.required' => 'Please select a client objective.',
@@ -149,9 +149,28 @@ class ConsultingController extends Controller
             'objective_manager_id.required' => 'Please select a objective.',
             'expertise_manager_id.required' => 'Please select an expertise.',
             'focus_area_manager_id.required' => 'Please select a focus area.',
-            'consulting_datetime.required' => 'Please select consulting date & time.',
-            // 'consulting_datetime.after_or_equal' => 'Consulting date must be today or future.',
+            'consulting_date.required' => 'Please select consulting date & time.',
+            'start_time.required' => 'Please select start time.',
+            'end_time.required' => 'Please select end time.',
+            'end_time.after' => 'End time must be greater than start time.',
+            // 'consulting_date.after_or_equal' => 'Consulting date must be today or future.',
         ]);
+
+        $overlap = Consulting::hasTimeOverlap(
+            $validated['consulting_date'],
+            $validated['start_time'],
+            $validated['end_time'],
+            $validated['expertise_manager_id']
+        );
+
+        if ($overlap) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'start_time' => ['This time slot overlaps with an existing consulting.']
+                ]
+            ], 422);
+        }
 
         try {
             // Start transaction
@@ -289,20 +308,38 @@ class ConsultingController extends Controller
                 'integer',
                 'exists:focus_area_managers,id',
             ],
-            'consulting_datetime' => [
-                'required',
-                'date',
-                // 'after_or_equal:today',
-            ],
+            'consulting_date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
         ], [
             // 'client_objective_id.required' => 'Please select a client objective.',
             'client_id.required' => 'Please select a client.',
             'objective_manager_id.required' => 'Please select a objective.',
             'expertise_manager_id.required' => 'Please select an expertise.',
             'focus_area_manager_id.required' => 'Please select a focus area.',
-            'consulting_datetime.required' => 'Please select consulting date & time.',
-            // 'consulting_datetime.after_or_equal' => 'Consulting date cannot be in the past.',
+            'consulting_date.required' => 'Please select consulting date & time.',
+            'start_time.required' => 'Please select start time.',
+            'end_time.required' => 'Please select end time.',
+            'end_time.after' => 'End time must be greater than start time.',
+            // 'consulting_date.after_or_equal' => 'Consulting date cannot be in the past.',
         ]);
+
+        $overlap = Consulting::hasTimeOverlap(
+            $validated['consulting_date'],
+            $validated['start_time'],
+            $validated['end_time'],
+            $validated['expertise_manager_id'],
+            $id // ignore current record
+        );
+
+        if ($overlap) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'start_time' => ['This time slot overlaps with an existing consulting.']
+                ]
+            ], 422);
+        }
 
         try {
             // Start transaction
@@ -388,8 +425,8 @@ class ConsultingController extends Controller
         $task->client_objective_id = $consulting->client_objective_id;
         $task->expertise_manager_id = $consulting->expertise_manager_id;
         $task->title = $focusArea ? $focusArea->name : 'Consulting Task';
-        $task->task_start_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
-        $task->task_due_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
+        $task->task_start_date = Carbon::parse($consulting->consulting_date)->format('Y-m-d');
+        $task->task_due_date = Carbon::parse($consulting->consulting_date)->format('Y-m-d');
         $pendingStatus = $this->getPendingStatus();
         if ($pendingStatus) {
             $task->status_manager_id = $pendingStatus->id;
@@ -408,8 +445,8 @@ class ConsultingController extends Controller
         $task->client_objective_id = $consulting->client_objective_id;
         $task->expertise_manager_id = $consulting->expertise_manager_id;
         $task->title = $focusArea ? $focusArea->name : 'Consulting Task';
-        $task->task_start_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
-        $task->task_due_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
+        $task->task_start_date = Carbon::parse($consulting->consulting_date)->format('Y-m-d');
+        $task->task_due_date = Carbon::parse($consulting->consulting_date)->format('Y-m-d');
         $task->updated_by = auth()->id();
         $task->save();
 
@@ -434,7 +471,7 @@ class ConsultingController extends Controller
         $task->client_objective_id = $consulting->client_objective_id;
         $task->expertise_manager_id = $consulting->expertise_manager_id;
         $task->title = $focusArea ? $focusArea->name : 'Consulting Task';
-        $task->task_due_date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
+        $task->task_due_date = Carbon::parse($consulting->consulting_date)->format('Y-m-d');
         $task->updated_by = auth()->id();
         $task->save();
 

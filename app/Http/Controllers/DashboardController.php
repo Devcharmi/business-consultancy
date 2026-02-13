@@ -68,28 +68,28 @@ class DashboardController extends Controller
         $expertiseTaskCounts = $expertiseTasks->keyBy('expertise_manager_id');
 
         // $consultingQuery = Consulting::with(['expertise_manager', 'client_objective.client'])
-        //     ->whereMonth('consulting_datetime', $selectedMonth)
-        //     ->whereYear('consulting_datetime', $selectedYear)
+        //     ->whereMonth('consulting_date', $selectedMonth)
+        //     ->whereYear('consulting_date', $selectedYear)
         //     ->accessibleBy($user);
         $consultingQuery = Consulting::with(['expertise_manager', 'client_objective.client'])
             ->accessibleBy($user);
 
         if ($fromDate && $toDate) {
-            $consultingQuery->whereBetween('consulting_datetime', [$fromDate, $toDate]);
+            $consultingQuery->whereBetween('consulting_date', [$fromDate, $toDate]);
         } else {
             // fallback month/year (optional)
             $consultingQuery
-                ->whereMonth('consulting_datetime', $selectedMonth)
-                ->whereYear('consulting_datetime', $selectedYear);
+                ->whereMonth('consulting_date', $selectedMonth)
+                ->whereYear('consulting_date', $selectedYear);
         }
 
         $consultings = $consultingQuery
-            ->orderBy('consulting_datetime')
+            ->orderBy('consulting_date')
             ->get();
 
         $consultingsByDate = [];
         foreach ($consultings as $consulting) {
-            $date = Carbon::parse($consulting->consulting_datetime)->format('Y-m-d');
+            $date = Carbon::parse($consulting->consulting_date)->format('Y-m-d');
             if (!isset($consultingsByDate[$date])) {
                 $consultingsByDate[$date] = [];
             }
@@ -331,9 +331,9 @@ class DashboardController extends Controller
             'client_objective.client',
             'client_objective.objective_manager',
         ])
-            ->whereDate('consulting_datetime', $date)
+            ->whereDate('consulting_date', $date)
             ->accessibleBy($user)
-            ->orderBy('consulting_datetime')
+            ->orderBy('consulting_date')
             ->get();
 
         return view('admin.day-consulting-modal', compact(

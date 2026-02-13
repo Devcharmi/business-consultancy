@@ -37,11 +37,13 @@
                             <thead>
                                 <tr>
                                     <th class="text-center no-export">Action</th>
-                                    <th>Date</th>
                                     <th>Client Name</th>
                                     <th>Objective</th>
                                     <th>Expertise</th>
                                     <th>Focus Area</th>
+                                    <th>Date</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
                                 </tr>
                             </thead>
                             <tbody>

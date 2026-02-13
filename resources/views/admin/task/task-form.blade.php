@@ -62,9 +62,9 @@
                                         {{-- Row 2: CVR Date & Expertise --}}
                                         <div class="col-md-3 mb-3">
                                             <label class="fw-bold">Date:</label>
-                                            <span>{{ \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('d-m-Y h:i') }}</span>
+                                            <span>{{ \Carbon\Carbon::parse($consultingData->consulting_date)->format('d-m-Y') }}</span>
                                             <input type="hidden" name="task_start_date"
-                                                value="{{ \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d') }}">
+                                                value="{{ \Carbon\Carbon::parse($consultingData->consulting_date)->format('Y-m-d') }}">
 
                                         </div>
 
@@ -139,7 +139,7 @@
                                     <div class="col-md-2 mb-3">
                                         <label class="required">Due Date</label>
                                         <input type="date" name="task_due_date" id="task_due_date" class="form-control"
-                                            value="{{ old('task_due_date', optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d')) }}">
+                                            value="{{ old('task_due_date', optional($taskData)->task_due_date ? \Carbon\Carbon::parse($taskData->task_due_date)->format('Y-m-d') : \Carbon\Carbon::parse($consultingData->consulting_date)->format('Y-m-d')) }}">
                                         <small class="text-danger">{{ $errors->first('task_due_date') }}</small>
                                     </div>
 

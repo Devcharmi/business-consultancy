@@ -14,11 +14,11 @@
 </div>
 
 @php
-    // ✅ If consulting exists → use consulting_datetime
+    // ✅ If consulting exists → use consulting_date
     // ✅ Else → use today
     $meetingDate =
         isset($consultingData) && $consultingData
-            ? \Carbon\Carbon::parse($consultingData->consulting_datetime)->toDateString()
+            ? \Carbon\Carbon::parse($consultingData->consulting_date)->toDateString()
             : now()->toDateString();
 
     $safeId = \Illuminate\Support\Str::slug($meetingDate);

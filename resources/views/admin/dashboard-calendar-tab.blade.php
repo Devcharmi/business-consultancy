@@ -107,7 +107,7 @@
                                      $expertise = $consulting->expertise_manager;
                                      $initial = strtoupper(substr($expertise->name ?? 'N', 0, 1));
                                      $color = $expertise->color_name ?? '#6c757d';
-                                     $date = \Carbon\Carbon::parse($consulting->consulting_datetime)->format('h:i A');
+                                     $date = \Carbon\Carbon::parse($consulting->consulting_date)->format('Y-m-d');
                                  @endphp
                                  <div class="calendar-dot"
                                      title="{{ $expertise->name }} | {{ $consulting->client_objective->client->client_name ?? 'N/A' }} | {{ $date }}"

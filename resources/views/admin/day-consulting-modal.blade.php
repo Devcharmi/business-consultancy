@@ -37,6 +37,13 @@
                             $expertise = $consulting->expertise_manager;
                             $initial = strtoupper(substr($expertise->name ?? 'N', 0, 1));
                             $color = $expertise->color_name ?? '#6c757d';
+                            $start = $consulting->start_time
+                                ? \Carbon\Carbon::parse($consulting->start_time)->format('h:i A')
+                                : null;
+
+                            $end = $consulting->end_time
+                                ? \Carbon\Carbon::parse($consulting->end_time)->format('h:i A')
+                                : null;
                         @endphp
 
                         <div class="calendar-event d-flex justify-content-between align-items-center mb-2 px-2 py-1 rounded"
@@ -44,7 +51,13 @@
 
                             <div class="small text-truncate">
                                 <strong class="me-1">({{ $initial }})</strong>
-                                {{ \Carbon\Carbon::parse($consulting->consulting_datetime)->format('h:i A') }}
+                                {{-- {{ \Carbon\Carbon::parse($consulting->consulting_date)->format('d-m-Y') }} --}}
+                                @if ($start && $end)
+                                    {{ $start }}–{{ $end }}
+                                @else
+                                    -
+                                @endif
+
                                 —
                                 {{ $consulting->client_objective->client->client_name ?? 'N/A' }}
                                 —

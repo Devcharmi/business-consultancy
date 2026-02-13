@@ -64,14 +64,6 @@ var consulting_table = $(".table-list").DataTable({
                 `;
             },
         },
-        // 6️⃣ Date
-        {
-            data: "consulting_datetime",
-            render: function (data) {
-                return data ? moment(data).format("DD-MM-YYYY HH:mm") : "-";
-            },
-        },
-
         // 2️⃣ Client Name
         // {
         //     data: "clinet",
@@ -132,6 +124,28 @@ var consulting_table = $(".table-list").DataTable({
             data: "focus_area_manager",
             render: function (data) {
                 return data ? data.name : "-";
+            },
+        },
+
+        // 6️⃣ Date
+        {
+            data: "consulting_date",
+            render: function (data) {
+                return data ? moment(data).format("DD-MM-YYYY") : "-";
+            },
+        },
+        // 7️⃣ Start Time
+        {
+            data: "start_time",
+            render: function (data) {
+                return data ? moment(data, "HH:mm:ss").format("hh:mm A") : "-";
+            },
+        },
+        // 8️⃣ End Time
+        {
+            data: "end_time",
+            render: function (data) {
+                return data ? moment(data, "HH:mm:ss").format("hh:mm A") : "-";
             },
         },
     ],

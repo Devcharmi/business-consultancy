@@ -165,7 +165,7 @@ class ReportController extends Controller
                     'expertise_manager:id,name,color_name',
                 ])
                 ->selectRaw('COUNT(*) as total_count')
-                ->selectRaw('MAX(consulting_datetime) as last_date')
+                ->selectRaw('MAX(consulting_date) as last_date')
                 ->groupBy('client_objective_id', 'expertise_manager_id');
 
             // 🔹 Uses YOUR scopeFilters()
