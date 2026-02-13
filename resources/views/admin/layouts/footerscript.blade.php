@@ -44,8 +44,8 @@
     <!-- End::main-scripts -->
 
     <!-- DataTables CORE -->
-    {{-- <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script> --}}
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    {{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script> --}}
 
     <!-- Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
@@ -155,50 +155,161 @@
 
     {{-- daterange setting common --}}
     <script>
-        // Initialize date range picker (FUTURE ORIENTED)
-        $('.date-range').daterangepicker({
-            autoUpdateInput: false,
-            opens: 'left',
-            autoApply: false,
-            minDate: moment(), // 🔥 prevent past dates
-            ranges: {
-                'Today': [moment(), moment()],
-                'Tomorrow': [moment().add(1, 'days'), moment().add(1, 'days')],
-                'Next 7 Days': [moment(), moment().add(6, 'days')],
-                'Next 30 Days': [moment(), moment().add(29, 'days')],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Next Month': [
-                    moment().add(1, 'month').startOf('month'),
-                    moment().add(1, 'month').endOf('month')
-                ]
+        $(document).ready(function() {
+
+            // Initialize date range picker (FUTURE ORIENTED)
+            $('.date-range').daterangepicker({
+                autoUpdateInput: false,
+                opens: 'left',
+                autoApply: false,
+                // minDate: moment(),
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Tomorrow': [moment().add(1, 'days'), moment().add(1, 'days')],
+                    'Next 7 Days': [moment(), moment().add(6, 'days')],
+                    'Next 30 Days': [moment(), moment().add(29, 'days')],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Next Month': [
+                        moment().add(1, 'month').startOf('month'),
+                        moment().add(1, 'month').endOf('month')
+                    ]
+                }
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const dateRange = urlParams.get('date_range');
+            const picker = $('.date-range').data('daterangepicker');
+
+            if (dateRange) {
+
+                $('#dateRange').val(dateRange);
+
+                let dates = dateRange.split(' - ');
+
+                if (dates.length === 2) {
+
+                    let start = moment(dates[0], 'DD-MM-YYYY');
+                    let end = moment(dates[1], 'DD-MM-YYYY');
+
+                    picker.setStartDate(start);
+                    picker.setEndDate(end);
+
+                    // 🔥 Match with predefined ranges
+                    let matchedLabel = 'Custom';
+
+                    $.each(picker.ranges, function(label, range) {
+                        if (start.isSame(range[0], 'day') &&
+                            end.isSame(range[1], 'day')) {
+                            matchedLabel = label;
+                        }
+                    });
+
+                    $('#selectedRangeLabel').text(matchedLabel);
+                }
+
+            } else {
+                $('#selectedRangeLabel').text('Today');
+            }
+
+            // Apply date range
+            $('.date-range').on('apply.daterangepicker', function(ev, picker) {
+
+                $(this).val(
+                    picker.startDate.format('DD-MM-YYYY') +
+                    ' - ' +
+                    picker.endDate.format('DD-MM-YYYY')
+                );
+
+                $(this).trigger('change');
+
+                // 🔥 Get selected predefined label
+                let selectedLabel = picker.chosenLabel;
+
+                if (selectedLabel === 'Custom Range') {
+                    selectedLabel = 'Custom';
+                }
+
+                $('#selectedRangeLabel').text(selectedLabel);
+            });
+
+
+            // Cancel date range
+            $('.date-range').on('cancel.daterangepicker', function() {
+                $(this).val('');
+                $(this).trigger('change');
+
+                // 🔥 Default back to Today
+                $('#selectedRangeLabel').text('Today');
+            });
+
+
+            // ✅ Set Today programmatically
+            window.setDateRangeToday = function() {
+                const today = moment();
+                const picker = $('.date-range').data('daterangepicker');
+
+                picker.setStartDate(today);
+                picker.setEndDate(today);
+
+                $('.date-range').val(
+                    today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY')
+                );
+
+                // 🔥 Update bold text
+                $('#selectedDateText').text(today.format('DD MMM YYYY'));
+            };
+
+        });
+    </script>
+
+    {{-- <script>
+        $(document).ready(function() {
+
+            // Initialize date range picker (FUTURE ORIENTED)
+            $('.date-range').daterangepicker({
+                autoUpdateInput: false,
+                opens: 'left',
+                autoApply: false,
+                minDate: moment(), // 🔥 prevent past dates
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Tomorrow': [moment().add(1, 'days'), moment().add(1, 'days')],
+                    'Next 7 Days': [moment(), moment().add(6, 'days')],
+                    'Next 30 Days': [moment(), moment().add(29, 'days')],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Next Month': [
+                        moment().add(1, 'month').startOf('month'),
+                        moment().add(1, 'month').endOf('month')
+                    ]
+                }
+            });
+
+            // Apply date range
+            $('.date-range').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(
+                    picker.startDate.format('DD-MM-YYYY') +
+                    ' - ' +
+                    picker.endDate.format('DD-MM-YYYY')
+                );
+                $(this).trigger('change'); // for filters
+            });
+
+            // Cancel date range
+            $('.date-range').on('cancel.daterangepicker', function() {
+                $(this).val('');
+                $(this).trigger('change');
+            });
+
+            // Set Today programmatically
+            function setDateRangeToday() {
+                const today = moment();
+                const picker = $('.date-range').data('daterangepicker');
+                picker.setStartDate(today);
+                picker.setEndDate(today);
+                $('.date-range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
             }
         });
-
-        // Apply date range
-        $('.date-range').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(
-                picker.startDate.format('DD-MM-YYYY') +
-                ' - ' +
-                picker.endDate.format('DD-MM-YYYY')
-            );
-            $(this).trigger('change'); // for filters
-        });
-
-        // Cancel date range
-        $('.date-range').on('cancel.daterangepicker', function() {
-            $(this).val('');
-            $(this).trigger('change');
-        });
-
-        // Set Today programmatically
-        function setDateRangeToday() {
-            const today = moment();
-            const picker = $('.date-range').data('daterangepicker');
-            picker.setStartDate(today);
-            picker.setEndDate(today);
-            $('.date-range').val(today.format('DD-MM-YYYY') + ' - ' + today.format('DD-MM-YYYY'));
-        }
-    </script>
+    </script> --}}
 
     {{-- select2 initialization common --}}
     <script>

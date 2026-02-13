@@ -22,28 +22,28 @@
                 {{-- Tabs --}}
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <ul class="nav nav-tabs card-header-tabs">
-                        @if (canAccess('consulting.allow'))
+                        @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
                             <li class="nav-item">
-                                <button class="nav-link active" id="tab-task-statistics" data-bs-toggle="tab"
-                                    data-bs-target="#task-statistics">
+                                <button class="nav-link {{ canAccess('consulting.allow') ? 'active' : '' }} "
+                                    id="tab-task-statistics" data-bs-toggle="tab" data-bs-target="#task-statistics">
                                     Task Statistics
                                 </button>
                             </li>
-                            <li class="nav-item">
-                                <button class="nav-link" id="tab-today-tasks" data-bs-toggle="tab"
-                                    data-bs-target="#today-tasks-tab">
-                                    Task & Followups
-                                </button>
-                            </li>
-                        @else
+                        @endif
+                        <li class="nav-item">
+                            <button class="nav-link  {{ !canAccess('consulting.allow') ? 'active' : '' }}"
+                                id="tab-today-tasks" data-bs-toggle="tab" data-bs-target="#today-tasks-tab">
+                                Task & Followups
+                            </button>
+                        </li>
+                        {{-- @else
                             <li class="nav-item">
                                 <button class="nav-link" id="tab-today-tasks active" data-bs-toggle="tab"
                                     data-bs-target="#today-tasks-tab">
                                     Task & Followups
                                 </button>
                             </li>
-                        @endif
-
+                        @endif --}}
                     </ul>
                 </div>
 
@@ -52,12 +52,14 @@
 
                     @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
                         {{-- ================= TAB 1 ================= --}}
-                        <div class="tab-pane fade show active" id="task-statistics">
+                        <div class="tab-pane fade {{ canAccess('consulting.allow') ? 'show active' : '' }}"
+                            id="task-statistics">
                             @include('admin.dashboard-calendar-tab')
                         </div>
                     @endif
                     {{-- ================= TAB 2 ================= --}}
-                    <div class="tab-pane fade" id="today-tasks-tab">
+                    <div class="tab-pane fade {{ !canAccess('consulting.allow') ? 'show active' : '' }} "
+                        id="today-tasks-tab">
                         @include('admin.dashboard-task-tab')
                     </div>
 
@@ -74,7 +76,6 @@
         var csrf_token = "{{ csrf_token() }}";
         var routeDayConsultings = "{{ route('dashboard.dayConsultings') }}";
         var routeUpdateStatue = "{{ route('dashboard.update-status') }}";
-
     </script>
     <script src="{{ asset('admin/assets/js/custom/dashboard.js') }}"></script>
 @endsection

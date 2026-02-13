@@ -32,13 +32,15 @@ var client_table = $(".table-list").DataTable({
                 let deleteDisabled = window.canDeleteTask
                     ? ""
                     : "style='pointer-events:none;opacity:0.4;' disabled";
-                return `<a href="${edit_url}" class="text-primary me-2" ${editDisabled}><i class="fas fa-pen"></i></a>
-                        <a href="javascript:void(0);" class="text-danger delete-data" ${deleteDisabled} data-url="${delete_url}"><i class="fas fa-trash"></i></a>
-                         <button class="btn btn-xs btn-outline-success open-consulting-modal"
+                return `
+                 <button class="btn btn-xs btn-outline-success open-consulting-modal me-2"
                                     data-client-id="${v}"
                                     data-client-name="${o.client_name}"
                                     title="Consultings">Consultings
-                                </button>`;
+                                </button>
+                        <a href="${edit_url}" class="text-primary me-2" ${editDisabled}><i class="fas fa-pen"></i></a>
+                        <a href="javascript:void(0);" class="text-danger delete-data" ${deleteDisabled} data-url="${delete_url}"><i class="fas fa-trash"></i></a>
+                        `;
             },
         },
         { data: "client_name" },

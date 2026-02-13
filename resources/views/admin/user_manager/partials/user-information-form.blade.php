@@ -13,7 +13,7 @@
                           </a>
                       @endif --}}
                   </div>
-                  <a href="{{ route('user-manager.index') }}" class="btn btn-primary mt-10 d-block text-center">Back</a>
+                  {{-- <a href="{{ route('user-manager.index') }}" class="btn btn-primary mt-10 d-block text-center">Back</a> --}}
               </div>
               <div class="card-body">
                   <!-- User update form -->

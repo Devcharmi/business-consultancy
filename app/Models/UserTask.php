@@ -141,13 +141,20 @@ class UserTask extends Model
             $query->whereDate('task_start_date', '<=', $to);
         }
 
-        // 🔹 Search filter
+        // 🔹 Search filter (with names for managers, client, and lead)
         if (!empty($filters['search']) || !empty($filters['search']['value'])) {
             $term = is_array($filters['search']) ? $filters['search']['value'] : $filters['search'];
+
             $query->where(function ($q) use ($term) {
                 $q->orWhere('task_name', 'LIKE', '%' . $term . '%')
                     ->orWhereHas('priority_manager', fn($q2) => $q2->where('name', 'LIKE', "%{$term}%"))
-                    ->orWhereDate('task_start_date', 'LIKE', "%{$term}%");
+                    ->orWhereDate('task_start_date', 'LIKE', "%{$term}%")
+                    ->orWhere('entity_type', 'LIKE', "%{$term}%")
+                    ->orWhere('task_type', 'LIKE', "%{$term}%")
+                    ->orWhere('source_type', 'LIKE', "%{$term}%")
+                    ->orWhereHas('status_manager', fn($q2) => $q2->where('name', 'LIKE', "%{$term}%"))
+                    ->orWhereHas('clients', fn($q2) => $q2->where('client_name', 'LIKE', "%{$term}%"))
+                    ->orWhereHas('lead', fn($q2) => $q2->where('name', 'LIKE', "%{$term}%"));
             });
         }
 

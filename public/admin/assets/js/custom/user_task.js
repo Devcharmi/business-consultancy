@@ -28,18 +28,18 @@ var columns = [
                 ? ""
                 : "style='pointer-events:none;opacity:0.4;' disabled";
 
-            html = ` <a href="${edit_path_set}" title="Edit" ${editDisabled}>
+            html = ` <button 
+                    class="btn btn-sm btn-info view-activity"
+                    data-url="${activityUrl}"
+                    title="View Activity">
+                    <i class="ri-history-line"></i>
+                </button>
+                <a href="${edit_path_set}" title="Edit" ${editDisabled}>
                     <i class="fas fa-pen p-1 text-primary"></i>
                 </a>
                 <a href="javascript:void(0);" data-url="${delete_path_set}" class="delete-data" title="Delete" ${deleteDisabled}>
                     <i class="fas fa-trash p-1 text-danger"></i>
-                </a>
-                 <button 
-                class="btn btn-sm btn-info view-activity"
-                data-url="${activityUrl}"
-                title="View Activity">
-                <i class="ri-history-line"></i>
-            </button>
+                </a>                 
                     `;
 
             return html;

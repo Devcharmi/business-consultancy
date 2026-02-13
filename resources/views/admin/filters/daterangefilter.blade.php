@@ -7,8 +7,15 @@
 </div> --}}
 <div class="row align-items-end mb-2">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-        <label for="input-label" class="form-label">Date Range</label>
-        <input type="text" id="dateRange" class="form-control date-range applyFilters" autocomplete="off">
+        <label for="form-label" class="form-label">Date Range</label>
+        {{-- <input type="text" id="dateRange" class="form-control date-range applyFilters" autocomplete="off"> --}}
+        <div class="d-flex align-items-center gap-2 flex-nowrap">
+            <input type="text" id="dateRange" class="form-control date-range applyFilters flex-grow-1"
+                autocomplete="off">
+
+            <strong id="selectedRangeLabel" class="text-nowrap mb-0"></strong>
+        </div>
+
     </div>
 
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end mt-2 mt-md-0">

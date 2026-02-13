@@ -46,7 +46,14 @@ var consulting_table = $(".table-list").DataTable({
                     : "style='pointer-events:none;opacity:0.4;' disabled";
 
                 return `
-                    <a href="javascript:void(0);" data-url="${edit_path_set}"
+                 <button class="btn btn-xs btn-outline-success open-meeting-modal me-2"
+                                    data-consulting-id="${id}"
+                                    data-client-objective-id="${row.client_objective_id}"
+                                    data-client-name="${row.client_objective.client.client_name}"
+                                    data-objective-name="${row.client_objective.objective_manager.name}"
+                                    title="Meetings">Meetings
+                                </button>
+                   <a href="javascript:void(0);" data-url="${edit_path_set}"
                        class="open-modal" title="Edit" ${editDisabled}>
                         <i class="fas fa-pen p-1 text-primary"></i>
                     </a>
@@ -54,13 +61,6 @@ var consulting_table = $(".table-list").DataTable({
                        class="delete-data" title="Delete" ${deleteDisabled}>
                         <i class="fas fa-trash p-1 text-danger"></i>
                     </a>
-                <button class="btn btn-xs btn-outline-success open-meeting-modal"
-                                    data-consulting-id="${id}"
-                                    data-client-objective-id="${row.client_objective_id}"
-                                    data-client-name="${row.client_objective.client.client_name}"
-                                    data-objective-name="${row.client_objective.objective_manager.name}"
-                                    title="Meetings">Meetings
-                                </button>
                 `;
             },
         },
