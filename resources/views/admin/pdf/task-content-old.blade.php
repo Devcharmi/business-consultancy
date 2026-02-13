@@ -139,7 +139,7 @@
         color:#2c7be5;
         letter-spacing:1px;
     ">
-            Meeting Task Report
+            Consulting Visit Report
         </div>
         {{-- <div style="font-size:11px; color:#777;">
             Detailed Task Summary
@@ -248,7 +248,7 @@
 
                 {{-- ================= CONTENT ================= --}}
                 @if ($contents->count())
-                    <div class="sub-title">Meeting Notes</div>
+                    <div class="sub-title">CVR Notes</div>
                     @foreach ($contents as $content)
                         <div class="content-box">{!! $content->task_content !!}</div>
                     @endforeach
@@ -256,7 +256,7 @@
 
                 {{-- ================= COMMITMENTS ================= --}}
                 @if ($commitments->count())
-                    <div class="sub-title">Commitments</div>
+                    <div class="sub-title">Actionables</div>
                     @foreach ($commitments as $c)
                         <div class="item-row">
                             <div class="item-header">

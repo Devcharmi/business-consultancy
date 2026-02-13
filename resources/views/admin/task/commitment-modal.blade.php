@@ -5,7 +5,7 @@
 
             {{-- Header --}}
             <div class="modal-header">
-                <h5 class="modal-title">Add Commitment</h5>
+                <h5 class="modal-title">Actionable</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="required">Commitment</label>
+                        <label class="required">Actionable</label>
                         <input type="text" name="commitment" id="commitment" class="form-control"
                             placeholder="Enter commitment">
                         <small class="text-danger" id="commitment_error"></small>
@@ -56,7 +56,7 @@
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        Save Commitment
+                        Save Actionable
                     </button>
                 </div>
 

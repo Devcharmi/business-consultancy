@@ -6,7 +6,7 @@
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">
-                        {{ isset($taskData) ? 'Edit Meeting' : 'Create Meeting' }}
+                        {{ isset($taskData) ? 'Edit CVR' : 'Create CVR' }}
                     </div>
                     <a href="{{ route('consulting.index') }}" class="btn btn-primary mt-10 d-block text-center">
                         Back
@@ -59,9 +59,9 @@
                                             <span>{{ $consultingData->client_objective->objective_manager->name }}</span>
                                         </div>
 
-                                        {{-- Row 2: Meeting Date & Expertise --}}
+                                        {{-- Row 2: CVR Date & Expertise --}}
                                         <div class="col-md-3 mb-3">
-                                            <label class="fw-bold">Meeting Date:</label>
+                                            <label class="fw-bold">Date:</label>
                                             <span>{{ \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('d-m-Y h:i') }}</span>
                                             <input type="hidden" name="task_start_date"
                                                 value="{{ \Carbon\Carbon::parse($consultingData->consulting_datetime)->format('Y-m-d') }}">
@@ -98,7 +98,7 @@
 
                                         {{-- Row 2: Meeting Date & Expertise --}}
                                         <div class="col-md-3 mb-3">
-                                            <label class="fw-bold">Meeting Date:</label>
+                                            <label class="fw-bold">Date:</label>
                                             <span>{{ \Carbon\Carbon::parse($taskData->task_start_date)->format('d-m-Y h:i') }}</span>
                                             <input type="hidden" name="task_start_date"
                                                 value="{{ \Carbon\Carbon::parse($taskData->task_start_date)->format('Y-m-d') }}">
@@ -124,12 +124,12 @@
                                 </div>
                                 <hr>
                                 {{-- =========================
-                                    Meeting Title
+                                    CVR Title
                                     ========================= --}}
                                 <div class="row">
 
                                     <div class="col-md-5 mb-3">
-                                        <label class="required">Meeting Title</label>
+                                        <label class="required">Title</label>
                                         <input type="text" name="title" id="title" class="form-control"
                                             value="{{ old('title', optional($taskData)->title) }}">
                                         <small class="text-danger">{{ $errors->first('title') }}</small>
@@ -229,7 +229,7 @@
                             {{-- Footer --}}
                             <div class="d-flex justify-content-end mt-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ !empty($taskData) ? 'Update Meeting' : 'Create Meeting' }}
+                                    {{ !empty($taskData) ? 'Update CVR' : 'Create CVR' }}
                                 </button>
                             </div>
                         </div>

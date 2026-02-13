@@ -57,7 +57,7 @@
                                     data-client-objective-id="{{ $consulting->client_objective_id }}"
                                     data-client-name="{{ $consulting->client_objective->client->client_name ?? '' }}"
                                     data-objective-name="{{ $consulting->client_objective->objective_manager->name ?? '' }}"
-                                    title="Meetings">Meetings
+                                    title="Counsulting Visit Report">CVR
                                     {{-- <i class="bi bi-list-task"></i> --}}
                                 </button>
 

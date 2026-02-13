@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Task Report - {{ $task->title }}</title>
+    <title>CVR - {{ $task->title }}</title>
 </head>
 
 <body style="font-family: DejaVu Sans; font-size: 10.5px; color: #2f2f2f; line-height:1.35; margin:0; padding:0;">
 
     {{-- ================= TASK INFO ================= --}}
     <div style="margin-bottom:6px;">
-        <div style="font-size:11px; font-weight:bold; padding:2px 4px; margin-bottom:3px;">Task Information</div>
+        {{-- <div style="font-size:11px; font-weight:bold; padding:2px 4px; margin-bottom:3px;">Task Information</div> --}}
 
         <div style="background-color:#f8fbff; border:1px solid #d6e0ff; padding:3px 5px; margin-bottom:6px;">
             <div style="margin-bottom:1px;">
@@ -32,12 +32,25 @@
                     @endif
                 </span>
             </div>
+            <div style="margin-bottom:1px;">
+                <span style="display:inline-block; width:65px; font-weight:bold; color:#1f4fd8;">Status</span>
+                <span style="font-size:10.5px;">
+                    @if ($task->status_manager)
+                        <span
+                            style="display:inline-block; padding:1px 4px; font-size:9px; font-weight:bold; color:#fff; border-radius:2px; background-color: {{ $task->status_manager->color_name }};">
+                            {{ $task->status_manager->name }}
+                        </span>
+                    @else
+                        -
+                    @endif
+                </span>
+            </div>
         </div>
     </div>
 
     {{-- ================= TIMELINE ================= --}}
     <div style="margin-bottom:6px;">
-        <div style="font-size:11px; font-weight:bold; padding:2px 4px; margin-bottom:3px;">Task Timeline</div>
+        <div style="font-size:11px; font-weight:bold; padding:2px 4px; margin-bottom:3px;">Visit Schedule</div>
 
         @php
             $dates = collect()
@@ -79,7 +92,7 @@
                 {{-- MEETING NOTES --}}
                 @if ($contents->count())
                     <p style="font-size:10.5px; font-weight:bold; color:#333; padding:3px 3px; margin:1px 0 2px 0;">
-                        Meeting Notes</p>
+                        Details</p>
                     <table cellpadding="3" cellspacing="0" border="0"
                         style="width:100%; border-collapse:collapse; margin:0 0 4px 0;">
                         @foreach ($contents as $content)
@@ -96,7 +109,7 @@
                 {{-- COMMITMENTS --}}
                 @if ($commitments->count())
                     <p style="font-size:10.5px; font-weight:bold; color:#333; padding:3px 3px; margin:3px 0 2px 0;">
-                        Commitments</p>
+                        Actionables</p>
                     <table cellpadding="3" cellspacing="0" border="0"
                         style="width:100%; border-collapse:collapse; margin:0 0 4px 0;">
                         @php

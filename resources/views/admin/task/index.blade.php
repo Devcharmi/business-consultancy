@@ -5,7 +5,7 @@
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">
-                        Meeting Manager
+                        CVR Manager
                     </div>
                     <div class="d-flex gap-2">
                         <!-- Open Filter Modal -->
@@ -21,7 +21,7 @@
                         {{-- @if (canAccess('status manager.create')) --}}
                         <a href="{{ route('task.show', ['task' => 'new']) }}"
                             class="btn btn-success mt-10 d-block text-center open-modal {{ canAccess('task.create') ? '' : 'disabled' }}">+
-                            Add Meeting</a>
+                            Add CVR</a>
                         {{-- @endif --}}
                     </div>
                 </div>

@@ -672,6 +672,14 @@ class TaskController extends Controller
         // Sort dates DESC
         krsort($timeline);
 
+        // 🔥 Prepare safe file name
+        $clientName = $task->client_objective->client->name ?? 'Client';
+        $expertiseName = $task->expertise_manager->name ?? 'Expertise';
+
+        $fileName = "Task-{$task->id}-" .
+            preg_replace('/[^A-Za-z0-9\-]/', '_', $clientName) . '-' .
+            preg_replace('/[^A-Za-z0-9\-]/', '_', $expertiseName) . '.pdf';
+
         $pdf = Pdf::loadView(
             'admin.pdf.task-content',
             compact('task', 'timeline')
@@ -685,7 +693,7 @@ class TaskController extends Controller
                 'dpi' => 150,
             ]);
 
-        return $pdf->stream("task-{$task->id}.pdf");
+        return $pdf->stream($fileName);
     }
 
     // public function taskPdf($id)

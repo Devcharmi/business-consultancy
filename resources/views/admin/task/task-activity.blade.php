@@ -1,13 +1,13 @@
 {{-- ================= Meeting Timeline Heading + Export ================= --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h5 class="text-primary fw-bold mb-0">
-        📅 Meeting Timeline
+        📅 Visit Schedule
     </h5>
     @if (!empty($taskData))
         <a href="{{ route('task.pdf', ['task' => $taskData->id]) }}" target="_blank"
             class="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-sm export-pdf-btn">
             <i class="fas fa-file-pdf"></i>
-            Export PDF
+            Export CVR
         </a>
     @endif
 </div>
@@ -55,14 +55,14 @@
                 <div class="accordion-body">
 
                     {{-- ================= Content (1 per day) ================= --}}
-                    <h6 class="mt-3 mb-2 text-success fw-bold">📝 Meeting Details</h6>
+                    <h6 class="mt-3 mb-2 text-success fw-bold">📝 Details</h6>
                     <textarea class="form-control mb-3" name="content[{{ $dateKey }}]" id="content_{{ $safeId }}">{{ optional($contentByDate->get($dateKey))->task_content }}</textarea>
 
                     {{-- ================= Commitments ================= --}}
-                    <h6 class="mt-4 mb-2 text-warning d-inline-block fw-bold">📌 Commitments</h6>
+                    <h6 class="mt-4 mb-2 text-warning d-inline-block fw-bold">📌 Actionables</h6>
                     <button type="button" class="btn btn-sm btn-outline-primary ms-2 open-commitment-modal"
                         data-date="{{ $dateKey }}">
-                        + Add Commitment
+                        + Add Actionable
                     </button>
 
                     <div class="table-responsive">

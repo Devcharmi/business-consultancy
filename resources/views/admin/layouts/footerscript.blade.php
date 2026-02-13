@@ -553,7 +553,7 @@
             const objectiveName = $(this).data("objective-name");
 
             $("#taskModalTitle").html(`
-                    Meetings
+                    CVR
                     <span class="text-muted fw-normal">
                         — ${clientName}${objectiveName ? " / " + objectiveName : ""}
                     </span>

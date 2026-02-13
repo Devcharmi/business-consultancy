@@ -113,7 +113,7 @@
                                 <path d="M8 13h6" />
                             </svg>
 
-                            <span class="side-menu__label">Consulting Meet</span>
+                            <span class="side-menu__label">Consulting Visit</span>
                         </a>
                     </li>
                 @endif
@@ -138,7 +138,7 @@
                                 <line x1="12" y1="15" x2="14" y2="15"></line>
                             </svg>
 
-                            <span class="side-menu__label">Meetings</span>
+                            <span class="side-menu__label">CVR</span>
                         </a>
                     </li>
                 @endif

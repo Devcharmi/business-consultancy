@@ -122,7 +122,7 @@
             </td>
         </tr>
     </table>
-    <div class="section-title">Meeting Details</div>
+    <div class="section-title">Visit Schedule</div>
 
     <table>
         <thead>
@@ -148,7 +148,7 @@
             @endforelse
         </tbody>
     </table>
-    <div class="section-title">Commitments</div>
+    <div class="section-title">Actionables</div>
 
     <table>
         <thead>

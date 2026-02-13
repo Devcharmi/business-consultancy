@@ -73,7 +73,7 @@
                                 <thead class="bg-light">
                                     <tr>
                                         <th>#</th>
-                                        <th>Meeting Title</th>
+                                        <th>CVR Title</th>
                                         {{-- <th>Task Details</th> --}}
                                         <th>Due Date</th>
                                         <th>Status</th>
@@ -141,7 +141,7 @@
                         <div class="d-flex justify-content-end gap-2 mt-3">
                             <a href="{{ route('task.show', 'new') }}?client_objective_id={{ $clientObjective->id }}&expertise_manager_id={{ $expertise->id }}"
                                 class="btn btn-success open-task-modal">
-                                <i class="fas fa-plus-circle me-1"></i> Add Meeting
+                                <i class="fas fa-plus-circle me-1"></i> Add CVR
                             </a>
                         </div>
                     @else
@@ -150,7 +150,7 @@
                             <h6 class="text-muted mb-3">No meetings found</h6>
                             <a href="{{ route('task.show', 'new') }}?client_objective_id={{ $clientObjective->id }}&expertise_manager_id={{ $expertise->id }}"
                                 class="btn btn-success open-task-modal">
-                                <i class="fas fa-plus-circle me-1"></i> Add First Meeting
+                                <i class="fas fa-plus-circle me-1"></i> Add First CVR
                             </a>
                         </div>
                     @endif

@@ -39,7 +39,7 @@
                                     {{-- <th>Updated By</th> --}}
                                     <th>No. of Objectives</th>
                                     <th>No. of Consulting</th>
-                                    <th>No. of Meetings</th>
+                                    <th>No. of CVR</th>
                                 </tr>
                             </thead>
                         </table>

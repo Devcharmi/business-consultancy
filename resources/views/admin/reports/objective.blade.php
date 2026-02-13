@@ -34,7 +34,7 @@
                                     <th>Client</th>
                                     <th>Objective</th>
                                     <th>No. of Consulting</th>
-                                    <th>No. of Meetings</th>
+                                    <th>No. of CVR</th>
                                     <th>Created By</th>
                                 </tr>
                             </thead>

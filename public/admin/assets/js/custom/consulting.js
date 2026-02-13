@@ -46,12 +46,12 @@ var consulting_table = $(".table-list").DataTable({
                     : "style='pointer-events:none;opacity:0.4;' disabled";
 
                 return `
-                 <button class="btn btn-xs btn-outline-success open-meeting-modal me-2"
+                 <button class="btn btn-xs btn-outline-success open-meeting-modal"
                                     data-consulting-id="${id}"
                                     data-client-objective-id="${row.client_objective_id}"
                                     data-client-name="${row.client_objective.client.client_name}"
                                     data-objective-name="${row.client_objective.objective_manager.name}"
-                                    title="Meetings">Meetings
+                                    title="CVR">CVR
                                 </button>
                    <a href="javascript:void(0);" data-url="${edit_path_set}"
                        class="open-modal" title="Edit" ${editDisabled}>

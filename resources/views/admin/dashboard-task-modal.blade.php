@@ -3,13 +3,13 @@
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center">
                 <h6 class="modal-title fw-semibold mb-0" id="taskModalTitle">
-                    Meetings
+                    CVR
                 </h6>
 
                 <div class="ms-auto d-flex align-items-center gap-2">
                     <a href="{{ route('task.show', 'new') }}" class="btn btn-success btn-sm open-task-modal"
                         id="addMeetingBtn">
-                        <i class="fas fa-plus-circle me-1"></i> Add Meeting
+                        <i class="fas fa-plus-circle me-1"></i> Add CVR
                     </a>
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
