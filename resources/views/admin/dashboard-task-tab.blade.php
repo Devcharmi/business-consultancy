@@ -261,4 +261,56 @@
         </div>
     </div>
 
+    {{-- Done tab code --}}
+    {{-- <div class="col-xl-4 col-lg-12">
+        <div class="card shadow-sm border-0 h-100 dashboard-card done-card">
+            <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
+                <h6 class="mb-0 fw-semibold text-success">
+                    <i class="fas fa-check-circle me-2"></i> Done Tasks
+                </h6>
+                <span class="badge bg-success-subtle text-success">
+                    {{ $doneTasks->count() }}
+                </span>
+            </div>
+
+            <div class="card-body p-2">
+                @forelse ($doneTasks as $task)
+                    <div class="dashboard-item d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <a href="{{ route('user-task.show', $task->id) }}"
+                                class="text-decoration-none text-dark">
+                                <div class="fw-semibold">
+                                    {{ Str::limit($task->task_name, 40) }}
+                                </div>
+                                <small class="text-muted">
+                                    Completed on: {{ \Carbon\Carbon::parse($task->updated_at)->format('d M Y') }}
+                                </small>
+                            </a>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge rounded-pill bg-success">
+                                <i class="fas fa-check me-1"></i>
+                                Done
+                            </span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <i class="fas fa-thumbs-up text-success"></i>
+                        <p>No done tasks today</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="card-footer bg-transparent border-0 text-end">
+                <a href="{{ route('user-task.index', ['filter' => 'done']) }}"
+                    class="small fw-semibold text-success">
+                    View all →
+                </a>
+            </div>
+        </div>
+    </div> --}}
+
 </div>

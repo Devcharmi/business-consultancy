@@ -154,8 +154,8 @@ class DashboardController extends Controller
             // 🔥 Default → task_start_date = today
             $todayTasks->whereDate('task_start_date', $today);
         }
-
-        // ✅ No status filtering (show ALL status)
+        // Exclude Pending status
+        $todayTasks->whereHas('status_manager', fn($q) => $q->where('name', '!=', 'Pending'));
 
 
         /* ================= PENDING TASKS ================= */
@@ -173,25 +173,45 @@ class DashboardController extends Controller
 
         // 🔥 Exclude Done
         $pendingTasks->whereHas('status_manager', function ($q) {
-            $q->where('name', '!=', 'Done');
+            $q->where('name', 'Pending');
         });
 
 
         /* ================= OVERDUE TASKS ================= */
         $overdueTasks = clone $taskBase;
 
-        // 🔥 Always before today (NOT based on range)
-        $overdueTasks
-            ->whereDate('task_due_date', '<', $today)
-            ->whereHas('status_manager', function ($q) {
-                $q->where('name', '!=', 'Done');
-            });
+        if ($isRange) {
+            $overdueTasks->whereDate('task_due_date', '<=', $toDate)
+                ->whereDate('task_due_date', '>=', $fromDate);
+        } else {
+            $overdueTasks->whereDate('task_due_date', '<', $today);
+        }
+
+        $overdueTasks->whereHas('status_manager', fn($q) => $q->where('name', '!=', 'Done'));
+        // // 🔥 Always before today (NOT based on range)
+        // $overdueTasks
+        //     ->whereDate('task_due_date', '<', $today)
+        //     ->whereHas('status_manager', function ($q) {
+        //         $q->where('name', '!=', 'Done');
+        //     });
+
+        // /* ================= DONE TASKS ================= */
+        // $doneTasks = clone $taskBase;
+        // if ($isRange) {
+        //     // If range selected, show tasks done in range based on completed_at or updated_at
+        //     $doneTasks->whereHas('status_manager', fn($q) => $q->where('name', 'Done'))
+        //         ->whereBetween('updated_at', [$fromDate, $toDate]);
+        // } else {
+        //     $doneTasks->whereHas('status_manager', fn($q) => $q->where('name', 'Done'))
+        //         ->whereDate('updated_at', $today);
+        // }
 
         return [
-            'todayFollowUps' => $followUps->latest()->take(3)->get(),
-            'todayTasks'     => $todayTasks->latest()->take(3)->get(),
-            'pendingTasks'   => $pendingTasks->latest()->take(3)->get(),
-            'overdueTasks'   => $overdueTasks->latest()->take(3)->get(),
+            'todayFollowUps' => $followUps->latest()->take(5)->get(),
+            'todayTasks'     => $todayTasks->latest()->take(5)->get(),
+            'pendingTasks'   => $pendingTasks->latest()->take(5)->get(),
+            'overdueTasks'   => $overdueTasks->latest()->take(5)->get(),
+            // 'doneTasks'      => $doneTasks->latest()->take(5)->get(), // new
         ];
     }
 
