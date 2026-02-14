@@ -111,7 +111,14 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
 
     Route::resource('client-objective-manager', ClientObjectiveController::class);
     Route::get('/client-objective/{id}/details', [ClientObjectiveController::class, 'getObjectiveDetails'])->name('client-objective.details');
+
+    Route::get('consulting/sample-download', [ConsultingController::class, 'downloadSample'])
+        ->name('consulting.sample.download');
+    Route::post('consulting/import', [ConsultingController::class, 'import'])
+        ->name('consulting.import');
+
     Route::resource('consulting', ConsultingController::class);
+
     Route::resource('task', TaskController::class);
     Route::delete('/task/attachments/{attachment}', [TaskController::class, 'destroyAttachment'])->name('task.attachments.delete');
     Route::get('task/{task}/pdf', [TaskController::class, 'exportTaskPdf'])

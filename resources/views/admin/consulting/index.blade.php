@@ -9,6 +9,32 @@
                     </div>
 
                     <div class="d-flex gap-2">
+                        {{-- Import / Export Dropdown --}}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                                id="importExportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                title=" Import / Export">
+                                <i class="ri-upload-2-line"></i>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="importExportDropdown">
+                                {{-- Import --}}
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#importConsultingModal">
+                                        <i class="ri-upload-line me-2"></i> Import Consulting
+                                    </a>
+                                </li>
+
+                                {{-- Download Sample --}}
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('consulting.sample.download') }}">
+                                        <i class="ri-download-2-line me-2"></i> Download Sample File
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                         <!-- Open Filter Modal -->
                         <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
                             title="Filters">
@@ -55,16 +81,16 @@
         </div>
     </div>
     @include('admin.dashboard-task-modal')
+    @include('admin.consulting.import-modal')
 @endsection
 @section('script')
     <script>
         var csrf_token = '{{ csrf_token() }}';
         var edit_path = "{{ route('consulting.show', ['consulting' => ':consulting']) }}";
         var delete_path = "{{ route('consulting.destroy', ['consulting' => ':consulting']) }}";
-      
         window.canEditTask = @json(canAccess('consulting.edit'));
         window.canDeleteTask = @json(canAccess('consulting.delete'));
-     
+
         $(".select2").select2({
             placeholder: "Select...",
             width: "100%",
@@ -73,5 +99,14 @@
             // closeOnSelect: false, // keep dropdown open for multiple selections
         });
     </script>
+    @if (session()->has('import_errors') || session()->has('success'))
+        <script>
+            $(document).ready(function() {
+                var importModal = new bootstrap.Modal($('#importConsultingModal')[0]);
+                importModal.show();
+            });
+        </script>
+    @endif
+
     <script src="{{ asset('admin/assets/js/custom/consulting.js') }}"></script>
 @endsection

@@ -274,3 +274,232 @@ $(document).on("click", ".delete-data", function () {
         }
     });
 });
+
+$(document).ready(function () {
+    $("#importConsultingForm").on("submit", function (e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+        let $btn = $("#importSubmitBtn");
+
+        // Disable button & show spinner
+        $btn.prop("disabled", true).html(
+            `<span class="spinner-border spinner-border-sm me-2"></span> Importing...`,
+        );
+
+        // Reset UI
+        $("#importLoader").removeClass("d-none");
+        $("#importSuccess").addClass("d-none").text("");
+        $("#importErrorContainer").addClass("d-none");
+        $("#importErrorTableBody").html("");
+
+        $.ajax({
+            url: $btn.data("url"),
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#importLoader").addClass("d-none");
+                $btn.prop("disabled", false).html("Import");
+
+                // Show errors if any
+                if (response.errors && response.errors.length > 0) {
+                    $("#importErrorContainer").removeClass("d-none");
+                    $.each(response.errors, function (index, error) {
+                        $("#importErrorTableBody").append(`
+                            <tr>
+                                <td>${error.row}</td>
+                                <td>${error.message}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    $("#importErrorContainer").addClass("d-none");
+                }
+
+                // Show success message if rows imported
+                if (response.success && response.importedCount > 0) {
+                    $("#importSuccess")
+                        .removeClass("d-none")
+                        .text(response.message);
+                    showToastr("success", response.message);
+                    consulting_table.draw(); // refresh table immediately
+                } else if (
+                    !response.success &&
+                    (!response.errors || response.errors.length === 0)
+                ) {
+                    showToastr("error", response.message || "Import failed.");
+                } else {
+                    $("#importSuccess").addClass("d-none");
+                }
+            },
+            error: function (xhr) {
+                $("#importLoader").addClass("d-none");
+                $btn.prop("disabled", false).html("Import");
+
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    showToastr(
+                        "error",
+                        Object.values(xhr.responseJSON.errors)[0],
+                    );
+                } else {
+                    showToastr("error", "Something went wrong.");
+                }
+            },
+        });
+    });
+});
+
+// Refresh DataTable when import modal is closed
+$("#importConsultingModal").on("hidden.bs.modal", function () {
+    if (typeof consulting_table !== "undefined") {
+        consulting_table.draw(); // redraw table to fetch new data
+    }
+
+    // Optional: reset form & UI
+    $("#importConsultingForm")[0].reset();
+    $("#importSuccess").addClass("d-none").text("");
+    $("#importErrorContainer").addClass("d-none");
+    $("#importErrorTableBody").html("");
+});
+
+$(document).ready(function () {
+    // $("#importConsultingForm").on("submit", function (e) {
+    //     e.preventDefault();
+    //     let formData = new FormData(this);
+    //     let $btn = $("#importSubmitBtn");
+    //     // Disable button & show loader
+    //     $btn.prop("disabled", true).html(
+    //         `<span class="spinner-border spinner-border-sm me-2"></span> Importing...`,
+    //     );
+    //     $("#importLoader").show();
+    //     $("#importSuccess").hide();
+    //     $("#importErrorContainer").hide();
+    //     $("#importErrorTableBody").html("");
+    //     $.ajax({
+    //         url: $btn.data("url"),
+    //         type: "POST",
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         success: function (response) {
+    //             $("#importLoader").hide();
+    //             $btn.prop("disabled", false).html("Import");
+    //             // Clear previous messages
+    //             $("#importSuccess").hide();
+    //             $("#importErrorContainer").hide();
+    //             $("#importErrorTableBody").html("");
+    //             // Show error table if there are errors
+    //             if (response.errors && response.errors.length > 0) {
+    //                 $("#importErrorContainer").show();
+    //                 $.each(response.errors, function (index, error) {
+    //                     $("#importErrorTableBody").append(`
+    //                         <tr>
+    //                             <td>${error.row}</td>
+    //                             <td>${error.message}</td>
+    //                         </tr>
+    //                     `);
+    //                 });
+    //             }
+    //             // Show success message if any rows imported
+    //             if (response.success && response.importedCount > 0) {
+    //                 $("#importSuccess")
+    //                     .text(response.message)
+    //                     .removeClass("d-none");
+    //             }
+    //             // Optional: show toast for overall result
+    //             if (response.success && response.importedCount > 0) {
+    //                 showToastr("success", response.message);
+    //             } else if (
+    //                 !response.success &&
+    //                 response.errors &&
+    //                 response.errors.length > 0
+    //             ) {
+    //                 showToastr(
+    //                     "error",
+    //                     "Some rows failed to import. Check the table for details.",
+    //                 );
+    //             }
+    //         },
+    //         error: function (xhr) {
+    //             $("#importLoader").hide();
+    //             $btn.prop("disabled", false).html("Import");
+    //             if (xhr.responseJSON && xhr.responseJSON.errors) {
+    //                 let firstError = Object.values(xhr.responseJSON.errors)[0];
+    //                 showToastr("error", firstError);
+    //             } else {
+    //                 showToastr("error", "Something went wrong.");
+    //             }
+    //         },
+    //     });
+    // });
+    // $("#importConsultingForm").on("submit", function (e) {
+    //     e.preventDefault();
+    //     let formData = new FormData(this);
+    //     let $btn = $("#importSubmitBtn");
+    //     // Disable button
+    //     $btn.prop("disabled", true).html(
+    //         `<span class="spinner-border spinner-border-sm me-2"></span> Importing...`,
+    //     );
+    //     // Reset UI
+    //     $("#importLoader").show();
+    //     $("#importSuccess").hide();
+    //     $("#importErrorContainer").hide();
+    //     $("#importErrorTableBody").html("");
+    //     $.ajax({
+    //         url: $("#importSubmitBtn").data("url"),
+    //         type: "POST",
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         success: function (response) {
+    //             $("#importLoader").hide();
+    //             $btn.prop("disabled", false).html("Import");
+    //             // Always reset
+    //             $("#importSuccess").hide();
+    //             $("#importErrorContainer").hide();
+    //             $("#importErrorTableBody").html("");
+    //             // Show errors if any
+    //             if (response.errors && response.errors.length > 0) {
+    //                 $("#importErrorContainer").show();
+    //                 $.each(response.errors, function (index, error) {
+    //                     $("#importErrorTableBody").append(`
+    //             <tr>
+    //                 <td>${error.row}</td>
+    //                 <td>${error.message}</td>
+    //             </tr>
+    //         `);
+    //                 });
+    //             }
+    //             // Show success only if some rows were imported
+    //             if (response.success && response.importedCount > 0) {
+    //                 $("#importSuccess")
+    //                     .text(response.message)
+    //                     .removeClass("d-none");
+    //                 showToastr("success", response.message);
+    //             } else if (response.errors && response.errors.length > 0) {
+    //                 showToastr(
+    //                     "error",
+    //                     response.message || "Some rows failed to import.",
+    //                 );
+    //             } else {
+    //                 showToastr("error", response.message || "Import failed.");
+    //             }
+    //         },
+    //         error: function (xhr) {
+    //             $("#importLoader").hide();
+    //             // Enable button again
+    //             $btn.prop("disabled", false).html("Import");
+    //             if (xhr.responseJSON.errors) {
+    //                 showToastr(
+    //                     "error",
+    //                     Object.values(xhr.responseJSON.errors)[0],
+    //                 );
+    //             } else {
+    //                 showToastr("error", "Something went wrong.");
+    //             }
+    //         },
+    //     });
+    // });
+});

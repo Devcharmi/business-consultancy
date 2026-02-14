@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ConsultingSampleExport;
 use App\Http\Controllers\Controller;
+use App\Imports\ConsultingImport;
 use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
@@ -15,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ConsultingController extends Controller
 {
@@ -493,4 +496,44 @@ class ConsultingController extends Controller
 
         return $status;
     }
+
+    public function downloadSample()
+    {
+        return Excel::download(new ConsultingSampleExport, 'consulting_sample_template.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv'
+        ]);
+
+        $import = new ConsultingImport;
+
+        Excel::import($import, $request->file('file'));
+
+        return response()->json([
+            'success' => $import->importedCount > 0,
+            'importedCount' => $import->importedCount,
+            'message' => $import->importedCount . ' rows imported successfully.',
+            'errors'  => $import->errors ?? [],
+        ]);
+    }
+
+    // public function import(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|mimes:xlsx,csv'
+    //     ]);
+
+    //     $import = new ConsultingImport;
+
+    //     Excel::import($import, $request->file('file'));
+
+    //     return response()->json([
+    //         'success' => $import->importedCount > 0,   // true if any rows imported
+    //         'message' => $import->importedCount . ' rows imported successfully.',
+    //         'errors'  => $import->errors ?? [],        // always return array
+    //     ]);
+    // }
 }
