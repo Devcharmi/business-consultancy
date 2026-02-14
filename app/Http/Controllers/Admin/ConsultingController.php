@@ -513,10 +513,10 @@ class ConsultingController extends Controller
         Excel::import($import, $request->file('file'));
 
         return response()->json([
-            'success' => $import->importedCount > 0,
-            'importedCount' => $import->importedCount,
-            'message' => $import->importedCount . ' rows imported successfully.',
-            'errors'  => $import->errors ?? [],
+            'success'       => $import->getImportedCount() > 0,
+            'importedCount' => $import->getImportedCount(),
+            'message'       => $import->getImportedCount() . ' rows imported successfully.',
+            'errors'        => $import->getErrors() ?? [],
         ]);
     }
 
