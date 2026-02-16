@@ -333,7 +333,7 @@ class DashboardController extends Controller
         ])
             ->whereDate('consulting_date', $date)
             ->accessibleBy($user)
-            ->orderBy('consulting_date')
+            ->latest('consulting_date')
             ->get();
 
         return view('admin.day-consulting-modal', compact(

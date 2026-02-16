@@ -51,7 +51,11 @@
 
                             <div class="small text-truncate">
                                 <strong class="me-1">({{ $initial }})</strong>
-                                {{-- {{ \Carbon\Carbon::parse($consulting->consulting_date)->format('d-m-Y') }} --}}
+
+                                @if (request()->routeIs('client.consultings'))
+                                    {{ \Carbon\Carbon::parse($consulting->consulting_date)->format('d-m-Y') }}
+                                    —
+                                @endif
                                 @if ($start && $end)
                                     {{ $start }}–{{ $end }}
                                 @else
