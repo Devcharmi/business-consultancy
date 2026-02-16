@@ -22,7 +22,26 @@ var client_report_table = $("#clientReportTable").DataTable({
         { data: "client_name" },
         { data: "email" },
         { data: "phone" },
-        { data: "status" },
+        {
+            data: "status",
+            render: function (data, type, row) {
+                if (!data) return "-";
+
+                let color = "secondary";
+
+                if (data.toLowerCase() === "active") {
+                    color = "success"; // green
+                }
+
+                if (data.toLowerCase() === "inactive") {
+                    color = "danger"; // red
+                }
+
+                return `<span class="badge bg-${color}">
+                    ${data}
+                </span>`;
+            },
+        },
         { data: "created_by" },
         // { data: "updated_by" },
         { data: "objectives", className: "text-center" },

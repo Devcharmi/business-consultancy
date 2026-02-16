@@ -149,5 +149,8 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
             // Lead Report
             Route::get('reports/leads', [ReportController::class, 'leadIndex'])
                 ->name('leads');
+
+            Route::get('reports/user-tasks', [ReportController::class, 'userTaskReport'])
+                ->name('tasks');
         });
 });

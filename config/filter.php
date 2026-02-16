@@ -64,6 +64,17 @@ return [
             'client',
             'created_by',
         ],
+
+        'reports.tasks' => [
+            'daterange',
+            'created_by',
+            'staff',
+            'client',
+            'status',
+            'priority',
+            'entities',
+            'types',
+        ],
     ],
 
 ];

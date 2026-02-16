@@ -5,8 +5,9 @@
         <div class="col-xl-12">
             <div class="card custom-card">
                 <div class="card-header">
-                    <div class="card-title">Leads Report</div>
+                    <div class="card-title">Tasks Report</div>
                     <div class="d-flex gap-2">
+
                         <!-- Open Filter Modal -->
                         <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
                             title="Filters">
@@ -19,29 +20,31 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="card-body">
 
+                    {{-- Common Filters Modal --}}
                     @include('admin.filters.common-filters-modal')
-                    {{-- @include('admin.filters.common-filters') --}}
 
                     <div class="table-responsive">
-                        <table class="table table-bordered text-nowrap w-100" id="leadReportTable"
-                            data-url="{{ route('reports.leads') }}">
+                        <table class="table table-bordered text-nowrap w-100" id="userTaskReportTable"
+                            data-url="{{ route('reports.tasks') }}">
+
                             <thead>
                                 <tr>
-                                    <th>Client</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
+                                    <th>Task Name</th>
+                                    <th>Entity</th>
+                                    <th>Type</th>
+                                    <th>Start Date</th>
+                                    <th>Due Date</th>
+                                    <th>Priority</th>
                                     <th>Status</th>
-                                    <th>Created by</th>
-                                    <th>Total Follow-ups</th>
-                                    <th>Total Tasks</th>
-                                    <th>Pending Follow-ups</th>
-                                    <th>Next Follow-up</th>
+                                    <th>Assigned To</th>
+                                    <th>Overdue</th>
                                 </tr>
                             </thead>
-                        </table>
 
+                        </table>
                     </div>
                 </div>
             </div>
@@ -57,9 +60,8 @@
             placeholder: "Select...",
             width: "100%",
             dropdownParent: $("#filterModal"),
-            // allowClear: true,
-            // closeOnSelect: false, // keep dropdown open for multiple selections
         });
     </script>
-    <script src="{{ asset('admin/assets/js/custom/reports/leads_reports.js') }}"></script>
+
+    <script src="{{ asset('admin/assets/js/custom/reports/user_task_reports.js') }}"></script>
 @endsection

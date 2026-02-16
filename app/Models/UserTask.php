@@ -34,7 +34,6 @@ class UserTask extends Model
         'task_type',     // task | meeting
         'source_type', //commitment,deliverable
         'source_id',
-
     ];
 
     protected $casts = [

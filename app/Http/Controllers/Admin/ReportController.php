@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
 use App\Models\Lead;
+use App\Models\UserTask;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -232,6 +233,7 @@ class ReportController extends Controller
             ])
                 ->withCount([
                     'followUps',
+                    'userTasks',
                     'followUps as pending_followups_count' => function ($q) {
                         $q->where('status', 'pending');
                     },
@@ -270,6 +272,7 @@ class ReportController extends Controller
                         'status'     => ucfirst($lead->status),
                         'assigned_to' => optional($lead->user)->name,
                         'followups'  => $lead->follow_ups_count,
+                        'tasks'  => $lead->user_tasks_count,
                         'pending'    => $lead->pending_followups_count,
                         'next_followup' => $lead->follow_ups_max_next_follow_up_at
                             ? \Carbon\Carbon::parse($lead->follow_ups_max_next_follow_up_at)->format('d-m-Y')
@@ -283,6 +286,113 @@ class ReportController extends Controller
         $filters = filterDropdowns(array_keys($filterRouteConfig));
 
         return view('admin.reports.leads', array_merge(
+            $filters,
+            compact('filterRouteConfig')
+        ));
+    }
+
+    public function userTaskReport(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $data = $request->all();
+            $data['date_range']     = $request->get('dateRange');
+            $data['filterStaff']    = $request->get('filterStaff');
+            $data['filterClient']   = $request->get('filterClient');
+            $data['filterStatus']   = $request->get('filterStatus');
+            $data['filterPriority'] = $request->get('filterPriority');
+            $data['filterEntity']   = $request->get('filterEntity');
+            $data['filterTaskType'] = $request->get('filterTaskType');
+            $data['tab']            = $request->get('tab');
+
+            $columns = [
+                0 => 'task_name',
+                1 => 'entity_type',
+                2 => 'task_type',
+                3 => 'task_start_date',
+                4 => 'task_due_date',
+                5 => 'priority_manager_id',
+                6 => 'status_manager_id',
+                7 => 'staff_manager_id',
+            ];
+
+            $query = UserTask::with([
+                'clients:id,client_name',
+                'lead:id,name',
+                'staff:id,name',
+                'priority_manager:id,name,color_name',
+                'status_manager:id,name,color_name',
+            ]);
+
+            // 🔹 Apply tab filters
+            if ($data['tab'] == 'tasks') {
+                $query->tasks();
+            }
+
+            if ($data['tab'] == 'meetings') {
+                $query->meetings();
+            }
+
+            if ($data['tab'] == 'completed') {
+                $query->whereNotNull('completed_at');
+            }
+
+            if ($data['tab'] == 'pending') {
+                $query->whereNull('completed_at');
+            }
+
+            if ($data['tab'] == 'overdue') {
+                $query->whereNull('completed_at')
+                    ->whereDate('task_due_date', '<', now());
+            }
+
+            $query->filters($data, $columns);
+
+            $totalRecords    = UserTask::count();
+            $filteredRecords = $query->count();
+            $tasks           = $query->get();
+
+            return response()->json([
+                'draw' => intval($request->draw),
+                'recordsTotal' => $totalRecords,
+                'recordsFiltered' => $filteredRecords,
+                'data' => $tasks->map(function ($task) {
+
+                    $isOverdue = $task->task_due_date &&
+                        !$task->completed_at &&
+                        now()->gt($task->task_due_date);
+
+                    return [
+                        'task_name' => $task->task_name,
+
+                        'entity' => $task->entity_type === 'lead'
+                            ? 'Lead - ' . optional($task->lead)->name
+                            : 'Client - ' . optional($task->clients)->client_name,
+
+                        'task_type' => ucfirst($task->task_type),
+
+                        'start_date' => optional($task->task_start_date)?->format('d-m-Y'),
+
+                        'due_date' => optional($task->task_due_date)?->format('d-m-Y'),
+
+                        'priority_name'  => optional($task->priority_manager)->name,
+                        'priority_color' => optional($task->priority_manager)->color_name,
+
+                        'status_name'  => optional($task->status_manager)->name,
+                        'status_color' => optional($task->status_manager)->color_name,
+
+                        'assigned_to' => optional($task->staff)->name,
+
+                        'overdue' => $isOverdue ? '<span class="badge bg-danger">Yes</span>' : '-',
+                    ];
+                }),
+            ]);
+        }
+        // 🔹 Filters (same pattern)
+        $filterRouteConfig = config('filter.route_filters');
+        $filters = filterDropdowns(array_keys($filterRouteConfig));
+
+        return view('admin.reports.user-task', array_merge(
             $filters,
             compact('filterRouteConfig')
         ));

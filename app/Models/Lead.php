@@ -33,9 +33,9 @@ class Lead extends Model
         return $this->hasMany(LeadFollowUp::class);
     }
 
-    public function lead()
+    public function userTasks()
     {
-        return $this->belongsTo(Lead::class);
+        return $this->hasMany(UserTask::class, 'lead_id');
     }
 
     public function scopeActiveUnconverted($query)

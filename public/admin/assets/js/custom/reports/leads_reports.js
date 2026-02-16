@@ -25,6 +25,7 @@ var lead_report_table = $("#leadReportTable").DataTable({
         { data: "status" },
         { data: "assigned_to" },
         { data: "followups", className: "text-center" },
+        { data: "tasks", className: "text-center" },
         { data: "pending", className: "text-center" },
         { data: "next_followup" },
     ],

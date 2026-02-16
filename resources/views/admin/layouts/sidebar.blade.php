@@ -235,7 +235,13 @@
                 <!-- End::slide -->
 
                 @php
-                    $reportRoutes = ['reports.clients', 'reports.objectives', 'reports.consultings', 'reports.leads'];
+                    $reportRoutes = [
+                        'reports.clients',
+                        'reports.objectives',
+                        'reports.consultings',
+                        'reports.leads',
+                        'reports.tasks',
+                    ];
 
                     $isReportActive = request()->routeIs($reportRoutes);
                 @endphp
@@ -284,6 +290,14 @@
                                 <a href="{{ route('reports.leads') }}"
                                     class="side-menu__item {{ request()->routeIs('reports.leads') ? 'active' : '' }}">
                                     Leads Report
+                                </a>
+                            </li>
+
+                            {{-- user task Report --}}
+                            <li class="slide">
+                                <a href="{{ route('reports.tasks') }}"
+                                    class="side-menu__item {{ request()->routeIs('reports.tasks') ? 'active' : '' }}">
+                                    Tasks Report
                                 </a>
                             </li>
                         </ul>
