@@ -7,7 +7,7 @@
                     <div class="card-title">
                         {{ isset($userData) ? 'Edit User' : 'Create User' }}
                     </div>
-                    <a href="{{ route('user-task.index') }}" class="btn btn-primary mt-10 d-block text-center">Back</a>
+                    <a href="{{ route('user-manager.index') }}" class="btn btn-primary mt-10 d-block text-center">Back</a>
                 </div>
                 <div class="card-body">
                     <form method="POST" id="user_form" class="mt-6 space-y-6" enctype="multipart/form-data">

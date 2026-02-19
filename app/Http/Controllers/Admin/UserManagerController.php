@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Models\ExpertiseManager;
-use App\Models\Segment;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
 class UserManagerController extends Controller
@@ -76,23 +75,20 @@ class UserManagerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
+        Log::info('User creation started', ['request' => $request->all()]);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-            ],
-
-            // 'designation' => ['required'],
-            // 'phone' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'password' => ['required', 'confirmed', Password::defaults()],
             'profile_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'role' => ['required', 'exists:roles,name'],
         ]);
+
+        Log::info('Validation passed');
 
         try {
             $profileImagePath = null;
@@ -101,9 +97,11 @@ class UserManagerController extends Controller
             if ($request->hasFile('profile_image')) {
                 $file = $request->file('profile_image');
                 $path = 'uploads/user/';
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $filename = time() . '_' . uniqid() . '.' . $file->getExtension();
                 $file->move(public_path($path), $filename);
                 $profileImagePath = $path . $filename;
+
+                Log::info('Profile image uploaded', ['path' => $profileImagePath]);
             }
 
             // 👤 Create user
@@ -116,35 +114,43 @@ class UserManagerController extends Controller
                 'profile_image' => $profileImagePath,
             ]);
 
-            $user->expertiseManagers()->sync(
-                $request->expertise_manager_ids
-            );
+            Log::info('User created', ['user_id' => $user->id]);
+
+            // Sync expertise managers
+            if ($request->filled('expertise_manager_ids')) {
+                $user->expertiseManagers()->sync($request->expertise_manager_ids);
+                Log::info('Expertise managers synced', ['ids' => $request->expertise_manager_ids]);
+            }
 
             // ✅ Assign role
-            $user->syncRoles($request->role);
+            if ($request->filled('role')) {
+                $user->syncRoles($request->role);
+                Log::info('Role assigned', ['role_name' => $request->role]);
 
-            // Auto assign all permissions of the role
-            $role = Role::find($request->role);
-            if ($role) {
-                $permissions = $role->permissions->pluck('name')->toArray();
-                $user->syncPermissions($permissions);
+                // Assign extra direct permissions (if any)
+                $user->syncPermissions($request->permissions ?? []);
+            } else {
+                Log::warning('No role provided in request');
             }
 
             /* ✅ Auto verify email */
             if (! $user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
                 event(new Verified($user));
+                Log::info('User email verified', ['user_id' => $user->id]);
             }
+
+            Log::info('User creation completed successfully', ['user_id' => $user->id]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'User created successfully!',
             ], 200);
         } catch (\Throwable $th) {
-            Log::error('User creation failed: ' . $th->getMessage());
+            Log::error('User creation failed', ['error' => $th->getMessage(), 'trace' => $th->getTraceAsString()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Something went wrong while creating user!',
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
@@ -201,6 +207,7 @@ class UserManagerController extends Controller
             ],
             // 'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'exists:roles,name'],
         ]);
 
         try {
@@ -256,14 +263,15 @@ class UserManagerController extends Controller
 
                 // Update role
                 $user->syncRoles($newRole);
+                // Assign extra direct permissions (if any)
+                $user->syncPermissions($request->permissions ?? []);
+                // // Sync permissions based on new role
+                // $role = Role::find($newRole);
 
-                // Sync permissions based on new role
-                $role = Role::find($newRole);
-
-                if ($role) {
-                    $permissions = $role->permissions->pluck('name')->toArray();
-                    $user->syncPermissions($permissions);
-                }
+                // if ($role) {
+                //     $permissions = $role->permissions->pluck('name')->toArray();
+                //     $user->syncPermissions($permissions);
+                // }
             }
 
             return response()->json([
@@ -274,7 +282,7 @@ class UserManagerController extends Controller
             Log::error($th->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Something went wrong while updating user!',
+                'message' => $th->getMessage(),
             ], 500);
         }
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -50,9 +51,9 @@ class UserPermissionController extends Controller
             return explode('.', $item->name)[0];
         });
 
-        $userPermissions = $user->permissions->pluck('name')->toArray();
-
-        $assigned = $user->permissions->pluck('name')->toArray();
+        $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
+        Log::info('Permissions - ', $userPermissions);
+        $assigned = $userPermissions;
 
         $html = view('admin.user_manager.permissions.user-permission-modal', compact(
             'user',
