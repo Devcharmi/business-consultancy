@@ -144,7 +144,7 @@ class ConsultingController extends Controller
             ],
             'consulting_date' => 'required|date',
             'start_time' => 'required',
-            'end_time' => 'required|after:start_time',
+            'end_time' => 'nullable|after:start_time',
         ], [
             // Optional custom messages
             // 'client_objective_id.required' => 'Please select a client objective.',
@@ -163,7 +163,8 @@ class ConsultingController extends Controller
             $validated['consulting_date'],
             $validated['start_time'],
             $validated['end_time'],
-            $validated['expertise_manager_id']
+            $validated['expertise_manager_id'],
+            auth()->id(),   // 👈 pass user id
         );
 
         if ($overlap) {
@@ -313,7 +314,7 @@ class ConsultingController extends Controller
             ],
             'consulting_date' => 'required|date',
             'start_time' => 'required',
-            'end_time' => 'required|after:start_time',
+            'end_time' => 'nullable|after:start_time',
         ], [
             // 'client_objective_id.required' => 'Please select a client objective.',
             'client_id.required' => 'Please select a client.',
@@ -324,36 +325,41 @@ class ConsultingController extends Controller
             'start_time.required' => 'Please select start time.',
             'end_time.required' => 'Please select end time.',
             'end_time.after' => 'End time must be greater than start time.',
-            // 'consulting_date.after_or_equal' => 'Consulting date cannot be in the past.',
+            'consulting_date.after_or_equal' => 'Consulting date cannot be in the past.',
         ]);
 
-        $overlap = Consulting::hasTimeOverlap(
-            $validated['consulting_date'],
-            $validated['start_time'],
-            $validated['end_time'],
-            $validated['expertise_manager_id'],
-            $id // ignore current record
-        );
-
-        if ($overlap) {
-            return response()->json([
-                'success' => false,
-                'errors' => [
-                    'start_time' => ['This time slot overlaps with an existing consulting.']
-                ]
-            ], 422);
-        }
 
         try {
             // Start transaction
             DB::beginTransaction();
+
+            $consulting = Consulting::findOrFail($id);
+            $userId = $consulting->created_by;
+
+            $overlap = Consulting::hasTimeOverlap(
+                $validated['consulting_date'],
+                $validated['start_time'],
+                $validated['end_time'],
+                $validated['expertise_manager_id'],
+                $userId, // 👈 pass user id
+                $id // ignore current record
+            );
+
+            if ($overlap) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => [
+                        'start_time' => ['This time slot overlaps with an existing consulting.']
+                    ]
+                ], 422);
+            }
+
             // ✅ Get or create client objective
             $clientObjective = $this->getOrCreateClientObjective(
                 $validated['client_id'],
                 $validated['objective_manager_id']
             );
 
-            $consulting = Consulting::findOrFail($id);
             $consulting->fill($data);
             $consulting->client_objective_id = $clientObjective->id;
             $consulting->updated_by = auth()->id();

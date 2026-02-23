@@ -25,34 +25,47 @@ class Consulting extends Model
         'consulting_date' => 'date',
     ];
 
+    // public static function hasTimeOverlap(
+    //     $consultingDate,
+    //     $startTime,
+    //     $endTime,
+    //     $expertiseManagerId,
+    //     $ignoreId = null
+    // ) {
+    //     return self::where('consulting_date', $consultingDate)
+    //         ->where('expertise_manager_id', $expertiseManagerId)
+    //         ->when($ignoreId, function ($query) use ($ignoreId) {
+    //             $query->where('id', '!=', $ignoreId);
+    //         })
+    //         ->where(function ($query) use ($startTime, $endTime) {
+    //             $query->where('start_time', '<', $endTime)
+    //                 ->where('end_time', '>', $startTime);
+    //         })
+    //         ->exists();
+    // }
+
     public static function hasTimeOverlap(
-        $consultingDate,
+        $date,
         $startTime,
         $endTime,
         $expertiseManagerId,
+        $userId,
         $ignoreId = null
     ) {
-        return self::where('consulting_date', $consultingDate)
+        $query = self::whereDate('consulting_date', $date)
+            ->where('user_id', $userId)
             ->where('expertise_manager_id', $expertiseManagerId)
-            ->when($ignoreId, function ($query) use ($ignoreId) {
-                $query->where('id', '!=', $ignoreId);
-            })
-            ->where(function ($query) use ($startTime, $endTime) {
-                $query->where('start_time', '<', $endTime)
+            ->where(function ($q) use ($startTime, $endTime) {
+                $q->where('start_time', '<', $endTime)
                     ->where('end_time', '>', $startTime);
-            })
-            ->exists();
+            });
+
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        return $query->exists();
     }
-
-    // public function client()
-    // {
-    //     return $this->belongsTo(Client::class);
-    // }
-
-    // public function objective_manager()
-    // {
-    //     return $this->belongsTo(ObjectiveManager::class);
-    // }
 
     public function client_objective()
     {

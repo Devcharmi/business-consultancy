@@ -16,6 +16,9 @@ class UserTask extends Model
     const TYPE_TASK    = 'task';
     const TYPE_MEETING = 'meeting';
 
+    const SOURCE_COMMITMENT   = 'commitment';
+    const SOURCE_DELIVERABLE = 'deliverable';
+
     protected $fillable = [
         'staff_manager_id',
         'client_id',
@@ -190,6 +193,11 @@ class UserTask extends Model
         // 🔹 Task / Meeting filter
         if (!empty($filters['filterTaskType'])) {
             $query->where('task_type', $filters['filterTaskType']);
+        }
+
+        // 🔹 Source filter
+        if (!empty($filters['filterSource'])) {
+            $query->where('source_type', $filters['filterSource']);
         }
 
         // 🔹 Lead ID filter

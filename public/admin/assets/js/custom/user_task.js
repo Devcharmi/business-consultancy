@@ -187,6 +187,11 @@ var columns = [
         data: "source_type",
         mRender: function (v, t, o) {
             if (!o.source_type) return "-";
+
+            if (o.source_type === "commitment") {
+                return "Actionable";
+            }
+
             return (
                 o.source_type.charAt(0).toUpperCase() + o.source_type.slice(1)
             );
@@ -218,6 +223,7 @@ var task_table = $(".table-list").DataTable({
             d.filterPriority = $("#filterPriority").val();
             d.filterEntity = $("#filterEntity").val();
             d.filterTaskType = $("#filterTaskType").val();
+            d.filterSource = $("#filterSource").val();
 
             // 🔥 FROM URL
             d.filterLead = urlLeadId;

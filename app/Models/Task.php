@@ -19,6 +19,7 @@ class Task extends Model
         'task_due_date',
         'type',
         'status_manager_id',
+        'participants',
         'created_by',
         'updated_by',
     ];

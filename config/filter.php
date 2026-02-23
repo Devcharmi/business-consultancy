@@ -20,6 +20,7 @@ return [
             'priority',
             'entities',
             'types',
+            'sources',
         ],
 
         'task.index' => [

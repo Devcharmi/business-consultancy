@@ -50,6 +50,17 @@ class FilterDropdownService
                 ],
             ]),
 
+            'sources' => collect([
+                [
+                    'id' => UserTask::SOURCE_COMMITMENT,
+                    'name' => 'Actionable',
+                ],
+                [
+                    'id' => UserTask::SOURCE_DELIVERABLE,
+                    'name' => 'Deliverable',
+                ],
+            ]),
+
         ];
     }
 }

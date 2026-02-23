@@ -208,6 +208,23 @@
                                 </div>
                             </div>
                         @endif
+
+
+                        @if (showFilter('sources', $enabledFilters))
+                            <div class="col-md-6">
+                                <div class="row align-items-center">
+                                    <label class="col-4 col-form-label">Source</label>
+                                    <div class="col-8">
+                                        <select id="filterSource" class="form-select applyFilters">
+                                            <option value="">All Sources</option>
+                                            @foreach ($sources as $source)
+                                                <option value="{{ $source['id'] }}">{{ $source['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

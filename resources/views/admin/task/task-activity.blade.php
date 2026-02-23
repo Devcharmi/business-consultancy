@@ -71,7 +71,7 @@
                                 <tr>
                                     <th style="width:150px;">Created Date</th>
                                     <th style="width:150px;">Due Date</th>
-                                    <th>Commitment</th>
+                                    <th>Actionable</th>
                                     @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
                                         <th>Assign to</th>
                                     @endif
@@ -115,7 +115,7 @@
                                     </tr>
                                 @empty
                                     <tr class="no-commitments">
-                                        <td colspan="4" class="text-muted text-center">No commitments for this date
+                                        <td colspan="4" class="text-muted text-center">No actionable for this date
                                         </td>
                                     </tr>
                                 @endforelse

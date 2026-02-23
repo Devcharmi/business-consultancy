@@ -156,7 +156,12 @@
                                         <small class="text-danger">{{ $errors->first('status_manager_id') }}</small>
                                     </div>
                                 </div>
-
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label>Participants</label>
+                                        <textarea class="form-control mb-3" name="participants" id="participants">{{ optional($taskData)->participants }}</textarea>
+                                    </div>
+                                </div>
                                 {{-- =========================
                                     TASK ACTIVITY (Accordion)
                                     ========================= --}}
@@ -256,6 +261,12 @@
         let deliverables = {};
         let deliverablesToDelete = [];
         var index_path = "{{ route('consulting.index') }}";
+        initAllCKEditors(
+            [
+                "participants"
+            ]
+        );
+
         window.deleteAttachment = "{{ route('task.attachments.delete', ':id') }}";
         window.taskContentEditorIds = [
             @foreach ($dates as $date)

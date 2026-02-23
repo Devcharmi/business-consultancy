@@ -49,6 +49,15 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
             $focusAreaName  = $row['focus_area_name'] ?? null;
             $expertiseName  = $row['expertise_name'] ?? null;
 
+            // Parse date/time
+            $consultingDateRaw = $row['consulting_date_yyyy_mm_dd'] ?? null;
+            $startTimeRaw      = $row['start_time_hhmm'] ?? null;
+            $endTimeRaw        = $row['end_time_hhmm'] ?? null;
+
+            $consultingDate = $this->parseDate($consultingDateRaw, $rowNumber, 'consulting_date');
+            $startTime      = $this->parseTime($startTimeRaw, $rowNumber, 'start_time');
+            $endTime        = $this->parseTime($endTimeRaw, $rowNumber, 'end_time');
+
             logger([
                 'client' => $clientName,
                 'objective' => $objectiveName,
@@ -94,18 +103,6 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 ['status' => 1]
             );
 
-            // Parse date/time
-            $consultingDateRaw = $row['consulting_date_yyyy_mm_dd'] ?? null;
-            $startTimeRaw      = $row['start_time_hhmm'] ?? null;
-            $endTimeRaw        = $row['end_time_hhmm'] ?? null;
-
-            $consultingDate = $this->parseDate($consultingDateRaw, $rowNumber, 'consulting_date');
-            $startTime      = $this->parseTime($startTimeRaw, $rowNumber, 'start_time');
-            $endTime        = $this->parseTime($endTimeRaw, $rowNumber, 'end_time');
-
-            if (!$consultingDate || !$startTime || !$endTime) {
-                continue;
-            }
 
             // Validator like controller
             $validatorData = [
@@ -113,9 +110,9 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 'objective_manager_id' => $objective->id,
                 'expertise_manager_id' => $expertise->id,
                 'focus_area_manager_id' => $focusArea->id,
-                'consulting_date' => $consultingDate,
-                'start_time' => $startTime,
-                'end_time' => $endTime,
+                // 'consulting_date' => $consultingDate,
+                // 'start_time' => $startTime,
+                // 'end_time' => $endTime,
             ];
 
             $validator = Validator::make($validatorData, [
@@ -123,18 +120,18 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 'objective_manager_id' => 'required|integer|exists:objective_managers,id',
                 'expertise_manager_id' => 'required|integer|exists:expertise_managers,id',
                 'focus_area_manager_id' => 'required|integer|exists:focus_area_managers,id',
-                'consulting_date' => 'required|date',
-                'start_time' => 'required',
-                'end_time' => 'required|after:start_time',
+                // 'consulting_date' => 'required|date',
+                // 'start_time' => 'required',
+                // 'end_time' => 'required|after:start_time',
             ], [
                 'client_id.required' => 'Please select a client.',
                 'objective_manager_id.required' => 'Please select a objective.',
                 'expertise_manager_id.required' => 'Please select an expertise.',
                 'focus_area_manager_id.required' => 'Please select a focus area.',
-                'consulting_date.required' => 'Please select consulting date & time.',
-                'start_time.required' => 'Please select start time.',
-                'end_time.required' => 'Please select end time.',
-                'end_time.after' => 'End time must be greater than start time.',
+                // 'consulting_date.required' => 'Please select consulting date & time.',
+                // 'start_time.required' => 'Please select start time.',
+                // 'end_time.required' => 'Please select end time.',
+                // 'end_time.after' => 'End time must be greater than start time.',
             ]);
 
             if ($validator->fails()) {
@@ -144,21 +141,21 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 continue;
             }
 
-            // Time overlap check
-            $overlap = Consulting::hasTimeOverlap(
-                $consultingDate,
-                $startTime,
-                $endTime,
-                $expertise->id
-            );
+            // // Time overlap check
+            // $overlap = Consulting::hasTimeOverlap(
+            //     $consultingDate,
+            //     $startTime,
+            //     $endTime,
+            //     $expertise->id
+            // );
 
-            if ($overlap) {
-                $this->errors[] = [
-                    'row' => $rowNumber,
-                    'message' => 'This time slot overlaps with an existing consulting.'
-                ];
-                continue;
-            }
+            // if ($overlap) {
+            //     $this->errors[] = [
+            //         'row' => $rowNumber,
+            //         'message' => 'This time slot overlaps with an existing consulting.'
+            //     ];
+            //     continue;
+            // }
 
             // Create record
             Consulting::create([
@@ -189,25 +186,26 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
 
     protected function parseDate($value, $rowNumber, $fieldName)
     {
-        if (!$value) {
-            $this->errors[] = ['row' => $rowNumber, 'message' => "{$fieldName} is empty."];
-            return null;
-        }
+        // if (!$value) {
+        //     $this->errors[] = ['row' => $rowNumber, 'message' => "{$fieldName} is empty."];
+        //     return null;
+        // }
 
         try {
-            if (is_numeric($value)) {
-                return Carbon::parse(ExcelDate::excelToDateTimeObject($value))->format('Y-m-d');
-            }
-
-            $formats = ['Y-m-d', 'd-m-Y', 'm/d/Y'];
-            foreach ($formats as $format) {
-                try {
-                    return Carbon::createFromFormat($format, $value)->format('Y-m-d');
-                } catch (\Exception $e) {
+            if ($value) {
+                if (is_numeric($value)) {
+                    return Carbon::parse(ExcelDate::excelToDateTimeObject($value))->format('Y-m-d');
                 }
-            }
 
-            throw new \Exception("No matching date format");
+                $formats = ['Y-m-d', 'd-m-Y', 'm/d/Y'];
+                foreach ($formats as $format) {
+                    try {
+                        return Carbon::createFromFormat($format, $value)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                    }
+                }
+                throw new \Exception("No matching date format");
+            }
         } catch (\Exception $e) {
             $this->errors[] = ['row' => $rowNumber, 'message' => "Invalid format for {$fieldName}: {$value}"];
             return null;
@@ -216,29 +214,31 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
 
     protected function parseTime($value, $rowNumber, $fieldName)
     {
-        if (!$value) {
-            $this->errors[] = ['row' => $rowNumber, 'message' => "{$fieldName} is empty."];
-            return null;
-        }
+        // if (!$value) {
+        //     $this->errors[] = ['row' => $rowNumber, 'message' => "{$fieldName} is empty."];
+        //     return null;
+        // }
 
         // Handle numeric Excel time
-        if (is_numeric($value) && $value < 1) {
-            try {
-                $dt = ExcelDate::excelToDateTimeObject($value);
-                return $dt->format('H:i');
-            } catch (\Exception $e) {
-                $this->errors[] = ['row' => $rowNumber, 'message' => "Invalid numeric time for {$fieldName}: {$value}"];
+        if ($value) {
+            if (is_numeric($value) && $value < 1) {
+                try {
+                    $dt = ExcelDate::excelToDateTimeObject($value);
+                    return $dt->format('H:i');
+                } catch (\Exception $e) {
+                    $this->errors[] = ['row' => $rowNumber, 'message' => "Invalid numeric time for {$fieldName}: {$value}"];
+                    return null;
+                }
+            }
+
+            $value = str_pad($value, 4, '0', STR_PAD_LEFT);
+
+            if (strlen($value) !== 4) {
+                $this->errors[] = ['row' => $rowNumber, 'message' => "Invalid time format for {$fieldName}: {$value}"];
                 return null;
             }
+
+            return substr($value, 0, 2) . ':' . substr($value, 2, 2);
         }
-
-        $value = str_pad($value, 4, '0', STR_PAD_LEFT);
-
-        if (strlen($value) !== 4) {
-            $this->errors[] = ['row' => $rowNumber, 'message' => "Invalid time format for {$fieldName}: {$value}"];
-            return null;
-        }
-
-        return substr($value, 0, 2) . ':' . substr($value, 2, 2);
     }
 }

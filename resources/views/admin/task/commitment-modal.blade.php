@@ -28,7 +28,7 @@
                     <div class="mb-3">
                         <label class="required">Actionable</label>
                         <input type="text" name="commitment" id="commitment" class="form-control"
-                            placeholder="Enter commitment">
+                            placeholder="Enter actionable">
                         <small class="text-danger" id="commitment_error"></small>
                     </div>
 

@@ -20,6 +20,7 @@ if (!function_exists('filterDropdowns')) {
                 'priorities' => collect(),
                 'entities' => collect(),
                 'types' => collect(),
+                'sources' => collect(),
             ];
         }
 

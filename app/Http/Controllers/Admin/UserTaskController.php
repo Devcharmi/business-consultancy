@@ -9,12 +9,8 @@ use App\Models\PriorityManager;
 use App\Models\StatusManager;
 use App\Models\User;
 use App\Models\UserTask;
-use App\Services\FilterDropdownService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class UserTaskController extends Controller
 {
@@ -57,6 +53,7 @@ class UserTaskController extends Controller
             $data['filterPriority'] = $request->get('filterPriority');
             $data['filterEntity'] = $request->get('filterEntity');
             $data['filterTaskType'] = $request->get('filterTaskType');
+            $data['filterSource'] = $request->get('filterSource');
             // 🔥 Lead from URL
             $data['filterLead']      = $request->get('filterLead');
 

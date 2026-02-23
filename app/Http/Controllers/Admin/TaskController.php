@@ -291,7 +291,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Task created successfully'
+                'message' => 'CVR created successfully'
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -329,6 +329,7 @@ class TaskController extends Controller
                 'task_due_date',
                 'type',
                 'status_manager_id',
+                'participants',
             ]));
 
             // ✅ Content
@@ -393,7 +394,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Task updated successfully'
+                'message' => 'CVR updated successfully'
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -570,7 +571,7 @@ class TaskController extends Controller
         try {
             $task = Task::findOrFail($id);
             $task->delete();
-            return response()->json(['success' => true, 'message' => 'Task deleted successfully'], 200);
+            return response()->json(['success' => true, 'message' => 'CVR deleted successfully'], 200);
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
             return response()->json(['success' => false, 'message' => 'Something went wrong!'], 500);
