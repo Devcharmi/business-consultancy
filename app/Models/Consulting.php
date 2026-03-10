@@ -53,7 +53,7 @@ class Consulting extends Model
         $ignoreId = null
     ) {
         $query = self::whereDate('consulting_date', $date)
-            ->where('user_id', $userId)
+            ->where('created_by', $userId)
             ->where('expertise_manager_id', $expertiseManagerId)
             ->where(function ($q) use ($startTime, $endTime) {
                 $q->where('start_time', '<', $endTime)

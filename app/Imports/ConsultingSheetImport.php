@@ -93,14 +93,14 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
             }
 
             // Objective, Focus Area, Expertise
-            $objective = ObjectiveManager::firstOrCreate(['name' => trim($objectiveName)], ['status' => 1]);
-            $focusArea = FocusAreaManager::firstOrCreate(['name' => trim($focusAreaName)], ['status' => 1]);
-            $expertise = ExpertiseManager::firstOrCreate(['name' => trim($expertiseName)], ['status' => 1]);
+            $objective = ObjectiveManager::firstOrCreate(['name' => trim($objectiveName)], ['status' => '1']);
+            $focusArea = FocusAreaManager::firstOrCreate(['name' => trim($focusAreaName)], ['status' => '1']);
+            $expertise = ExpertiseManager::firstOrCreate(['name' => trim($expertiseName)], ['status' => '1']);
 
             // Client Objective
             $clientObjective = ClientObjective::firstOrCreate(
                 ['client_id' => $client->id, 'objective_manager_id' => $objective->id],
-                ['status' => 1]
+                ['status' => '1']
             );
 
 

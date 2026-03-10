@@ -107,19 +107,19 @@ class ConsultingImportOld implements ToCollection, WithHeadingRow
             // 2️⃣ Objective
             $objective = ObjectiveManager::firstOrCreate(
                 ['name' => trim($objectiveName)],
-                ['status' => 1]
+                ['status' => '1']
             );
 
             // 3️⃣ Focus Area
             $focusArea = FocusAreaManager::firstOrCreate(
                 ['name' => trim($focusAreaName)],
-                ['status' => 1]
+                ['status' => '1']
             );
 
             // 3️⃣ Expertise
             $expertise = ExpertiseManager::firstOrCreate(
                 ['name' => trim($expertiseName)],
-                ['status' => 1]
+                ['status' => '1']
             );
 
             // 4️⃣ Client Objective
@@ -128,7 +128,7 @@ class ConsultingImportOld implements ToCollection, WithHeadingRow
                     'client_id' => $client->id,
                     'objective_manager_id' => $objective->id
                 ],
-                ['status' => 1]
+                ['status' => '1']
             );
 
 
