@@ -76,6 +76,16 @@
                                   class="help-inline text-danger mt-2">{{ $errors->first('phone') }}</span>
                           </div>
                       </div>
+                      <div class="row mb-1">
+                          <label class="col-form-label col-md-2">Role</label>
+                          <div class="form-group col-md-6 pt-2">
+
+                              <span class="badge bg-primary">
+                                  {{ $user->getRoleNames()->first() }}
+                              </span>
+
+                          </div>
+                      </div>
                       {{-- <div class="row"> --}}
                       <div>
                           @if (!empty($user))

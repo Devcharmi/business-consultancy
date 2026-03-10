@@ -133,6 +133,11 @@ class UserTask extends Model
         return $query->where('task_type', self::TYPE_MEETING);
     }
 
+    public function scopeStatus($query, $status)
+    {
+        return $query->whereHas('status_manager', fn($q) => $q->where('name', $status));
+    }
+
     public function scopeFilters($query, $filters = [], $columns = [])
     {
         if (!empty($filters['date_range'])) {
