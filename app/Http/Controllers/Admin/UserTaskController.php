@@ -132,8 +132,8 @@ class UserTaskController extends Controller
                 break;
 
             case 'pending':
-                $query->whereDate('task_start_date', '<=', today())
-                    ->whereDate('task_due_date', '>=', today())
+                // $query->whereDate('task_start_date', '<=', today())
+                $query->whereDate('task_due_date', '>=', today())
                     ->whereHas('status_manager', function ($q) {
                         $q->where('name', '!=', 'Done');
                     });
@@ -311,7 +311,7 @@ class UserTaskController extends Controller
         $task->load(['activities.user']);
 
         $html = view('admin.user_task.activity-modal', compact('task'))->render();
-        
+
         return response()->json([
             'success' => true,
             'html' => $html
