@@ -92,6 +92,24 @@
             cursor: pointer;
         }
     </style>
+    <style>
+        .import-export-menu {
+            min-width: 220px;
+        }
+
+        .import-export-menu .dropdown-item {
+            white-space: nowrap;
+        }
+        
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+    </style>
 @endsection
 @section('content')
     <!-- Page Header -->
@@ -114,19 +132,47 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">Task Manager</div>
                     <div class="d-flex gap-2">
-                        <!-- Open Filter Modal -->
-                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
-                            title="Filters">
-                            <i class="ri-filter-3-line"></i>
-                        </button>
+                        <div class="d-flex gap-2">
+                            {{-- Import / Export Dropdown --}}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary btn-sm icon-btn" type="button" id="importExportDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false" title="Import / Export">
+                                    <i class="ri-upload-2-line"></i>
+                                </button>
 
-                        <!-- Reset Filters -->
-                        <button class="btn btn-outline-danger btn-sm" id="resetFilters" title="Reset">
-                            <i class="ri-refresh-line"></i>
-                        </button>
-                        <a href="{{ route('user-task.show', ['user_task' => 'new']) }}"
-                            class="btn btn-success {{ canAccess('user-task.create') ? '' : 'disabled' }}">+ Add
-                            Task</a>
+                                <ul class="dropdown-menu dropdown-menu-end import-export-menu"
+                                    aria-labelledby="importExportDropdown">
+                                    {{-- Import --}}
+                                    <li>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                            data-bs-target="#importUserTaskModal">
+                                            <i class="ri-upload-line me-2"></i> Import Task
+                                        </a>
+                                    </li>
+
+                                    {{-- Download Sample --}}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('user-task.sample.download') }}">
+                                            <i class="ri-download-2-line me-2"></i> Download Sample File
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Open Filter Modal -->
+                            <button class="btn btn-outline-primary btn-sm icon-btn" data-bs-toggle="modal"
+                                data-bs-target="#filterModal" title="Filters">
+                                <i class="ri-filter-3-line"></i>
+                            </button>
+
+                            <!-- Reset Filters -->
+                            <button class="btn btn-outline-danger btn-sm icon-btn" id="resetFilters" title="Reset">
+                                <i class="ri-refresh-line"></i>
+                            </button>
+                            <a href="{{ route('user-task.show', ['user_task' => 'new']) }}"
+                                class="btn btn-success {{ canAccess('user-task.create') ? '' : 'disabled' }}">+ Add
+                                Task</a>
+                        </div>
+
                     </div>
                 </div>
 
@@ -190,6 +236,7 @@
             </div>
         </div>
     </div>
+    @include('admin.user_task.import-modal')
 @endsection
 
 @section('script')

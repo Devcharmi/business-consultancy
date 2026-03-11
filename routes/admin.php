@@ -124,9 +124,12 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::get('task/{task}/pdf', [TaskController::class, 'exportTaskPdf'])
         ->name('task.pdf');
 
-    Route::resource('user-task', UserTaskController::class);
     Route::get('user-task/{task}/activities', [UserTaskController::class, 'activities'])
         ->name('user-task.activities');
+    Route::get('/user-task/sample-download', [UserTaskController::class, 'downloadSample'])
+        ->name('user-task.sample.download');
+    Route::post('/user-task/import', [UserTaskController::class, 'import'])->name('user-task.import');
+    Route::resource('user-task', UserTaskController::class);
 
     Route::prefix('reports')
         ->name('reports.')

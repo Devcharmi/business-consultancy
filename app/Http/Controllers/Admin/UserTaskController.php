@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UserTaskSampleExport;
 use App\Http\Controllers\Controller;
+use App\Imports\UserTaskImport;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\PriorityManager;
@@ -11,6 +13,7 @@ use App\Models\User;
 use App\Models\UserTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserTaskController extends Controller
 {
@@ -316,5 +319,35 @@ class UserTaskController extends Controller
             'success' => true,
             'html' => $html
         ], 200);
+    }
+
+    public function downloadSample()
+    {
+        return Excel::download(new UserTaskSampleExport, 'usertask_import_sample.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv'
+        ]);
+
+        $import = new UserTaskImport();
+        try {
+            Excel::import($import, $request->file('file'));
+
+            return response()->json([
+                'success'       => $import->getImportedCount() > 0,
+                'importedCount' => $import->getImportedCount(),
+                'message'       => $import->getImportedCount() . ' rows imported successfully.',
+                'errors'        => $import->getErrors() ?? [],
+            ]);
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

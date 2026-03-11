@@ -1,4 +1,24 @@
 @extends('admin.layouts.app')
+@section('styles')
+    <style>
+        .import-export-menu {
+            min-width: 220px;
+        }
+
+        .import-export-menu .dropdown-item {
+            white-space: nowrap;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="row mt-4">
         <div class="col-xl-12">
@@ -11,13 +31,13 @@
                     <div class="d-flex gap-2">
                         {{-- Import / Export Dropdown --}}
                         <div class="dropdown">
-                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                                id="importExportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                                title=" Import / Export">
+                            <button class="btn btn-outline-primary btn-sm icon-btn" type="button" id="importExportDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false" title=" Import / Export">
                                 <i class="ri-upload-2-line"></i>
                             </button>
 
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="importExportDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end import-export-menu"
+                                aria-labelledby="importExportDropdown">
                                 {{-- Import --}}
                                 <li>
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal"
@@ -36,13 +56,13 @@
                         </div>
 
                         <!-- Open Filter Modal -->
-                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filterModal"
+                        <button class="btn btn-outline-primary btn-sm icon-btn" data-bs-toggle="modal" data-bs-target="#filterModal"
                             title="Filters">
                             <i class="ri-filter-3-line"></i>
                         </button>
 
                         <!-- Reset Filters -->
-                        <button class="btn btn-outline-danger btn-sm" id="resetFilters" title="Reset">
+                        <button class="btn btn-outline-danger btn-sm icon-btn" id="resetFilters" title="Reset">
                             <i class="ri-refresh-line"></i>
                         </button>
 
