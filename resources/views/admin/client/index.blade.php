@@ -43,4 +43,5 @@
         window.canDeleteTask = @json(canAccess('client.delete'));
     </script>
     <script src="{{ asset('admin/assets/js/custom/client.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/reports/direct_consulting.js') }}"></script>
 @endsection

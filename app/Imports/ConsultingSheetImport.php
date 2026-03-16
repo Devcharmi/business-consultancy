@@ -103,7 +103,6 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 ['status' => '1']
             );
 
-
             // Validator like controller
             $validatorData = [
                 'client_id' => $client->id,

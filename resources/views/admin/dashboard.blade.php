@@ -78,4 +78,5 @@
         var routeUpdateStatue = "{{ route('dashboard.update-status') }}";
     </script>
     <script src="{{ asset('admin/assets/js/custom/dashboard.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/custom/reports/direct_consulting.js') }}"></script>
 @endsection
