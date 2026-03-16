@@ -25,7 +25,7 @@
             <div class="card custom-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="card-title">
-                        Consulting Manager
+                        Consulting Visit
                     </div>
 
                     <div class="d-flex gap-2">
