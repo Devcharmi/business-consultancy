@@ -100,7 +100,7 @@
         .import-export-menu .dropdown-item {
             white-space: nowrap;
         }
-        
+
         .icon-btn {
             width: 38px;
             height: 38px;
@@ -135,8 +135,9 @@
                         <div class="d-flex gap-2">
                             {{-- Import / Export Dropdown --}}
                             <div class="dropdown">
-                                <button class="btn btn-outline-primary btn-sm icon-btn" type="button" id="importExportDropdown"
-                                    data-bs-toggle="dropdown" aria-expanded="false" title="Import / Export">
+                                <button class="btn btn-outline-primary btn-sm icon-btn" type="button"
+                                    id="importExportDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                    title="Import / Export">
                                     <i class="ri-upload-2-line"></i>
                                 </button>
 

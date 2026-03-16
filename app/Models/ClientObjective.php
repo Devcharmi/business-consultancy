@@ -20,7 +20,7 @@ class ClientObjective extends Model
 
     public function getLabelAttribute()
     {
-        return $this->client->client_name . ' - ' . $this->objective_manager->name;
+        return ($this->client?->client_name ?? '-') . ' - ' . ($this->objective_manager?->name ?? '-');
     }
 
     public function client()
