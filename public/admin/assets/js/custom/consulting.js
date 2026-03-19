@@ -127,6 +127,14 @@ var consulting_table = $(".table-list").DataTable({
             },
         },
 
+        // 5️⃣ consulting_type
+        {
+            data: "consulting_type",
+            render: function (data) {
+                return data ? data.name : "-";
+            },
+        },
+
         // 6️⃣ Date
         {
             data: "consulting_date",

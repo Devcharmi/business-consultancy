@@ -15,6 +15,7 @@ class Consulting extends Model
         'expertise_manager_id',
         'focus_area_manager_id',
         'consulting_date',
+        'consulting_type_id',
         'start_time',
         'end_time',
         'created_by',
@@ -25,23 +26,28 @@ class Consulting extends Model
         'consulting_date' => 'date',
     ];
 
+
     // public static function hasTimeOverlap(
-    //     $consultingDate,
+    //     $date,
     //     $startTime,
     //     $endTime,
     //     $expertiseManagerId,
+    //     $userId,
     //     $ignoreId = null
     // ) {
-    //     return self::where('consulting_date', $consultingDate)
+    //     $query = self::whereDate('consulting_date', $date)
+    //         ->where('created_by', $userId)
     //         ->where('expertise_manager_id', $expertiseManagerId)
-    //         ->when($ignoreId, function ($query) use ($ignoreId) {
-    //             $query->where('id', '!=', $ignoreId);
-    //         })
-    //         ->where(function ($query) use ($startTime, $endTime) {
-    //             $query->where('start_time', '<', $endTime)
+    //         ->where(function ($q) use ($startTime, $endTime) {
+    //             $q->where('start_time', '<', $endTime)
     //                 ->where('end_time', '>', $startTime);
-    //         })
-    //         ->exists();
+    //         });
+
+    //     if ($ignoreId) {
+    //         $query->where('id', '!=', $ignoreId);
+    //     }
+
+    //     return $query->exists();
     // }
 
     public static function hasTimeOverlap(
@@ -52,19 +58,28 @@ class Consulting extends Model
         $userId,
         $ignoreId = null
     ) {
+        // If any are null, cannot check overlap
+        if (!$date || !$startTime || !$endTime) {
+            return false;
+        }
+
         $query = self::whereDate('consulting_date', $date)
             ->where('created_by', $userId)
-            ->where('expertise_manager_id', $expertiseManagerId)
-            ->where(function ($q) use ($startTime, $endTime) {
-                $q->where('start_time', '<', $endTime)
-                    ->where('end_time', '>', $startTime);
-            });
+            ->where('expertise_manager_id', $expertiseManagerId);
 
         if ($ignoreId) {
             $query->where('id', '!=', $ignoreId);
         }
 
-        return $query->exists();
+        return $query->where(function ($q) use ($startTime, $endTime) {
+            $q->where('start_time', '<', $endTime)
+                ->where('end_time', '>', $startTime);
+        })->exists();
+    }
+
+    public function consulting_type()
+    {
+        return $this->belongsTo(ConsultingType::class);
     }
 
     public function client_objective()

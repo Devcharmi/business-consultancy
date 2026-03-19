@@ -78,9 +78,24 @@
                             </select>
                             <small class="text-danger" id="focus_area_manager_id_error"></small>
                         </div>
+
+                        {{-- consultingTypes --}}
+                        <div class="col-md-12 mb-3">
+                            <label>Type</label>
+                            <select name="consulting_type_id" class="form-control select2">
+                                <option value="">Select type</option>
+                                @foreach ($consultingTypes as $consultingType)
+                                    <option value="{{ $consultingType->id }}" @selected(old('consulting_type_id', $consultingData->consulting_type_id ?? null) == $consultingType->id)>
+                                        {{ $consultingType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger" id="consulting_type_id_error"></small>
+                        </div>
+                        
                         {{-- Consulting Date --}}
                         <div class="col-md-4 mb-3">
-                            <label class="required">Date</label>
+                            <label>Date</label>
                             <input type="date" name="consulting_date" id="consulting_date"
                                 class="form-control form-control-sm"
                                 value="{{ old('consulting_date', isset($consultingData) ? $consultingData->consulting_date?->format('Y-m-d') : '') }}">
@@ -89,7 +104,7 @@
 
                         {{-- Start Time --}}
                         <div class="col-md-4 mb-3">
-                            <label class="required">Start Time</label>
+                            <label>Start Time</label>
                             <input type="time" name="start_time" id="start_time" class="form-control form-control-sm"
                                 value="{{ old('start_time', isset($consultingData->start_time) ? \Carbon\Carbon::parse($consultingData->start_time)->format('H:i') : '') }}">
 
@@ -98,7 +113,7 @@
 
                         {{-- End Time --}}
                         <div class="col-md-4 mb-3">
-                            <label class="required">End Time</label>
+                            <label>End Time</label>
                             <input type="time" name="end_time" id="end_time" class="form-control form-control-sm"
                                 value="{{ old('end_time', isset($consultingData->end_time) ? \Carbon\Carbon::parse($consultingData->end_time)->format('H:i') : '') }}">
                             <small class="text-danger" id="end_time_error"></small>

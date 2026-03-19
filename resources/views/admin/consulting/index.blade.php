@@ -87,6 +87,7 @@
                                     <th>Objective</th>
                                     <th>Expertise</th>
                                     <th>Focus Area</th>
+                                    <th>Type</th>
                                     <th>Date</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>

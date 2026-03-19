@@ -20,6 +20,7 @@ class ConsultingsSheet implements FromArray, WithTitle, ShouldAutoSize, WithStyl
                 'objective_name',
                 'expertise_name',
                 'focus_area_name',
+                'type',
                 'consulting_date (YYYY-MM-DD)',
                 'start_time (HH:MM)',
                 'end_time (HH:MM)'

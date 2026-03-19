@@ -180,13 +180,21 @@
 
                 <!-- Start::slide Staff Maanger-->
                 @if (canAccess('objective.allow') ||
+                        canAccess('consulting-type.allow') ||
                         canAccess('expertise.allow') ||
                         canAccess('focus-area.allow') ||
                         canAccess('status-manager.allow'))
                     <li
                         class="slide has-sub
-                        {{ (request()->routeIs('objective-manager.*') || request()->routeIs('expertise-manager.*') || request()->routeIs('focus-area-manager.*') ? 'open' : '' || request()->routeIs('status-manager.*')) ? 'open' : '' }}
-                        ">
+                        {{ request()->routeIs([
+                            'objective-manager.*',
+                            'expertise-manager.*',
+                            'focus-area-manager.*',
+                            'status-manager.*',
+                            'consulting-type.*',
+                        ])
+                            ? 'open'
+                            : '' }}">
                         <a href="javascript:void(0);"
                             class="side-menu__item {{ (request()->routeIs('objective-manager.*') || request()->routeIs('expertise-manager.*') || request()->routeIs('focus-area-manager.*') ? 'active' : '' || request()->routeIs('status-manager.*')) ? 'active' : '' }}">
                             <i class="ri-arrow-right-s-line side-menu__angle"></i>
@@ -227,6 +235,13 @@
                                     <a href="{{ route('status-manager.index') }}"
                                         class="side-menu__item {{ request()->routeIs('status-manager.*') ? 'active' : '' }}">Status
                                         Manager</a>
+                                </li>
+                            @endif
+                            @if (canAccess('consulting-type.allow'))
+                                <li class="slide">
+                                    <a href="{{ route('consulting-type.index') }}"
+                                        class="side-menu__item {{ request()->routeIs('consulting-type.*') ? 'active' : '' }}">Consulting
+                                        Type</a>
                                 </li>
                             @endif
                         </ul>

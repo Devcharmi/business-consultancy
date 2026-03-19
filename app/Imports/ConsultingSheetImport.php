@@ -7,6 +7,7 @@ use App\Models\ObjectiveManager;
 use App\Models\FocusAreaManager;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
+use App\Models\ConsultingType;
 use App\Models\ExpertiseManager;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -48,6 +49,7 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
             $objectiveName  = $row['objective_name'] ?? null;
             $focusAreaName  = $row['focus_area_name'] ?? null;
             $expertiseName  = $row['expertise_name'] ?? null;
+            $typeName  = $row['type'] ?? null;
 
             // Parse date/time
             $consultingDateRaw = $row['consulting_date_yyyy_mm_dd'] ?? null;
@@ -96,6 +98,7 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
             $objective = ObjectiveManager::firstOrCreate(['name' => trim($objectiveName)], ['status' => '1']);
             $focusArea = FocusAreaManager::firstOrCreate(['name' => trim($focusAreaName)], ['status' => '1']);
             $expertise = ExpertiseManager::firstOrCreate(['name' => trim($expertiseName)], ['status' => '1']);
+            $type = ConsultingType::firstOrCreate(['name' => trim($typeName)], ['status' => '1']);
 
             // Client Objective
             $clientObjective = ClientObjective::firstOrCreate(
@@ -161,6 +164,7 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 'client_objective_id'   => $clientObjective->id,
                 'focus_area_manager_id' => $focusArea->id,
                 'expertise_manager_id'  => $expertise->id,
+                'consulting_type_id'    => $type->id,
                 'consulting_date'       => $consultingDate,
                 'start_time'            => $startTime,
                 'end_time'              => $endTime,

@@ -14,6 +14,7 @@ class ConsultingSampleExport implements WithMultipleSheets
             new Sheets\ObjectivesSheet(),
             new Sheets\ExpertiseSheet(),
             new Sheets\FocusAreasSheet(),
+            new Sheets\ConsultingTypeSheet(),
         ];
     }
 }

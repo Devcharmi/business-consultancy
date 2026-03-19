@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryManagerController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\ClientObjectiveController;
 use App\Http\Controllers\Admin\ConsultingController;
+use App\Http\Controllers\Admin\ConsultingTypeController;
 use App\Http\Controllers\Admin\EventTypeController;
 use App\Http\Controllers\Admin\ExpertiseManagerController;
 use App\Http\Controllers\Admin\FeatureGroupController;
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'user.access'])->prefix('admin')->group(function () {
     Route::resource('objective-manager', ObjectiveManagerController::class);
     Route::resource('expertise-manager', ExpertiseManagerController::class);
     Route::resource('focus-area-manager', FocusAreaManagerController::class);
+    Route::resource('consulting-type', ConsultingTypeController::class);
 
     Route::resource('lead', LeadController::class);
 

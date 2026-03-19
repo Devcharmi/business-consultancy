@@ -8,6 +8,7 @@ use App\Imports\ConsultingImport;
 use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
+use App\Models\ConsultingType;
 use App\Models\ExpertiseManager;
 use App\Models\FocusAreaManager;
 use App\Models\ObjectiveManager;
@@ -49,6 +50,7 @@ class ConsultingController extends Controller
                 'client_objective_id',
                 'expertise_manager_id',
                 'focus_area_manager_id',
+                'consulting_type_id',
                 'consulting_date',
                 'start_time',
                 'end_time',
@@ -71,7 +73,8 @@ class ConsultingController extends Controller
                 'client_objective.client',
                 'client_objective.objective_manager',
                 'expertise_manager',
-                'focus_area_manager'
+                'focus_area_manager',
+                'consulting_type',
             ])->get();
 
 
@@ -142,8 +145,8 @@ class ConsultingController extends Controller
                 'integer',
                 'exists:focus_area_managers,id',
             ],
-            'consulting_date' => 'required|date',
-            'start_time' => 'required',
+            'consulting_date' => 'nullable|date',
+            'start_time' => 'nullable',
             'end_time' => 'nullable|after:start_time',
         ], [
             // Optional custom messages
@@ -152,9 +155,9 @@ class ConsultingController extends Controller
             'objective_manager_id.required' => 'Please select a objective.',
             'expertise_manager_id.required' => 'Please select an expertise.',
             'focus_area_manager_id.required' => 'Please select a focus area.',
-            'consulting_date.required' => 'Please select consulting date & time.',
-            'start_time.required' => 'Please select start time.',
-            'end_time.required' => 'Please select end time.',
+            // 'consulting_date.required' => 'Please select consulting date & time.',
+            // 'start_time.required' => 'Please select start time.',
+            // 'end_time.required' => 'Please select end time.',
             'end_time.after' => 'End time must be greater than start time.',
             // 'consulting_date.after_or_equal' => 'Consulting date must be today or future.',
         ]);
@@ -236,6 +239,7 @@ class ConsultingController extends Controller
         // $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
         $clients = Client::select('id', 'client_name')->activeClients()->orderBy('client_name')->get();
         $objectives = ObjectiveManager::activeObjectives()->select('id', 'name')->orderBy('name')->get();
+        $consultingTypes = ConsultingType::activeConsultingTypes()->select('id', 'name')->orderBy('name')->get();
 
         $consultingData = null;
         $taskId = null;
@@ -262,7 +266,8 @@ class ConsultingController extends Controller
                 'objectives',
                 'expertises',
                 'focusAreas',
-                'taskId'
+                'taskId',
+                'consultingTypes'
             )
         )->render();
 
@@ -312,8 +317,8 @@ class ConsultingController extends Controller
                 'integer',
                 'exists:focus_area_managers,id',
             ],
-            'consulting_date' => 'required|date',
-            'start_time' => 'required',
+            'consulting_date' => 'nullable|date',
+            'start_time' => 'nullable',
             'end_time' => 'nullable|after:start_time',
         ], [
             // 'client_objective_id.required' => 'Please select a client objective.',
@@ -321,11 +326,11 @@ class ConsultingController extends Controller
             'objective_manager_id.required' => 'Please select a objective.',
             'expertise_manager_id.required' => 'Please select an expertise.',
             'focus_area_manager_id.required' => 'Please select a focus area.',
-            'consulting_date.required' => 'Please select consulting date & time.',
-            'start_time.required' => 'Please select start time.',
-            'end_time.required' => 'Please select end time.',
+            // 'consulting_date.required' => 'Please select consulting date & time.',
+            // 'start_time.required' => 'Please select start time.',
+            // 'end_time.required' => 'Please select end time.',
             'end_time.after' => 'End time must be greater than start time.',
-            'consulting_date.after_or_equal' => 'Consulting date cannot be in the past.',
+            // 'consulting_date.after_or_equal' => 'Consulting date cannot be in the past.',
         ]);
 
 
