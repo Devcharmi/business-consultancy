@@ -42,6 +42,7 @@ class ConsultingController extends Controller
             $data['filterObjective']  = $request->get('filterObjective');
             $data['filterExpertise'] = $request->get('filterExpertise');
             $data['filterFocusArea'] = $request->get('filterFocusArea');
+            $data['filterConsultingType'] = $request->get('filterConsultingType');
 
             $columns = [
                 'id',

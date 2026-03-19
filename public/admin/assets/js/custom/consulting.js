@@ -18,6 +18,7 @@ var consulting_table = $(".table-list").DataTable({
             d.filterObjective = $("#filterObjective").val();
             d.filterExpertise = $("#filterExpertise").val();
             d.filterFocusArea = $("#filterFocusArea").val();
+            d.filterConsultingType = $("#filterConsultingType").val();
         },
     },
     columns: [

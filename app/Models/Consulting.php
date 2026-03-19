@@ -145,6 +145,10 @@ class Consulting extends Model
                     // OR focus_area name
                     ->orWhereHas('focus_area_manager', function ($qo) use ($term) {
                         $qo->where('name', 'LIKE', "%{$term}%");
+                    })
+                    // OR type name
+                    ->orWhereHas('consulting_type', function ($qo) use ($term) {
+                        $qo->where('name', 'LIKE', "%{$term}%");
                     });
                 // // OR client name
                 // ->orWhereHas('client', function ($qo) use ($term) {
@@ -157,28 +161,28 @@ class Consulting extends Model
             });
         }
 
-        // 🔹 Project filter
         if (!empty($filters['filterClient'])) {
             $query->whereHas('client_objective', function ($qc) use ($filters) {
                 $qc->where('client_id', $filters['filterClient']);
             });
         }
 
-        // 🔹 Project filter
         if (!empty($filters['filterObjective'])) {
             $query->whereHas('client_objective', function ($qc) use ($filters) {
                 $qc->where('objective_manager_id', $filters['filterObjective']);
             });
         }
 
-        // 🔹 Status filter
         if (!empty($filters['filterExpertise'])) {
             $query->where('expertise_manager_id', $filters['filterExpertise']);
         }
 
-        // 🔹 Status filter
         if (!empty($filters['filterFocusArea'])) {
             $query->where('focus_area_manager_id', $filters['filterFocusArea']);
+        }
+
+        if (!empty($filters['filterConsultingType'])) {
+            $query->where('consulting_type_id', $filters['filterConsultingType']);
         }
 
         if (!empty($filters['sort'])) {

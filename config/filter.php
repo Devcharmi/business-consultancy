@@ -38,6 +38,7 @@ return [
             'objective',
             'expertise',
             'focus_area',
+            'consulting_type',
         ],
 
         'reports.clients' => [

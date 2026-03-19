@@ -65,6 +65,7 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 'objective' => $objectiveName,
                 'focus' => $focusAreaName,
                 'expertise' => $expertiseName,
+                'type' => $typeName,
             ]);
 
             if (collect($row)->filter(function ($value) {
@@ -98,7 +99,14 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
             $objective = ObjectiveManager::firstOrCreate(['name' => trim($objectiveName)], ['status' => '1']);
             $focusArea = FocusAreaManager::firstOrCreate(['name' => trim($focusAreaName)], ['status' => '1']);
             $expertise = ExpertiseManager::firstOrCreate(['name' => trim($expertiseName)], ['status' => '1']);
-            $type = ConsultingType::firstOrCreate(['name' => trim($typeName)], ['status' => '1']);
+            $type = null;
+
+            if (!empty($typeName) && trim($typeName) !== '') {
+                $type = ConsultingType::firstOrCreate(
+                    ['name' => trim($typeName)],
+                    ['status' => '1']
+                );
+            }
 
             // Client Objective
             $clientObjective = ClientObjective::firstOrCreate(
@@ -164,7 +172,7 @@ class ConsultingSheetImport implements ToCollection, WithHeadingRow, SkipsEmptyR
                 'client_objective_id'   => $clientObjective->id,
                 'focus_area_manager_id' => $focusArea->id,
                 'expertise_manager_id'  => $expertise->id,
-                'consulting_type_id'    => $type->id,
+                'consulting_type_id'    => $type?->id,
                 'consulting_date'       => $consultingDate,
                 'start_time'            => $startTime,
                 'end_time'              => $endTime,
