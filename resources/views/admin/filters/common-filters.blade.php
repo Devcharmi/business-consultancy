@@ -74,6 +74,19 @@
             </div>
         @endif
 
+        {{-- Consulting Type --}}
+        @if (showFilter('consulting_type', $enabledFilters))
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Focus Area</label>
+                <select id="filterFocusArea" class="form-control select2 applyFilters">
+                    <option value="">All Focus Areas</option>
+                    @foreach ($consultingTypes as $type)
+                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+
         {{-- Priority --}}
         @if (showFilter('priority', $enabledFilters))
             <div class="col-md-3 mb-3">
