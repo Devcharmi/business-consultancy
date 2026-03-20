@@ -12,6 +12,7 @@ use App\Models\StatusManager;
 use App\Models\User;
 use App\Models\UserTask;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -228,7 +229,9 @@ class UserTaskController extends Controller
         // $staffs = User::whereDoesntHave('roles', function ($q) {
         //     $q->where('name', 'Super Admin');
         // })->get();
-        $staffs = User::get();
+        // $staffs = User::get();
+        $staffs = User::where('id', '!=', Auth::id())->get();
+
         $clients = Client::where('status', '1')->get();
         $statuses = StatusManager::where('status', '1')->get();
         $priorities = PriorityManager::where('status', '1')->get();

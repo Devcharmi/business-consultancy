@@ -78,20 +78,6 @@
                             </select>
                             <small class="text-danger" id="focus_area_manager_id_error"></small>
                         </div>
-
-                        {{-- consultingTypes --}}
-                        <div class="col-md-12 mb-3">
-                            <label>Type</label>
-                            <select name="consulting_type_id" class="form-control select2">
-                                <option value="">Select type</option>
-                                @foreach ($consultingTypes as $consultingType)
-                                    <option value="{{ $consultingType->id }}" @selected(old('consulting_type_id', $consultingData->consulting_type_id ?? null) == $consultingType->id)>
-                                        {{ $consultingType->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <small class="text-danger" id="consulting_type_id_error"></small>
-                        </div>
                         
                         {{-- Consulting Date --}}
                         <div class="col-md-4 mb-3">

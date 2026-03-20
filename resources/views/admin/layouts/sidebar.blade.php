@@ -180,7 +180,7 @@
 
                 <!-- Start::slide Staff Maanger-->
                 @if (canAccess('objective.allow') ||
-                        canAccess('consulting-type.allow') ||
+                        canAccess('lead-type.allow') ||
                         canAccess('expertise.allow') ||
                         canAccess('focus-area.allow') ||
                         canAccess('status-manager.allow'))
@@ -191,7 +191,7 @@
                             'expertise-manager.*',
                             'focus-area-manager.*',
                             'status-manager.*',
-                            'consulting-type.*',
+                            'lead-type.*',
                         ])
                             ? 'open'
                             : '' }}">
@@ -237,10 +237,10 @@
                                         Manager</a>
                                 </li>
                             @endif
-                            @if (canAccess('consulting-type.allow'))
+                            @if (canAccess('lead-type.allow'))
                                 <li class="slide">
-                                    <a href="{{ route('consulting-type.index') }}"
-                                        class="side-menu__item {{ request()->routeIs('consulting-type.*') ? 'active' : '' }}">Consulting
+                                    <a href="{{ route('lead-type.index') }}"
+                                        class="side-menu__item {{ request()->routeIs('lead-type.*') ? 'active' : '' }}">Lead
                                         Type</a>
                                 </li>
                             @endif

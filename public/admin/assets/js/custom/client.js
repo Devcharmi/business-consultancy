@@ -146,3 +146,41 @@ $(document).on("click", ".delete-data", function () {
         }
     });
 });
+
+
+$(document).on("click", ".calendar-add-btn", function () {
+    const date = $(this).data("date");
+    const url = $(this).data("url");
+
+    $("#sub_modal_show_html").html(
+        '<div class="text-center p-5"><i class="bi bi-hourglass-split fs-1"></i><p>Loading...</p></div>',
+    );
+
+    $.ajax({
+        url: url,
+        method: "GET",
+        dataType: "json",
+        success: function (response) {
+            $("#sub_modal_show_html").html(response.html);
+
+            const dateInput = $("#consulting_date");
+            if (dateInput.length) {
+                dateInput.val(date);
+            }
+
+            if ($.fn.select2) {
+                $(".select2").select2({
+                    placeholder: "Select...",
+                    width: "100%",
+                    dropdownParent: $("#consultingModal"),
+                    allowClear: true,
+                });
+            }
+
+            $("#consultingModal").modal("show");
+        },
+        error: function () {
+            showToastr("error", "Error loading form");
+        },
+    });
+});

@@ -74,13 +74,13 @@
             </div>
         @endif
 
-        {{-- Consulting Type --}}
-        @if (showFilter('consulting_type', $enabledFilters))
+        {{-- Lead Type --}}
+        @if (showFilter('lead', $enabledFilters))
             <div class="col-md-3 mb-3">
-                <label class="form-label">Consulting Type</label>
-                <select id="filterConsultingType" class="form-control select2 applyFilters">
+                <label class="form-label">Lead Type</label>
+                <select id="filterLeadType" class="form-control select2 applyFilters">
                     <option value="">All Focus Areas</option>
-                    @foreach ($consultingTypes as $type)
+                    @foreach ($leadTypes as $type)
                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                     @endforeach
                 </select>

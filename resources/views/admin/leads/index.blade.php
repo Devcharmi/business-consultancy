@@ -30,7 +30,7 @@
                                     <th>Name</th>
                                     <th>Phone</th>
                                     <th>Email</th>
-                                    {{-- <th>Objective</th> --}}
+                                    <th>Type</th>
                                     <th style="width: 140px">Status</th>
                                 </tr>
                             </thead>

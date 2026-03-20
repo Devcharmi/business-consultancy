@@ -18,7 +18,6 @@ var consulting_table = $(".table-list").DataTable({
             d.filterObjective = $("#filterObjective").val();
             d.filterExpertise = $("#filterExpertise").val();
             d.filterFocusArea = $("#filterFocusArea").val();
-            d.filterConsultingType = $("#filterConsultingType").val();
         },
     },
     columns: [
@@ -123,14 +122,6 @@ var consulting_table = $(".table-list").DataTable({
         // 5️⃣ Focus Area
         {
             data: "focus_area_manager",
-            render: function (data) {
-                return data ? data.name : "-";
-            },
-        },
-
-        // 5️⃣ consulting_type
-        {
-            data: "consulting_type",
             render: function (data) {
                 return data ? data.name : "-";
             },

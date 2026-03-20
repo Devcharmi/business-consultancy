@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('consultings', function (Blueprint $table) {
-            $table->foreignId('consulting_type_id')->nullable()->constrained('consulting_types')->nullOnDelete();
+        Schema::create('lead_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->enum('status', ['0', '1'])->default('1');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('consultings', function (Blueprint $table) {
-            $table->dropColumn('consulting_type_id');
-        });
+        Schema::dropIfExists('leads');
     }
 };

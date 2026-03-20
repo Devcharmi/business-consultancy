@@ -4,14 +4,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitleId">
-                    {{ isset($consultingTypeData) ? 'Edit Consulting Type' : 'Create Consulting Type' }}
+                    {{ isset($leadTypeData) ? 'Edit Lead Type' : 'Create Lead Type' }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form
-                action="{{ !empty($consultingTypeData) ? route('consulting-type.update', $consultingTypeData->id) : route('consulting-type.store') }}"
-                method="POST" id="consulting_type_form">
-                @if (!empty($consultingTypeData))
+                action="{{ !empty($leadTypeData) ? route('lead-type.update', $leadTypeData->id) : route('lead-type.store') }}"
+                method="POST" id="lead_type_form">
+                @if (!empty($leadTypeData))
                     @method('PUT')
                 @endif
                 @csrf
@@ -20,7 +20,7 @@
                         <label for="name" class="col-md-3 col-form-label required">Name</label>
                         <div class="form-group col-md-9">
                             <input type="text" name="name" id="name" class="form-control"
-                                value="{{ $consultingTypeData->name ?? '' }}">
+                                value="{{ $leadTypeData->name ?? '' }}">
                             <span id="name_error"
                                 class="help-inline text-danger mt-2">{{ $errors->first('name') }}</span>
                         </div>
@@ -30,11 +30,11 @@
                         <div class="form-group col-md-6">
                             <select name="status" id="status" class="form-select">
                                 <option value="1"
-                                    {{ (isset($consultingTypeData) && $consultingTypeData->status == '1') || !isset($consultingTypeData) ? 'selected' : 'selected' }}>
+                                    {{ (isset($leadTypeData) && $leadTypeData->status == '1') || !isset($leadTypeData) ? 'selected' : 'selected' }}>
                                     Active
                                 </option>
                                 <option value="0"
-                                    {{ isset($consultingTypeData) && $consultingTypeData->status == '0' ? 'selected' : '' }}>
+                                    {{ isset($leadTypeData) && $leadTypeData->status == '0' ? 'selected' : '' }}>
                                     Deactive
                                 </option>
                             </select>
@@ -43,13 +43,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
-                    @if (!empty($consultingTypeData))
-                        <button type="submit" class="btn btn-primary float-end" id="consulting_type_form_button"
-                            data-url="{{ route('consulting-type.update', ['consulting_type' => $consultingTypeData->id]) }}">Update</button>
+                    @if (!empty($leadTypeData))
+                        <button type="submit" class="btn btn-primary float-end" id="lead_type_form_button"
+                            data-url="{{ route('lead-type.update', ['lead' => $leadTypeData->id]) }}">Update</button>
                     @else
                         <button type="submit"
-                            class="btn btn-primary float-end {{ canAccess('consulting_type.create') ? '' : 'disabled' }}"
-                            id="consulting_type_form_button" data-url="{{ route('consulting-type.store') }}">Submit</button>
+                            class="btn btn-primary float-end {{ canAccess('lead.create') ? '' : 'disabled' }}"
+                            id="lead_type_form_button" data-url="{{ route('lead-type.store') }}">Submit</button>
                     @endif
                 </div>
             </form>

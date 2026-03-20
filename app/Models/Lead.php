@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Lead extends Model
 {
@@ -14,6 +13,7 @@ class Lead extends Model
         'name',
         'phone',
         'email',
+        'lead_type_id',
         'status',
         'note',
     ];
@@ -37,6 +37,12 @@ class Lead extends Model
     {
         return $this->hasMany(UserTask::class, 'lead_id');
     }
+
+    public function lead_type()
+    {
+        return $this->belongsTo(LeadType::class);
+    }
+
 
     public function scopeActiveUnconverted($query)
     {
@@ -66,6 +72,9 @@ class Lead extends Model
                 $q->orWhere('email', 'LIKE', '%' . $term . '%');
                 $q->orWhere('phone', 'LIKE', '%' . $term . '%');
                 $q->orWhere('status', 'LIKE', '%' . $term . '%');
+                $q->whereHas('lead_type', function ($qc) use ($term) {
+                    $qc->where('name', 'LIKE', "%{$term}%");
+                });
             });
         }
         // 🔹 Created by filter

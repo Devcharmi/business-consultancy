@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ConsultingType extends Model
+class LeadType extends Model
 {
      use HasFactory;
 
@@ -14,15 +14,15 @@ class ConsultingType extends Model
         'status'
     ];
 
-    public function scopeActiveConsultingTypes($query)
+    public function scopeActiveLeadTypes($query)
     {
         return $query->where('status', '1');
     }
 
     // 🔹 Objective → Objective Manager
-    public function consulting()
+    public function leads()
     {
-        return $this->hasMany(Consulting::class);
+        return $this->hasMany(Lead::class);
     }
 
     public function scopeFilters($query, $filters = [], $columns = [])

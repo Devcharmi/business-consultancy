@@ -100,26 +100,26 @@
                                 <span class="text-danger">{{ $errors->first('lead_id') }}</span>
                             </div>
 
-                            @if (auth()->user()->hasRole(['Super Admin', 'Admin']))
-                                {{-- <div class="row mb-1"> --}}
-                                <label for="staff_manager_id" class="required col-form-label col-md-2 text-end">Assign
-                                    to</label>
-                                <div class="form-group col-md-4">
-                                    <select name="staff_manager_id" id="staff_manager_id" class="form-control select2">
-                                        <option value="">Select</option>
-                                        @foreach ($staffs as $staff)
-                                            <option value="{{ $staff->id }}"
-                                                {{ isset($taskData) && $taskData->staff_manager_id == $staff->id ? 'selected' : '' }}>
-                                                {{ $staff->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <span id="staff_manager_id_error"
-                                        class="help-inline text-danger mt-2">{{ $errors->first('staff_manager_id') }}</span>
-                                </div>
-                            @else
+                            {{-- @if (auth()->user()->hasRole(['Super Admin', 'Admin'])) --}}
+                            {{-- <div class="row mb-1"> --}}
+                            <label for="staff_manager_id" class="required col-form-label col-md-2 text-end">Assign
+                                to</label>
+                            <div class="form-group col-md-4">
+                                <select name="staff_manager_id" id="staff_manager_id" class="form-control select2">
+                                    <option value="">Select</option>
+                                    @foreach ($staffs as $staff)
+                                        <option value="{{ $staff->id }}"
+                                            {{ isset($taskData) && $taskData->staff_manager_id == $staff->id ? 'selected' : '' }}>
+                                            {{ $staff->name }}</option>
+                                    @endforeach
+                                </select>
+                                <span id="staff_manager_id_error"
+                                    class="help-inline text-danger mt-2">{{ $errors->first('staff_manager_id') }}</span>
+                            </div>
+                            {{-- @else
                                 <input type="hidden" name="staff_manager_id" id="staff_manager_id"
                                     value="{{ isset($taskData) ? $taskData->staff_manager_id : auth()->id() }}">
-                            @endif
+                            @endif --}}
                         </div>
 
                         <div class="row mb-1">

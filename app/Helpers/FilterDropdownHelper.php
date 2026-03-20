@@ -14,7 +14,7 @@ if (!function_exists('filterDropdowns')) {
                 'staffList' => collect(),
                 'clients' => collect(),
                 'objectives' => collect(),
-                'consultingTypes' => collect(),
+                'leadTypes' => collect(),
                 'statuses' => collect(),
                 'expertiseManagers' => collect(),
                 'focusAreas' => collect(),

@@ -1,4 +1,4 @@
-var consulting_type_table = $(".table-list").DataTable({
+var lead_table = $(".table-list").DataTable({
     order: [[0, "desc"]],
     autoWidth: false,
     processing: true,
@@ -9,7 +9,7 @@ var consulting_type_table = $(".table-list").DataTable({
         [25, 100, 200, 250],
     ],
     ajax: {
-        url: $("#consulting_type_table").attr("data-url"),
+        url: $("#lead_table").attr("data-url"),
     },
     columns: [
         {
@@ -38,11 +38,11 @@ var consulting_type_table = $(".table-list").DataTable({
                 var id = o["id"];
 
                 var edit_path_set = edit_path;
-                edit_path_set = edit_path_set.replace(":consulting_type", id);
+                edit_path_set = edit_path_set.replace(":lead_type", id);
 
                 var delete_path_set = delete_path;
                 delete_path_set = delete_path_set.replace(
-                    ":consulting_type",
+                    ":lead_type",
                     id
                 );
 
@@ -84,11 +84,11 @@ $(document).on("click", ".open-modal", function () {
     return false;
 });
 
-$(document).on("click", "#consulting_type_form_button", function () {
-    let form = $("#consulting_type_form");
+$(document).on("click", "#lead_type_form_button", function () {
+    let form = $("#lead_type_form");
     let url = $(this).attr("data-url");
     let method = form.find("input[name='_method']").length ? "PUT" : "POST"; // Detect if it's an update
-    $("#consulting_type_form").ajaxSubmit({
+    $("#lead_type_form").ajaxSubmit({
         url: url,
         type: method,
         dataType: "json",
@@ -97,7 +97,7 @@ $(document).on("click", "#consulting_type_form_button", function () {
         },
         beforeSubmit: function () {},
         success: function (result) {
-            consulting_type_table.draw();
+            lead_table.draw();
             $("#modalForm").modal("hide");
             showToastr("success", result.message);
         },
@@ -107,7 +107,7 @@ $(document).on("click", "#consulting_type_form_button", function () {
             $.each(result.responseJSON.errors, function (k, v) {
                 var id_arr = k.split(".");
                 $("body")
-                    .find("#consulting_type_form")
+                    .find("#lead_type_form")
                     .find("#" + id_arr[0] + "_error")
                     .text(v);
             });
@@ -136,7 +136,7 @@ $(document).on("click", ".delete-data", function () {
                 },
                 success: function (result) {
                     $("[id$='_error']").empty();
-                    consulting_type_table.draw();
+                    lead_table.draw();
                     showToastr("success", result.message);
                 },
                 error: function (result) {

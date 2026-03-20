@@ -8,7 +8,6 @@ use App\Imports\ConsultingImport;
 use App\Models\Client;
 use App\Models\ClientObjective;
 use App\Models\Consulting;
-use App\Models\ConsultingType;
 use App\Models\ExpertiseManager;
 use App\Models\FocusAreaManager;
 use App\Models\ObjectiveManager;
@@ -42,7 +41,6 @@ class ConsultingController extends Controller
             $data['filterObjective']  = $request->get('filterObjective');
             $data['filterExpertise'] = $request->get('filterExpertise');
             $data['filterFocusArea'] = $request->get('filterFocusArea');
-            $data['filterConsultingType'] = $request->get('filterConsultingType');
 
             $columns = [
                 'id',
@@ -51,7 +49,6 @@ class ConsultingController extends Controller
                 'client_objective_id',
                 'expertise_manager_id',
                 'focus_area_manager_id',
-                'consulting_type_id',
                 'consulting_date',
                 'start_time',
                 'end_time',
@@ -75,7 +72,6 @@ class ConsultingController extends Controller
                 'client_objective.objective_manager',
                 'expertise_manager',
                 'focus_area_manager',
-                'consulting_type',
             ])->get();
 
 
@@ -240,7 +236,6 @@ class ConsultingController extends Controller
         // $clientObjectives = ClientObjective::with(['client', 'objective_manager'])->get();
         $clients = Client::select('id', 'client_name')->activeClients()->orderBy('client_name')->get();
         $objectives = ObjectiveManager::activeObjectives()->select('id', 'name')->orderBy('name')->get();
-        $consultingTypes = ConsultingType::activeConsultingTypes()->select('id', 'name')->orderBy('name')->get();
 
         $consultingData = null;
         $taskId = null;
@@ -268,7 +263,6 @@ class ConsultingController extends Controller
                 'expertises',
                 'focusAreas',
                 'taskId',
-                'consultingTypes'
             )
         )->render();
 

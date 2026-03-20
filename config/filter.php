@@ -38,7 +38,6 @@ return [
             'objective',
             'expertise',
             'focus_area',
-            'consulting_type',
         ],
 
         'reports.clients' => [
@@ -64,6 +63,7 @@ return [
         'reports.leads' => [
             'daterange',
             'client',
+            'lead_type',
             'created_by',
         ],
 

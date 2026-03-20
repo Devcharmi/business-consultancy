@@ -15,7 +15,6 @@ class Consulting extends Model
         'expertise_manager_id',
         'focus_area_manager_id',
         'consulting_date',
-        'consulting_type_id',
         'start_time',
         'end_time',
         'created_by',
@@ -75,11 +74,6 @@ class Consulting extends Model
             $q->where('start_time', '<', $endTime)
                 ->where('end_time', '>', $startTime);
         })->exists();
-    }
-
-    public function consulting_type()
-    {
-        return $this->belongsTo(ConsultingType::class);
     }
 
     public function client_objective()
@@ -145,11 +139,8 @@ class Consulting extends Model
                     // OR focus_area name
                     ->orWhereHas('focus_area_manager', function ($qo) use ($term) {
                         $qo->where('name', 'LIKE', "%{$term}%");
-                    })
-                    // OR type name
-                    ->orWhereHas('consulting_type', function ($qo) use ($term) {
-                        $qo->where('name', 'LIKE', "%{$term}%");
                     });
+                   
                 // // OR client name
                 // ->orWhereHas('client', function ($qo) use ($term) {
                 //     $qo->where('client_name', 'LIKE', "%{$term}%");
@@ -179,10 +170,6 @@ class Consulting extends Model
 
         if (!empty($filters['filterFocusArea'])) {
             $query->where('focus_area_manager_id', $filters['filterFocusArea']);
-        }
-
-        if (!empty($filters['filterConsultingType'])) {
-            $query->where('consulting_type_id', $filters['filterConsultingType']);
         }
 
         if (!empty($filters['sort'])) {

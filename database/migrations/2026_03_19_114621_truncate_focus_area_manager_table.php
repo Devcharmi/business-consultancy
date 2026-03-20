@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
+        // Schema::disableForeignKeyConstraints();
 
-        DB::table('focus_area_managers')->truncate();
+        // DB::table('focus_area_managers')->truncate();
 
-        DB::table('consultings')->truncate();
+        // DB::table('consultings')->truncate();
 
-        Schema::enableForeignKeyConstraints();
+        // Schema::enableForeignKeyConstraints();
     }
 
     /**

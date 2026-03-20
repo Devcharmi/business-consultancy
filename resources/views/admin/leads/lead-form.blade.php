@@ -93,6 +93,21 @@
                                 <small class="text-danger" id="email_error"></small>
                             </div>
 
+
+                            {{-- leadTypes --}}
+                            <div class="col-md-4 mb-3">
+                                <label>Type</label>
+                                <select name="lead_type_id" class="form-control select2">
+                                    <option value="">Select type</option>
+                                    @foreach ($leadTypes as $leadType)
+                                        <option value="{{ $leadType->id }}" @selected(old('lead_id', $leadData->lead_type_id ?? null) == $leadType->id)>
+                                            {{ $leadType->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="text-danger" id="lead_id_error"></small>
+                            </div>
+
                             {{-- Status --}}
                             <div class="col-md-4 mb-3">
                                 <label>Status</label>

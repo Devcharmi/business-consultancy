@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\LeadFollowUp;
+use App\Models\LeadType;
 use App\Models\ObjectiveManager;
 use App\Models\User;
 use App\Models\VendorService;
@@ -36,6 +37,7 @@ class LeadController extends Controller
                 'name',
                 'email',
                 'phone',
+                'lead_type_id',
                 'user_id',
                 'status',
                 'created_at',
@@ -49,7 +51,8 @@ class LeadController extends Controller
 
             $tableData = Lead::with([
                 'user:id,name',
-                'followUps'
+                'followUps',
+                'lead_type'
             ])
                 ->when(($data['filter'] ?? null) === 'open_follow_up', function ($q) {
                     $q->openFollowUps();
@@ -82,6 +85,7 @@ class LeadController extends Controller
     {
         $clients  = Client::activeClients()->get();
         $objectives  = ObjectiveManager::activeObjectives()->get();
+        $leadTypes  = LeadType::activeLeadTypes()->get();
 
         if ($id !== 'new') {
             $leadData = Lead::with([
@@ -89,21 +93,24 @@ class LeadController extends Controller
                 'followUps',
             ])->findOrFail($id);
 
-            return view('admin.leads.lead-form', compact('leadData', 'clients', 'objectives'));
+            return view('admin.leads.lead-form', compact('leadData', 'clients', 'objectives', 'leadTypes'));
         }
 
-        return view('admin.leads.lead-form', compact('clients', 'objectives'));
+        return view('admin.leads.lead-form', compact('clients', 'objectives', 'leadTypes'));
     }
 
     public function store(Request $request)
     {
         // ✅ SINGLE validation block
-
         $rules = [
             'client_id' => 'nullable|exists:clients,id',
             'name'      => 'required|string|max:255',
             'phone'     => ['required', 'string', 'max:10'],
             'email'     => ['nullable', 'email'],
+            'lead_type_id'   => 'nullable',
+            'status' => 'required|in:new,contacted,converted,lost',
+            'note'   => 'nullable|string',
+
         ];
 
         // ✅ Apply unique only when client_id is NULL
@@ -117,7 +124,7 @@ class LeadController extends Controller
         try {
             $validated['user_id'] = Auth::id();
 
-            $lead = Lead::create($validated);
+            $lead = Lead::create($rules);
 
             LeadConversionService::convertIfRequired(
                 $lead,
@@ -160,6 +167,7 @@ class LeadController extends Controller
                 Rule::unique('leads', 'email')->ignore($lead->id),
             ],
 
+            'lead_type_id'   => 'nullable',
             'status' => 'required|in:new,contacted,converted,lost',
             'note'   => 'nullable|string',
         ]);

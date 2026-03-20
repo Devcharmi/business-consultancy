@@ -15,7 +15,6 @@
 //     return $(node).text().trim();
 // }
 
-
 var leads_table = $("#leads_table").DataTable({
     order: [[0, "desc"]],
     autoWidth: false,
@@ -108,12 +107,12 @@ var leads_table = $("#leads_table").DataTable({
         { data: "name" },
         { data: "phone" },
         { data: "email" },
-        // {
-        //     data: "objective_manager",
-        //     mRender: function (v) {
-        //         return v ? v.name : "-";
-        //     },
-        // },
+        {
+            data: "lead_type",
+            mRender: function (v) {
+                return v ? v.name : "-";
+            },
+        },
         {
             data: "status",
             mRender: function (v, t, o) {
